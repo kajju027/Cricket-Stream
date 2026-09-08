@@ -787,30 +787,93 @@ function buildPlayerUrl(id, langCode, streamIndex){
 async function translateBatch(texts, targetLang){
   if(targetLang === 'en') return texts;
   const cacheKey = `${targetLang}::${texts.join('||')}`;
+
   if(translationCache[cacheKey]) return translationCache[cacheKey];
 
-  const langName = LANG_NAMES[targetLang] || targetLang;
-  const prompt = `Translate each of the following cricket match titles and tournament names into ${langName}. Keep team names, abbreviations, and formats recognizable. Return ONLY a JSON array of translated strings in the same order, no extra text.\n\n${JSON.stringify(texts)}`;
+  /* Free client-side translation with localStorage caching.
+     The original API, player logic and all other site functions remain unchanged. */
+  const savedCache = localStorage.getItem(`fc_translation_${targetLang}`);
+  if(savedCache){
+    try{
+      const parsedCache = JSON.parse(savedCache);
+      if(Array.isArray(parsedCache) && parsedCache.length){
+        const lookup = {};
+        parsedCache.forEach(item => {
+          if(item && typeof item.source === 'string'){
+            lookup[item.source] = item.translated;
+          }
+        });
+
+        const cachedResults = texts.map(text =>
+          Object.prototype.hasOwnProperty.call(lookup, text) ? lookup[text] : text
+        );
+
+        if(cachedResults.every((value, index) => value !== texts[index] || !texts[index])){
+          translationCache[cacheKey] = cachedResults;
+          return cachedResults;
+        }
+      }
+    }catch(e){}
+  }
 
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({
-        model:'claude-sonnet-4-6',
-        max_tokens:1000,
-        messages:[{role:'user', content: prompt}]
-      })
+    const results = await Promise.all(texts.map(async (text) => {
+      if(!text) return '';
+
+      const url =
+        'https://translate.googleapis.com/translate_a/single' +
+        '?client=gtx&sl=en&tl=' + encodeURIComponent(targetLang) +
+        '&dt=t&q=' + encodeURIComponent(text);
+
+      const res = await fetch(url, {cache:'no-store'});
+      if(!res.ok) throw new Error('Translation request failed');
+
+      const data = await res.json();
+      const parts = Array.isArray(data) && Array.isArray(data[0]) ? data[0] : [];
+      const result = parts
+        .map(part => Array.isArray(part) ? (part[0] || '') : '')
+        .join('');
+
+      return result || text;
+    }));
+
+    translationCache[cacheKey] = results;
+
+    /* Persist translations so repeated visits do not require new requests. */
+    const storedMap = {};
+    try{
+      const stored = JSON.parse(
+        localStorage.getItem(`fc_translation_${targetLang}`) || '[]'
+      );
+
+      if(Array.isArray(stored)){
+        stored.forEach(item => {
+          if(item && typeof item.source === 'string'){
+            storedMap[item.source] = item.translated;
+          }
+        });
+      }
+    }catch(e){}
+
+    texts.forEach((source, index) => {
+      storedMap[source] = results[index];
     });
-    const data = await res.json();
-    const raw = (data.content || []).map(b => b.text || '').join('');
-    const clean = raw.replace(/```json|```/g,'').trim();
-    const parsed = JSON.parse(clean);
-    if(Array.isArray(parsed) && parsed.length === texts.length){
-      translationCache[cacheKey] = parsed;
-      return parsed;
-    }
+
+    try{
+      localStorage.setItem(
+        `fc_translation_${targetLang}`,
+        JSON.stringify(
+          Object.entries(storedMap).map(([source, translated]) => ({
+            source,
+            translated
+          }))
+        )
+      );
+    }catch(e){}
+
+    return results;
   } catch(e){}
+
   return texts;
 }
 
