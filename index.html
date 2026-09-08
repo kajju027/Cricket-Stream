@@ -69,7 +69,6 @@
   ]
 }
 </script>     
-
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-G5NE717HVD"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-G5NE717HVD',{anonymize_ip:true});</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -79,7 +78,8 @@
 <link rel="dns-prefetch" href="1dot1dot1dot1.cloudflare-dns.com">
 <link href="https://fonts.googleapis.com/css2?family=Acme&family=Amaranth:wght@400;700&display=swap" rel="stylesheet">
 
-<!-- // AD #1 | Popunder | loaded dynamically after popup closes -->
+<!-- // AD #1 | Popunder | Adsterra policy: place before </head> -->
+<script src="https://pl31059628.profitableratecpmnetwork.com/f8/f8/52/f8f852a3e38c84e55f1c05d4c9e28e6f.js"></script>
 
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
@@ -144,7 +144,7 @@ body{width:100%;height:100%;min-height:100vh;min-height:100dvh;min-height:-webki
 <body>
 
 <a href="https://t.me/CnpTVOfficial" class="logo-btn" target="_blank" rel="noopener noreferrer" aria-label="CnpTVOfficial on Telegram">
-  <img src="/file_00000000d56c7208939f3cb5bb73adc0.png" alt="Football News Point Logo" loading="eager" width="36" height="36">
+  <img src="/gop-gop-moww.png" alt="Football News Point Logo" loading="eager" width="36" height="36">
 </a>
 
 <button class="revenue-btn" id="revenueBtn" type="button" aria-label="Earn reward">
@@ -171,7 +171,7 @@ body{width:100%;height:100%;min-height:100vh;min-height:100dvh;min-height:-webki
     <div class="loader-core"></div>
   </div>
   <div class="loading-text">
-    <div class="loading-label">Connecting to Sonu xs Server</div>
+    <div class="loading-label">Connecting to Server</div>
     <div class="loading-sub">Fetching Live Stream<span>.</span><span>.</span><span>.</span></div>
   </div>
 </div>
@@ -184,7 +184,7 @@ body{width:100%;height:100%;min-height:100vh;min-height:100dvh;min-height:-webki
       <div class="popup-title">Follow Us !!</div>
       <div class="popup-text">
         Join our WhatsApp channel<br>
-        <b>FOOTBALL NEWS POINT &#8482;</b>
+        <b>CRICKET NEWS POINT &#8482;</b>
         For Instant Updates &amp; Exclusive Links.
       </div>
       <button class="btn-popup btn-join-main" id="popupJoinBtn" type="button">JOIN NOW</button>
@@ -195,16 +195,13 @@ body{width:100%;height:100%;min-height:100vh;min-height:100dvh;min-height:-webki
 
 <div id="error-screen">
   <div class="error-card">
-    <div class="error-icon" id="errIcon">
-      <svg id="errSvg" viewBox="0 0 24 24"></svg>
+    <div class="error-icon">
+      <svg viewBox="0 0 24 24"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/></svg>
     </div>
-    <div class="error-title" id="errTitle">Something Went Wrong</div>
-    <div class="error-badge" id="error-badge"></div>
-    <div class="error-body" id="errBody">Please wait while we reconnect.</div>
-    <div class="error-retry-note">
-      <span class="error-retry-dot"></span>
-      <span id="errCountdown">Retrying automatically</span>
-    </div>
+    <div class="error-title">Stream Not Found</div>
+    <div class="error-badge" id="error-badge">"Unknown"</div>
+    <div class="error-body">The requested stream is not available right now.<br>Please check the link or try again later.</div>
+    <div class="error-retry-note"><span class="error-retry-dot"></span><span>Retrying Automatically</span></div>
     <a href="https://t.me/CnpTVOfficial" target="_blank" rel="noopener noreferrer" class="error-contact-btn" id="error-contact-btn">
       <svg viewBox="0 0 24 24"><path d="M9.993 15.674l-.398 5.604c.57 0 .817-.245 1.113-.54l2.67-2.557 5.53 4.047c1.014.558 1.734.264 1.987-.939l3.6-16.86c.3-1.4-.506-1.95-1.496-1.58L1.27 9.64c-1.37.53-1.35 1.29-.233 1.64l5.68 1.77 13.337-8.418c.59-.39 1.13-.175.69.215"/></svg>
       Contact Support
@@ -217,9 +214,9 @@ body{width:100%;height:100%;min-height:100vh;min-height:100dvh;min-height:-webki
 'use strict';
 
 var PRIMARY_JSON  = 'https://sonujson-v4.pages.dev/loura.json';
-var FALLBACK_JSON = 'https://sonujson-v3.pages.dev/loura.json';
+var FALLBACK_JSON = '';
 var CONTACT_LINK  = 'https://t.me/CnpTVOfficial';
-var WA_CHANNEL    = 'https://whatsapp.com/channel/0029VbDMpWVAe5VldaFI370o';
+var WA_CHANNEL    = 'https://whatsapp.com/channel/0029VaeylYYBPzjVNomWuZ0T';
 
 // AD #3 | Smartlink | Revenue button only
 var AD3 = 'https://www.profitableratecpmnetwork.com/pkunuvbs?key=abfcf12dc6d9eba50e5371212ba6db71';
@@ -237,6 +234,7 @@ var JOIN_SCHEMES = [
 var iframe     = document.getElementById('main-iframe');
 var loadScreen = document.getElementById('loading-screen');
 var errScreen  = document.getElementById('error-screen');
+var errBadge   = document.getElementById('error-badge');
 var contactBtn = document.getElementById('error-contact-btn');
 var popup      = document.getElementById('popup');
 var joinBtn    = document.getElementById('popupJoinBtn');
@@ -259,16 +257,6 @@ function openTab(url) {
   setTimeout(function(){ if (a.parentNode) a.parentNode.removeChild(a); }, 150);
 }
 
-var ad1Loaded = false;
-function loadAdsterra() {
-  if (ad1Loaded) return;
-  ad1Loaded = true;
-  var s = document.createElement('script');
-  s.src   = 'https://pl31059628.profitableratecpmnetwork.com/f8/f8/52/f8f852a3e38c84e55f1c05d4c9e28e6f.js';
-  s.async = true;
-  document.head.appendChild(s);
-}
-
 popup.classList.add('visible');
 
 function closePopup() {
@@ -281,15 +269,14 @@ function closePopup() {
   }, 220);
 }
 
-joinBtn.addEventListener('click', function(){
+joinBtn.addEventListener('click', function(e){
+  e.stopPropagation();
   openTab(WA_CHANNEL);
   closePopup();
-  loadAdsterra();
 });
 
 skipBtn.addEventListener('click', function(){
   closePopup();
-  loadAdsterra();
 });
 
 revenueBtn.addEventListener('click', function(e){
@@ -311,82 +298,19 @@ function hideLoader() {
 }
 iframe.addEventListener('load', hideLoader);
 
-var retryTimer    = null;
-var countdownTick = null;
+var retryTimer = null;
 
-var ERR = {
-  network: {
-    svg: '<path d="M1 1l22 22M16.72 11.06A10.94 10.94 0 0 1 19 12.55M5 12.55a10.94 10.94 0 0 1 5.17-2.39M10.71 5.05A16 16 0 0 1 22.56 9M1.42 9a15.91 15.91 0 0 1 4.7-2.88M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01"/>',
-    title: 'No Internet',
-    badge: 'Connection Problem',
-    body:  'Your internet seems to be offline. Check your connection — we\'re retrying.'
-  },
-  timeout: {
-    svg: '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
-    title: 'Server Timeout',
-    badge: 'Taking Too Long',
-    body:  'The server is not responding right now. We\'ll keep trying automatically.'
-  },
-  notfound: {
-    svg: '<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>',
-    title: 'Stream Unavailable',
-    badge: '',
-    body:  'This stream is not available at the moment. It may have ended or the link is incorrect.'
-  }
-};
-
-function showError(id, type) {
-  type = type || 'notfound';
-  var cfg = ERR[type] || ERR.notfound;
-
-  loadScreen.style.display   = 'none';
-  iframe.style.visibility    = 'hidden';
-
-  document.getElementById('errSvg').innerHTML   = cfg.svg;
-  document.getElementById('errTitle').textContent = cfg.title;
-  document.getElementById('errBody').textContent  = cfg.body;
-
-  var badge = document.getElementById('error-badge');
-  if (type === 'notfound' && id) {
-    badge.textContent = '"' + id + '"';
-    badge.style.display = 'inline-block';
-  } else if (type !== 'notfound') {
-    badge.textContent   = cfg.badge;
-    badge.style.display = 'inline-block';
-  } else {
-    badge.style.display = 'none';
-  }
-
+function showError(id) {
+  loadScreen.style.display = 'none';
+  iframe.style.visibility  = 'hidden';
+  errBadge.textContent     = id ? '"' + id + '"' : '"Unknown"';
   errScreen.classList.add('show');
-  scheduleRetry(id, type);
+  clearTimeout(retryTimer);
+  retryTimer = setTimeout(function(){ fetchAndLoad(id); }, RETRY_DELAY);
 }
-
 function hideError() {
   errScreen.classList.remove('show');
   clearTimeout(retryTimer);
-  clearInterval(countdownTick);
-}
-
-function scheduleRetry(id, type) {
-  clearTimeout(retryTimer);
-  clearInterval(countdownTick);
-
-  var delay   = (type === 'network' || type === 'timeout') ? 6000 : RETRY_DELAY;
-  var seconds = Math.ceil(delay / 1000);
-  var cdEl    = document.getElementById('errCountdown');
-
-  cdEl.textContent = 'Retrying in ' + seconds + 's';
-  countdownTick = setInterval(function(){
-    seconds--;
-    if (seconds <= 0) {
-      clearInterval(countdownTick);
-      cdEl.textContent = 'Retrying\u2026';
-    } else {
-      cdEl.textContent = 'Retrying in ' + seconds + 's';
-    }
-  }, 1000);
-
-  retryTimer = setTimeout(function(){ fetchAndLoad(id); }, delay);
 }
 
 function onFSChange() {
@@ -437,33 +361,24 @@ function applyStream(item) {
 function fetchAndLoad(id) {
   Promise.allSettled([fetchJSON(PRIMARY_JSON), fetchJSON(FALLBACK_JSON)])
     .then(function(res){
-      var pd = res[0].status === 'fulfilled' ? res[0].value : null;
-      var fd = res[1].status === 'fulfilled' ? res[1].value : null;
-
-      if (!pd && !fd) {
-        var reason = res[0].reason || res[1].reason;
-        var type   = (reason && reason.name === 'AbortError') ? 'timeout' : 'network';
-        showError(id, type);
-        return;
-      }
-
+      var pd   = res[0].status === 'fulfilled' ? res[0].value : null;
+      var fd   = res[1].status === 'fulfilled' ? res[1].value : null;
       var list = ((pd && pd.iframes) || []).concat((fd && fd.iframes) || []);
       var item = null;
       for (var i = 0; i < list.length; i++) {
         if (String(list[i].id) === String(id) && list[i].iframeSrc) { item = list[i]; break; }
       }
-      if (item) { applyStream(item); } else { showError(id, 'notfound'); }
+      if (item) { applyStream(item); } else { showError(id); }
     });
 }
 
 var sid = getStreamId();
-if (sid) { fetchAndLoad(sid); } else { showError(null, 'notfound'); }
+if (sid) { fetchAndLoad(sid); } else { showError(null); }
 
 })();
 </script>
 
 <!-- // AD #2 | Social Bar / Banner | Adsterra policy: before </body> — add script below when ready -->
-<!-- <script src="PASTE_YOUR_AD2_SCRIPT_URL_HERE"></script> -->
 
 </body>
 </html>
