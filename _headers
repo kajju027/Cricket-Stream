@@ -1,7 +1,7 @@
 /*
   X-Content-Type-Options: nosniff
-  X-Frame-Options: SAMEORIGIN
   Referrer-Policy: no-referrer-when-downgrade
+  Content-Security-Policy: frame-ancestors *;
   Link: </.well-known/api-catalog>; rel="api-catalog", </.well-known/agent-card.json>; rel="service-doc"
 
 /robots.txt
