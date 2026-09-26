@@ -414,33 +414,11 @@ function fetchJSON(url) {
     .catch(function(e){ clearTimeout(timer); throw e; });
 }
 
-var metaDescEl  = document.querySelector('meta[name="description"]');
-var ogTitleEl   = document.querySelector('meta[property="og:title"]');
-var ogDescEl    = document.querySelector('meta[property="og:description"]');
-var twTitleEl   = document.querySelector('meta[name="twitter:title"]');
-var twDescEl    = document.querySelector('meta[name="twitter:description"]');
-var canonicalEl = document.querySelector('link[rel="canonical"]');
-
-function updatePageMeta(channelName){
-  channelName = (channelName || '').trim();
-  if (!channelName) return;
-  var title = channelName + ' -  Streaming By CnpTV | CRICKET NEWS POINT';
-  var desc  = 'Watch ' + channelName + ' Live Streaming Free On Cricket News Point. Live Cricket Scores, IPL Updates & Instant Match Alerts - Join Our WhatsApp Channel Now.';
-  document.title = title;
-  if (metaDescEl)  metaDescEl.setAttribute('content', desc);
-  if (ogTitleEl)   ogTitleEl.setAttribute('content', title);
-  if (ogDescEl)    ogDescEl.setAttribute('content', desc);
-  if (twTitleEl)   twTitleEl.setAttribute('content', title);
-  if (twDescEl)    twDescEl.setAttribute('content', desc);
-  if (canonicalEl) canonicalEl.setAttribute('href', window.location.href.split('#')[0]);
-}
-
 function applyStream(item) {
   clearTimeout(safetyTimer);
   iframe.src  = item.iframeSrc;
   safetyTimer = setTimeout(hideLoader, SAFETY_MS);
   hideError();
-  updatePageMeta(item.name);
   if (item.hit) fetch(item.hit, {cache:'no-store'}).catch(function(){});
 }
 
