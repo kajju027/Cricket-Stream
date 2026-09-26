@@ -1,4 +1,4 @@
-name: Sync Live Meta + Title Refresh (every 12 hours)
+name: Sync Live Meta + Title Refresh
 
 on:
   schedule:
@@ -16,25 +16,24 @@ jobs:
   refresh:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      - name: Update every page together, in one pass
+      - name: Update pages
         run: node scripts/sync-and-refresh.mjs
 
-      - name: Commit + push only if something changed
+      - name: Commit and push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add -A
           if git diff --cached --quiet; then
-            echo "No files changed this run — skipping commit."
+            echo "No changes"
           else
-            git commit -m "chore: sync live channel meta + title refresh ($(date -u +'%Y-%m-%d %H:%M UTC'))"
+            git commit -m "chore: sync live channel meta + title refresh"
             git push
           fi
+          
