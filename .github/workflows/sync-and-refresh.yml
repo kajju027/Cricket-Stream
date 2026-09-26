@@ -1,26 +1,8 @@
-name: Sync Live Meta + Daily Title Refresh
-
-# 100% static-site friendly — NO Cloudflare Pages Functions involved.
-# Everything happens as plain GitHub Actions writing plain .html files,
-# which Cloudflare Pages then serves exactly as before.
-#
-# Runs ONCE A DAY. Every run does ALL pages together, in this one job,
-# then makes a single commit + push (never one file at a time).
-#
-# - Channels that have a live entry in the iframes JSON at the moment
-#   this runs get their title/description/preview-image/keywords taken
-#   from that entry (name + logourl) — this is what makes shared
-#   /Willow/, /Hindi/ ... links show the right picture and name.
-# - Channels with no live entry right now fall back to a date-seeded
-#   template, so the page still reads fresh instead of being stuck on
-#   one static line forever — this is the daily SEO-refresh part.
-#
-# You can trigger it manually any time from the Actions tab
-# ("Run workflow") to test without waiting for the schedule.
+name: Sync Live Meta + Title Refresh (every 12 hours)
 
 on:
   schedule:
-    - cron: '30 18 * * *'   # 18:30 UTC = 00:00 IST, once a day
+    - cron: '30 6,18 * * *'
   workflow_dispatch: {}
 
 permissions:
@@ -42,18 +24,17 @@ jobs:
         with:
           node-version: 20
 
-      - name: Update all pages together (one pass)
+      - name: Update every page together, in one pass
         run: node scripts/sync-and-refresh.mjs
 
-      - name: Commit + push (one commit for every changed file)
+      - name: Commit + push only if something changed
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add -A
           if git diff --cached --quiet; then
-            echo "Nothing changed this run, skipping commit."
+            echo "No files changed this run — skipping commit."
           else
             git commit -m "chore: sync live channel meta + title refresh ($(date -u +'%Y-%m-%d %H:%M UTC'))"
             git push
           fi
-          
