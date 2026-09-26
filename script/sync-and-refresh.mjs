@@ -1,52 +1,66 @@
 #!/usr/bin/env node
 /**
- * sync-and-refresh.mjs
- * ----------------------------------------------------------------------
- * Pure static-file updater — no Cloudflare Pages Functions, no server,
- * no edge runtime. This script just rewrites the plain .html files that
- * are already sitting in the repo, then the workflow commits + pushes
- * them. Cloudflare Pages serves them exactly like any other static file.
+ * =============================================================================
+ *  sync-and-refresh.mjs
+ * =============================================================================
+ *  Pure static-file updater. No Cloudflare Pages Functions, no server, no
+ *  edge runtime — this script just rewrites plain .html files that are
+ *  already sitting in the repo. The workflow then commits + pushes whatever
+ *  changed. Cloudflare Pages serves the result exactly like any other
+ *  static file, no different from editing the HTML by hand.
  *
- * For each page — the homepage AND every channel (Hindi/, English/,
- * Willow/, ...) — this touches EVERY tag that's safe to vary: <title>,
- * meta description, meta keywords, og:title/description/image,
- * twitter:title/description/image. (Things left alone on purpose:
- * canonical/og:url stay pointed at that page's own real URL, and the
- * site-wide JSON-LD WebSite/Organization block is left as-is since it
- * describes the whole site as one entity, not the individual page —
- * schema.org repeating that block identically on every page is normal
- * and is not a duplicate-content problem.)
+ *  Runs twice a day (see the workflow's cron). Every run checks ALL pages —
+ *  the homepage and every channel folder — together, in this one process.
+ * =============================================================================
+ *  WHAT GETS UPDATED, PER PAGE
+ * =============================================================================
+ *  <title>, meta description, meta keywords, og:title, og:description,
+ *  og:image, twitter:title, twitter:description, twitter:image.
  *
- *   1. Try to find that channel's entry in the LIVE iframes JSON
- *      (the same one the front-end already fetches at runtime).
- *      -> If found: bake that entry's "name" into the title/description,
- *         and its "logourl" into the og:image/twitter:image — THIS is
- *         what makes a shared https://matchdekho.pages.dev/Willow/ link
- *         preview show the right channel name + picture on
- *         WhatsApp/Telegram/Facebook, instead of the generic default.
- *      -> If a channel has no logourl right now, its existing default
- *         image (gop-gop-moww.png) is simply left untouched.
- *   2. If NO live entry exists for that channel right now (it's idle),
- *      fall back to a date-seeded template pool instead, so the page
- *      still gets a fresh (but same-all-day) title/description/keywords
- *      — this is the daily SEO-freshness rotation.
+ *  Left alone on purpose (so the rest of the site keeps working exactly as
+ *  before):
+ *    - canonical / og:url: always kept pointed at that page's own real URL.
+ *    - The JSON-LD WebSite/Organization block: this describes the whole
+ *      site as one entity, not the individual page, so it's meant to be
+ *      identical on every page — that's normal schema.org practice, not a
+ *      duplicate-content problem, so it's never touched.
+ *    - Every script, style, iframe, and id in the page — this script only
+ *      ever edits <head> meta tags via targeted find-and-replace; nothing
+ *      else in the file is touched.
+ * =============================================================================
+ *  WHERE EACH PAGE'S CONTENT COMES FROM (two sources, in priority order)
+ * =============================================================================
+ *  1. LIVE DATA (preferred): this channel's entry in the live iframes JSON
+ *     that the site already fetches at runtime. If present, its "name"
+ *     becomes the title/description, and its "logourl" (if set) becomes
+ *     the og:image/twitter:image. THIS is what makes a shared link like
+ *     https://matchdekho.pages.dev/Willow/ show the right channel name and
+ *     picture in a WhatsApp/Telegram preview, instead of the generic
+ *     default. If logourl is empty, the existing default image
+ *     (gop-gop-moww.png) is simply left as-is.
+ *  2. FALLBACK TEMPLATE (only when a channel has no live entry right now,
+ *     i.e. it's idle): a date-seeded template pool, so an idle page still
+ *     reads "fresh" instead of being stuck on one static line forever —
+ *     this is the SEO-freshness rotation.
  *
- * Runs once a day. Because social-preview crawlers (WhatsApp/Telegram/
- * etc.) don't run JavaScript, they only ever see whatever this script
- * last baked in — so a channel's preview picture/name is only as fresh
- * as the last daily run, which is the trade-off of not using a server
- * function.
- *
- * Known limitation of going static-only: this can only fix pages that
- * have their own real file/URL (Hindi/, English/, Willow/, ...). A link
- * like https://matchdekho.pages.dev/?English (query-string routing off
- * the homepage) is still the SAME homepage file for every channel, so a
- * crawler hitting that exact URL will keep seeing the generic homepage
- * preview — there is no way to give two different static previews for
- * the same file/URL without a server. If that matters to you, the folder
- * links (/Willow/, /Hindi/, ...) are the ones to share instead — those
- * already get the accurate preview from this script.
- * ----------------------------------------------------------------------
+ *  Only a file whose computed content is actually DIFFERENT from what's
+ *  already on disk gets rewritten (see the `out !== html` check below) — an
+ *  idle channel whose fallback template hasn't rolled over yet, or a live
+ *  channel whose name/logo hasn't changed, is left completely alone and
+ *  logged as [unchanged]. Only real changes get written, and the workflow
+ *  then commits every changed file together in a single commit.
+ * =============================================================================
+ *  KNOWN LIMITATION OF STAYING 100% STATIC (no server functions)
+ * =============================================================================
+ *  This can only fix pages that have their own real file/URL (Hindi/,
+ *  English/, Willow/, ...). A link like https://matchdekho.pages.dev/?English
+ *  (query-string routing off the homepage) is still the SAME homepage file
+ *  for every channel, so a crawler hitting that exact URL keeps seeing the
+ *  generic homepage preview — two different static previews for the same
+ *  URL isn't possible without a server. Share the folder links
+ *  (/Willow/, /Hindi/, ...) instead — those already get the accurate,
+ *  live-synced preview from this script.
+ * =============================================================================
  */
 
 import fs from 'node:fs/promises';
@@ -60,7 +74,10 @@ const CHANNELS = [
   'Cricbuzz', 'FC', 'IOS', 'Exp1', 'All',
 ];
 
-// ---- fallback templates, used only when a channel has no live entry ----
+// -----------------------------------------------------------------------------
+// Fallback templates — used ONLY when a channel has no live entry right now.
+// {label} is swapped for the channel name, {year} for the current year.
+// -----------------------------------------------------------------------------
 const TITLE_TEMPLATES = [
   'CRICKET NEWS POINT — {label} Live Cricket & IPL {year} | CnpTVOfficial',
   '{label} Live Cricket Streaming Free — Cricket News Point {year}',
@@ -93,15 +110,16 @@ const HOME_DESC_TEMPLATES = [
   'Free live cricket and IPL streaming with real-time scores. Join Cricket News Point on WhatsApp for instant updates.',
 ];
 
-// The base list is the same one already in every page today — kept as-is
-// so the core brand keywords are never lost, only extended.
+// -----------------------------------------------------------------------------
+// Keywords: the base list is exactly what's already in every page today, so
+// the core brand keywords are never lost — this only extends it with a
+// channel name and a couple of date-seeded phrases, so pages don't all
+// carry the byte-for-byte identical keywords line.
+// -----------------------------------------------------------------------------
 const BASE_KEYWORDS =
   'cricket news, IPL live stream, live cricket streaming, IPL live score, international cricket, ' +
   'Cricket News Point, CnpTVOfficial, cricket highlights, live match, watch IPL free, T20 world cup live, live score updates';
 
-// Small pool of extra phrases so the keywords line isn't byte-identical
-// on every single page/day (this was one of the "everything should look
-// duplicate" issues) — rotates the same date-seeded way as titles.
 const EXTRA_KEYWORD_POOL = [
   'live match today', 'free cricket streaming', 'ipl live updates today',
   'cricket highlights today', 'live score update', 'watch cricket online free',
@@ -115,33 +133,55 @@ function buildKeywords(label, isHome) {
   return `${BASE_KEYWORDS}${channelPart}, ${e1}, ${e2}`;
 }
 
+// -----------------------------------------------------------------------------
+// Small helpers
+// -----------------------------------------------------------------------------
+
+// Deterministic "pick an index for today" — same channel + same calendar day
+// always gives the same index (so re-running mid-day is a no-op), but a
+// different channel or the next day gives a different one.
 function dayIndex(len, salt = '') {
   const days = Math.floor(Date.now() / 86400000);
-  let h = 0;
-  for (const c of salt) h = (h * 31 + c.charCodeAt(0)) | 0;
-  return (days + Math.abs(h)) % len;
+  let hash = 0;
+  for (const ch of salt) hash = (hash * 31 + ch.charCodeAt(0)) | 0;
+  return (days + Math.abs(hash)) % len;
 }
-function fill(tpl, label, year) {
-  return tpl.replaceAll('{label}', label).replaceAll('{year}', String(year));
+
+function fill(template, label, year) {
+  return template.replaceAll('{label}', label).replaceAll('{year}', String(year));
 }
+
+// Only touches the file if the target pattern actually exists, so a page
+// with slightly different markup is safely left untouched for that one tag
+// instead of throwing.
 function replaceOne(html, regex, replacement) {
   return regex.test(html) ? html.replace(regex, replacement) : html;
 }
 
+// -----------------------------------------------------------------------------
+// Live data: the exact same JSON the front-end already fetches at runtime.
+// Any failure here (network down, bad JSON, source moved) is swallowed and
+// simply means every channel falls back to its template for this run —
+// the workflow must never fail just because an external site is slow/down.
+// -----------------------------------------------------------------------------
 async function fetchLiveList() {
   try {
     const ctrl = new AbortController();
     const timer = setTimeout(() => ctrl.abort(), 10000);
-    const res = await fetch(PRIMARY_JSON + '?nc=' + Date.now(), { cache: 'no-store', signal: ctrl.signal });
+    const res = await fetch(`${PRIMARY_JSON}?nc=${Date.now()}`, { signal: ctrl.signal });
     clearTimeout(timer);
     if (!res.ok) return [];
     const data = await res.json();
     return (data && data.iframes) || [];
   } catch {
-    return []; // source unreachable this run -> every channel just falls back to templates below
+    return [];
   }
 }
 
+// -----------------------------------------------------------------------------
+// Applies one computed set of {title, desc, image, keywords, pageUrl} onto an
+// HTML string. Pure string in, string out — makes this trivial to unit-test.
+// -----------------------------------------------------------------------------
 function applyTags(html, { title, desc, image, pageUrl, keywords }) {
   let out = html;
   out = replaceOne(out, /<title>[\s\S]*?<\/title>/, `<title>${title}</title>`);
@@ -161,6 +201,9 @@ function applyTags(html, { title, desc, image, pageUrl, keywords }) {
   return out;
 }
 
+// -----------------------------------------------------------------------------
+// One channel folder (e.g. Hindi/index.html).
+// -----------------------------------------------------------------------------
 async function updateChannel(label, liveList) {
   const file = path.join(process.cwd(), label, 'index.html');
   let html;
@@ -178,22 +221,22 @@ async function updateChannel(label, liveList) {
   let title, desc, image;
 
   if (liveItem && liveItem.name) {
-    // Live data wins: real channel/event name + its own logo (if any).
+    // Live data wins: real channel/event name + its own logo (if it has one).
     title = `${liveItem.name} — CRICKET NEWS POINT`;
     desc = `Watch ${liveItem.name} live free on Cricket News Point. Live scores, IPL updates & instant match alerts.`;
     image = liveItem.logourl && liveItem.logourl.trim() ? liveItem.logourl.trim() : null;
   } else {
-    // No live entry right now -> date-seeded fallback so the page still
+    // No live entry right now -> date-seeded fallback, so the page still
     // reads fresh instead of being stuck forever on one static line.
-    const baseTitle = fill(TITLE_TEMPLATES[dayIndex(TITLE_TEMPLATES.length, label + 'title')], label, year);
-    const baseDesc = fill(DESC_TEMPLATES[dayIndex(DESC_TEMPLATES.length, label + 'desc')], label, year);
-    title = baseTitle;
-    desc = baseDesc;
+    title = fill(TITLE_TEMPLATES[dayIndex(TITLE_TEMPLATES.length, label + 'title')], label, year);
+    desc = fill(DESC_TEMPLATES[dayIndex(DESC_TEMPLATES.length, label + 'desc')], label, year);
     image = null; // leave whatever default image is already in the file
   }
 
   const keywords = buildKeywords(label, false);
   const out = applyTags(html, { title, desc, image, pageUrl, keywords });
+
+  // The whole "only touch what actually changed" guarantee lives right here:
   if (out !== html) {
     await fs.writeFile(file, out, 'utf8');
     console.log(`[updated] ${label} -> ${title}${image ? ' (custom image)' : ''}`);
@@ -202,6 +245,10 @@ async function updateChannel(label, liveList) {
   }
 }
 
+// -----------------------------------------------------------------------------
+// The homepage. Not tied to one channel id, so it only ever uses the
+// date-seeded HOME templates — never the live JSON.
+// -----------------------------------------------------------------------------
 async function updateHome() {
   const file = path.join(process.cwd(), 'index.html');
   let html;
@@ -211,11 +258,13 @@ async function updateHome() {
     console.warn(`[skip] ${file} not found`);
     return;
   }
+
   const year = new Date().getUTCFullYear();
   const title = fill(HOME_TITLE_TEMPLATES[dayIndex(HOME_TITLE_TEMPLATES.length, 'hometitle')], '', year);
   const desc = fill(HOME_DESC_TEMPLATES[dayIndex(HOME_DESC_TEMPLATES.length, 'homedesc')], '', year);
   const keywords = buildKeywords('', true);
   const out = applyTags(html, { title, desc, image: null, pageUrl: `${SITE_ORIGIN}/`, keywords });
+
   if (out !== html) {
     await fs.writeFile(file, out, 'utf8');
     console.log(`[updated] (home) -> ${title}`);
@@ -232,5 +281,5 @@ async function main() {
 
 main().catch((err) => {
   console.error(err);
-  process.exit(1);
+  process.exit(1); // a real crash should fail the Action loudly, not silently
 });
