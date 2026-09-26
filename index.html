@@ -14,7 +14,7 @@
 <meta property="og:description" content="Watch live IPL & cricket streams, get live scores & exclusive sports updates. Join our WhatsApp channel for instant alerts.">
 <meta property="og:image"       content="/gop-gop-moww.png">
 <meta property="og:image:alt"   content="Cricket News Point Logo">
-<meta property="og:url"         content="https://diko8teen.pages.dev/">
+<meta property="og:url"         content="https://matchdekho.pages.dev/">
 <meta property="og:site_name"   content="Cricket News Point">
 <meta property="og:locale"      content="en_US">
 <meta name="twitter:card"        content="summary_large_image">
@@ -36,26 +36,26 @@
 <title>CRICKET NEWS POINT — Live Cricket &amp; IPL | CnpTVOfficial</title>
 <link rel="icon"             href="/gop-gop-moww.png" type="image/png">
 <link rel="apple-touch-icon" href="/gop-gop-moww.png">
-<link rel="canonical"        href="https://diko8teen.pages.dev/">
+<link rel="canonical"        href="https://matchdekho.pages.dev/">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@graph": [
     {
       "@type": "WebSite",
-      "@id": "https://diko8teen.pages.dev/#website",
+      "@id": "https://matchdekho.pages.dev/#website",
       "name": "Cricket News Point",
       "alternateName": "CnpTVOfficial",
-      "url": "https://diko8teen.pages.dev/",
+      "url": "https://matchdekho.pages.dev/",
       "description": "Live IPL, international cricket scores, exclusive streams, and instant match updates",
       "inLanguage": "en",
-      "publisher": { "@id": "https://diko8teen.pages.dev/#organization" }
+      "publisher": { "@id": "https://matchdekho.pages.dev/#organization" }
     },
     {
       "@type": "Organization",
-      "@id": "https://diko8teen.pages.dev/#organization",
+      "@id": "https://matchdekho.pages.dev/#organization",
       "name": "CnpTVOfficial",
-      "url": "https://diko8teen.pages.dev/",
+      "url": "https://matchdekho.pages.dev/",
       "logo": {
         "@type": "ImageObject",
         "url": "/gop-gop-moww.png",
@@ -76,8 +76,11 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://sonujson-v5.pages.dev/">
 <link rel="dns-prefetch" href="https://sonujson-v5.pages.dev/">
-<link rel="dns-prefetch" href="1dot1dot1dot1.cloudflare-dns.com">
+<link rel="dns-prefetch" href="https://1dot1dot1dot1.cloudflare-dns.com">
 <link href="https://fonts.googleapis.com/css2?family=Acme&family=Amaranth:wght@400;700&display=swap" rel="stylesheet">
+<link rel="ai-catalog" href="/.well-known/ai-catalog.json">
+<link rel="api-catalog" href="/.well-known/api-catalog">
+<link rel="service-doc" href="/.well-known/agent-card.json">
 
 <script src="https://pl31451422.profitableratecpmnetwork.com/1a/12/14/1a1214333a11f56be944032d1324ea8e.js"></script>
 
@@ -224,7 +227,6 @@ var FALLBACK_JSON = 'https://allrounder3-0.pages.dev/id.json';
 var CONTACT_LINK  = 'https://t.me/CnpTVOfficial';
 var WA_CHANNEL    = 'https://whatsapp.com/channel/0029VaeylYYBPzjVNomWuZ0T';
 
-// AD #3 | Smartlink | Revenue button only
 var AD3 = 'https://www.profitableratecpmnetwork.com/z7h98ufmff?key=3fca2af399e3f83446376c79dbf78aa9';
 
 var FETCH_TIMEOUT = 8000;
@@ -487,6 +489,19 @@ function fetchAndLoad(id) {
 
 var sid = getStreamId();
 if (sid) { fetchAndLoad(sid); } else { showError(null, 'missing'); }
+
+if (navigator.modelContext && typeof navigator.modelContext.registerTool === 'function') {
+  var openTelegramAbort = new AbortController();
+  navigator.modelContext.registerTool({
+    name: 'open_telegram_channel',
+    description: 'Open the official CnpTVOfficial Telegram channel in a new tab',
+    inputSchema: { type: 'object', properties: {} },
+    execute: function(){
+      openTab(CONTACT_LINK);
+      return { status: 'opened', url: CONTACT_LINK };
+    }
+  }, { signal: openTelegramAbort.signal });
+}
 
 })();
 </script>
