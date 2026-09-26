@@ -1,10 +1,9 @@
-#!/usr/bin/env node
-
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
 const SITE_ORIGIN = 'https://matchdekho.pages.dev';
 const PRIMARY_JSON = 'https://sonujson-v5.pages.dev/loura.json';
+const HOME_IMAGE_SOURCE_ID = 'All';
 
 const CHANNELS = [
   'Hindi', 'English', 'Tamil', 'Telugu', 'Willow',
@@ -23,6 +22,7 @@ const TITLE_TEMPLATES = [
   'Free {label} Live Cricket Streaming — CnpTVOfficial {year}',
   '{label} Live — Cricket News Point Streaming Hub',
 ];
+
 const DESC_TEMPLATES = [
   'Watch {label} live streaming free on Cricket News Point. Live IPL, cricket scores & instant match alerts — join our WhatsApp channel.',
   'Stream {label} live cricket & IPL matches for free. Get real-time scores and updates from Cricket News Point / CnpTVOfficial.',
@@ -30,6 +30,7 @@ const DESC_TEMPLATES = [
   'Catch every {label} match live — IPL, international cricket & scores, streamed free by CnpTVOfficial.',
   'Live {label} cricket streaming with real-time scores and match alerts. Join CnpTVOfficial on WhatsApp & Telegram.',
 ];
+
 const HOME_TITLE_TEMPLATES = [
   'CRICKET NEWS POINT — Live Cricket, IPL & Match Streaming {year}',
   'Watch Live Cricket & IPL Free — Cricket News Point {year}',
@@ -37,6 +38,7 @@ const HOME_TITLE_TEMPLATES = [
   'Live Cricket Scores, IPL & Streaming — Cricket News Point',
   'Cricket News Point — Every Live Match, One Link',
 ];
+
 const HOME_DESC_TEMPLATES = [
   'Watch live IPL & cricket streams, get live scores & exclusive sports updates. Join our WhatsApp channel for instant alerts.',
   'All your live cricket in one place — IPL, international matches, live scores and instant alerts from CnpTVOfficial.',
@@ -145,7 +147,7 @@ async function updateChannel(label, liveList) {
   }
 }
 
-async function updateHome() {
+async function updateHome(liveList) {
   const file = path.join(process.cwd(), 'index.html');
   let html;
   try {
@@ -159,11 +161,15 @@ async function updateHome() {
   const title = fill(HOME_TITLE_TEMPLATES[dayIndex(HOME_TITLE_TEMPLATES.length, 'hometitle')], '', year);
   const desc = fill(HOME_DESC_TEMPLATES[dayIndex(HOME_DESC_TEMPLATES.length, 'homedesc')], '', year);
   const keywords = buildKeywords('', true);
-  const out = applyTags(html, { title, desc, image: null, pageUrl: `${SITE_ORIGIN}/`, keywords });
+
+  const featured = liveList.find((x) => String(x.id) === HOME_IMAGE_SOURCE_ID) || null;
+  const image = featured && featured.logourl && featured.logourl.trim() ? featured.logourl.trim() : null;
+
+  const out = applyTags(html, { title, desc, image, pageUrl: `${SITE_ORIGIN}/`, keywords });
 
   if (out !== html) {
     await fs.writeFile(file, out, 'utf8');
-    console.log(`[updated] (home) -> ${title}`);
+    console.log(`[updated] (home) -> ${title}${image ? ' (custom image)' : ''}`);
   } else {
     console.log('[unchanged] (home)');
   }
@@ -171,7 +177,7 @@ async function updateHome() {
 
 async function main() {
   const liveList = await fetchLiveList();
-  await updateHome();
+  await updateHome(liveList);
   await Promise.all(CHANNELS.map((label) => updateChannel(label, liveList)));
 }
 
