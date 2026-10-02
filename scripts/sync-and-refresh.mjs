@@ -32,11 +32,11 @@ const DESC_TEMPLATES = [
 ];
 
 const HOME_TITLE_TEMPLATES = [
-  'CRICKET NEWS POINT — Live Cricket, IPL & Match Streaming {year}',
-  'Watch Live Cricket & IPL Free — Cricket News Point {year}',
-  'CnpTVOfficial — All Cricket Live Streams In One Place',
-  'Live Cricket Scores, IPL & Streaming — Cricket News Point',
-  'Cricket News Point — Every Live Match, One Link',
+  'India vs Pakistan Asian Games Final 2026 — Live Cricket, Match Updates & Scores | Cricket News Point {year}',
+  'India vs Pakistan Final Live 2026 — Asian Games Cricket, Live Score & Match Updates | CNP TV Official',
+  'India vs Pakistan Asian Games Final — Live Cricket Score, Match Updates & Streaming | Cricket News Point',
+  'Asian Games Final 2026: India vs Pakistan — Live Score, Match Updates & Cricket News | CNP TV Official',
+  'India vs Pakistan Live Cricket 2026 — Asian Games Final, Live Score & Latest Match Updates | Cricket News Point',
 ];
 
 const HOME_DESC_TEMPLATES = [
