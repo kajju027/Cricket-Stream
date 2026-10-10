@@ -32,11 +32,11 @@ const DESC_TEMPLATES = [
 ];
 
 const HOME_TITLE_TEMPLATES = [
-  'India vs Pakistan Asian Games Final 2026 — Live Cricket, Match Updates & Scores | Cricket News Point {year}',
-  'India vs Pakistan Final Live 2026 — Asian Games Cricket, Live Score & Match Updates | CNP TV Official',
-  'India vs Pakistan Asian Games Final — Live Cricket Score, Match Updates & Streaming | Cricket News Point',
-  'Asian Games Final 2026: India vs Pakistan — Live Score, Match Updates & Cricket News | CNP TV Official',
-  'India vs Pakistan Live Cricket 2026 — Asian Games Final, Live Score & Latest Match Updates | Cricket News Point',
+  'CRICKET NEWS POINT : MAIN 2026 — Live Cricket, Match Updates & Scores | Cricket News Point {year}',
+  'CRICKET NEWS POINT  : MAIN — Asian Games Cricket, Live Score & Match Updates | CNP TV Official',
+  'CRICKET NEWS POINT : MAIN — Live Cricket Score, Match Updates & Streaming | Cricket News Point',
+  'CRICKET NEWS POINT : MAIN — Live Score, Match Updates & Cricket News | CNP TV Official',
+  'CRICKET NEWS POINT : MAIN Live Score & Latest Match Updates | Cricket News Point',
 ];
 
 const HOME_DESC_TEMPLATES = [
