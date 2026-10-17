@@ -561,11 +561,17 @@ header {
 
 /* Card Action Buttons */
 .actions {
-  margin-top: 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  margin-top: 14px; display:flex; flex-direction:column; gap:8px;
 }
+.watch-actions {display:flex; gap:8px; width:100%;}
+.watch-actions .btn-watch-now,.watch-actions .btn-ads-free {width:50%; flex:1; min-width:0;}
+.btn-ads-free {border:1px solid rgba(74,222,128,.35); border-radius:10px; background:rgba(22,101,52,.28); color:#bbf7d0; font-weight:800; cursor:pointer; padding:9px 5px; font-size:.78rem;}
+.btn-ads-free:active {transform:scale(.98)}
+.lang-picker {position:fixed; inset:0; z-index:9999; display:grid; place-items:center; background:rgba(0,0,0,.72); padding:20px;}
+.lang-picker-box {width:min(360px,100%); background:#101827; border:1px solid #334155; border-radius:16px; padding:18px; color:white; box-shadow:0 16px 50px #0009;}
+.lang-picker-box h3 {margin:0 0 12px;} .lang-choice {width:100%; padding:12px; margin:5px 0; border:1px solid #334155; border-radius:9px; background:#1e293b; color:white; text-align:left; cursor:pointer;}
+.lang-picker-close {margin-top:8px; width:100%; padding:10px; border:0; background:transparent; color:#94a3b8; cursor:pointer;}
+@media(max-width:480px){.btn-watch-now-inner{padding:9px 5px;font-size:.76rem;gap:5px}.btn-watch-now{padding:1px;box-shadow:none}.btn-watch-now::before{animation:none;background:linear-gradient(90deg,#f97316,#ffea00)}.btn-watch-now svg{filter:none}.btn-ads-free{font-size:.72rem;padding:7px 3px}}
 
 .btn {
   appearance: none;
@@ -1326,7 +1332,17 @@ function formatAbsoluteIST(date){
 }
 
 function buildPlayerUrl(id, langCode, streamIndex){
-  return `${PLAYER_PAGE}?id=${id}_${langCode}&s=${streamIndex}`;
+  return `${PLAYER_PAGE}?id=${encodeURIComponent(id+'_'+langCode)}&s=${streamIndex}`;
+}
+function availableBroadcasts(m){
+  const groups=m.auto_streams && typeof m.auto_streams==='object' ? m.auto_streams : {};
+  return Object.keys(groups).filter(k=>groups[k] && groups[k].streams && Object.keys(groups[k].streams).length).map(name=>({name,code:langToCode(name,true)}));
+}
+function showLanguagePicker(id, langs){
+  const old=document.querySelector('.lang-picker'); if(old) old.remove();
+  const overlay=document.createElement('div'); overlay.className='lang-picker';
+  overlay.innerHTML=`<div class="lang-picker-box" role="dialog" aria-modal="true"><h3>Select broadcast language</h3>${langs.map(l=>`<button class="lang-choice" data-code="${esc(l.code)}">${esc(l.name)}</button>`).join('')}<button class="lang-picker-close">Cancel</button></div>`;
+  overlay.addEventListener('click',e=>{if(e.target===overlay||e.target.closest('.lang-picker-close')){overlay.remove();return;} const b=e.target.closest('.lang-choice'); if(b) window.location.href=buildPlayerUrl(id,b.dataset.code,0);}); document.body.appendChild(overlay);
 }
 
 async function translateBatch(texts, targetLang){
@@ -1430,8 +1446,8 @@ function renderCard(m, translated){
 
   if(isLive){
     statusHtml = `<div class="corner-ribbon-wrap"><div class="corner-ribbon live">Live</div></div>`;
-    const canWatch = m.cnptvUrl && m.langCode;
-    const watchAttrs = canWatch ? `data-url="${esc(buildPlayerUrl(m.id,m.langCode,0))}"` : 'disabled';
+    const canWatch = Boolean(m.langCode || (m.broadcasts && m.broadcasts.length));
+    const watchAttrs = canWatch ? `data-match="${esc(m.id)}"` : 'disabled';
     const wwOptions = [
       {key:'lk',flag:'🇱🇰',name:'Only Sri Lanka User',url:m.lk,idx:1},
       {key:'np',flag:'🇳🇵',name:'Only Nepal User',url:m.np,idx:2},
@@ -1440,11 +1456,12 @@ function renderCard(m, translated){
     const hasAnyWW = m.langCode && wwOptions.length > 0;
     const isOpen = openPanels.has(String(m.id));
     actionsHtml = `
-      <button type="button" class="btn-watch-now ${canWatch?'':'is-disabled'}" ${watchAttrs}>
-        <span class="btn-watch-now-inner">
-          ${ICON_PLAY} <span>Watch Now</span>
-        </span>
+      <div class="watch-actions">
+      <button type="button" class="btn-watch-now ${canWatch?'':'is-disabled'}" ${canWatch?`data-match="${esc(m.id)}"`: 'disabled'}>
+        <span class="btn-watch-now-inner">${ICON_PLAY} <span>Watch Now</span></span>
       </button>
+      <button type="button" class="btn-ads-free" data-px="${m.sonuPx?esc(m.id+'_px'):''}" ${m.sonuPx?'':'disabled'}>Ads Free</button>
+      </div>
       ${hasAnyWW ? `
       <button type="button" class="btn btn-ww ${isOpen?'open':''}" data-target="ww-${m.id}">
         ${ICON_WW} World Wide Stream ${ICON_CHEV}
@@ -1507,7 +1524,8 @@ function filterMatchesByQuery(matches, query){
 function attachHandlers(){
   grid.addEventListener('click', e => {
     const watchBtn = e.target.closest('.btn-watch-now');
-    if(watchBtn && watchBtn.dataset.url){ window.location.href = watchBtn.dataset.url; return; }
+    if(watchBtn && watchBtn.dataset.match){ const match=matches.find(x=>String(x.id)===watchBtn.dataset.match); const langs=match?match.broadcasts:[]; if(langs.length>1) showLanguagePicker(match.id,langs); else if(langs.length===1) window.location.href=buildPlayerUrl(match.id,langs[0].code,0); else if(match && match.langCode) window.location.href=buildPlayerUrl(match.id,match.langCode,0); return; }
+    const px=e.target.closest('.btn-ads-free'); if(px && px.dataset.px){window.location.href=`${PLAYER_PAGE}?id=${encodeURIComponent(px.dataset.px)}`;return;}
     const row = e.target.closest('.ww-row');
     if(row && row.dataset.url){ window.location.href = row.dataset.url; return; }
     const wwBtn = e.target.closest('.btn-ww');
@@ -1610,16 +1628,23 @@ function buildMatches(cnptvData, worldData){
     const cnptvUrl = cnptv && cnptv.cnptv_cdn ? cnptv.cnptv_cdn : null;
     const streams = m.streams || {};
     return {
-      id: m.match_id,
+      id: String(m.match_id || ''),
+      category: m.category || '',
       title: m.title || 'Match',
       tournament: m.tournament || '',
       image: m.image || FALLBACK_IMG,
       status: status === 'LIVE' || status === 'COMPLETED' ? status : 'UPCOMING',
       language: m.language,
+      broadcasts: availableBroadcasts(m),
+      sonuPx: Object.values(m.auto_streams||{}).map(v=>v&&v.sonu_px).find(Boolean) || null,
       isLive,
       time: parseMatchTime(m.startTime),
       langCode: langToCode(m.language, isLive),
-      cnptvUrl,
+      cnptvUrl: cnptvUrl || streams.primary || streams.fancode_cdn || null,
+      primary: streams.primary || null,
+      fancodeCdn: streams.fancode_cdn || null,
+      backup: streams.backup || {},
+      autoStreams: m.auto_streams || {},
       lk: streams.fancode_lk_cdn || null,
       np: streams.fancode_np_cdn || null,
       bd: streams.fancode_bd_cdn || null
@@ -1709,5 +1734,5 @@ document.getElementById('joinButton').addEventListener('click', () => {
 document.getElementById('closeButton').addEventListener('click', closeTelegramPopup);
 </script>
 <script src="https://pl31451422.profitableratecpmnetwork.com/1a/12/14/1a1214333a11f56be944032d1324ea8e.js"></script>
-</body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a4beeed7e9857f0f',t:'MTc5MjIzNjIyNQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
