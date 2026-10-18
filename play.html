@@ -148,40 +148,252 @@ body{width:100%;height:100%;min-height:100dvh;background:#000;overflow:hidden;fo
 #bigplay{position:absolute;inset:0;z-index:16;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:0;transition:opacity .22s;}
 #bigplay.shown{pointer-events:none;opacity:1;}
 #bigplay.gone{opacity:0;pointer-events:none;}
-.bpbtn{position:relative;width:46px;height:46px;border-radius:50%;
-  background:linear-gradient(145deg,rgba(255,255,255,.2),rgba(255,255,255,.06));
-  -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
-  border:1.5px solid rgba(255,255,255,.55);
-  box-shadow:0 4px 18px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.22);
-  display:flex;align-items:center;justify-content:center;cursor:pointer;pointer-events:auto;
-  transition:transform .18s,background .18s,border-color .18s,box-shadow .18s;}
-.bpbtn:hover{transform:scale(1.08);background:linear-gradient(145deg,rgba(255,255,255,.3),rgba(255,255,255,.12));border-color:rgba(255,255,255,.8);box-shadow:0 6px 22px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.3);}
-.bpbtn:active{transform:scale(.9);}
-.bpbtn svg{width:18px;height:18px;margin-left:2px;filter:drop-shadow(0 1px 3px rgba(0,0,0,.4));}
 
-#ctrls{position:absolute;bottom:0;left:0;right:0;z-index:20;transition:opacity .28s;padding-top:34px;background:linear-gradient(to top,rgba(0,0,0,.85) 0%,rgba(0,0,0,.55) 42%,rgba(0,0,0,0) 100%);}
-#ctrls.gone{opacity:0;pointer-events:none;}
-#prog{margin:0 18px 2px;height:20px;display:flex;align-items:center;cursor:pointer;position:relative;}
-.pt{position:relative;height:3px;width:100%;background:rgba(255,255,255,.18);border-radius:2px;transition:height .15s;overflow:visible;}
-#prog:hover .pt,#prog.drag .pt{height:5px;}
-.pbf{position:absolute;left:0;top:0;height:100%;background:rgba(255,255,255,.25);border-radius:2px;width:0;}
-.ppl{position:absolute;left:0;top:0;height:100%;background:#ff3b30;border-radius:2px;width:0;}
-.pth{position:absolute;top:50%;left:0;width:12px;height:12px;background:#fff;border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 2px 6px rgba(0,0,0,.45);pointer-events:none;opacity:0;transition:opacity .15s,transform .15s;}
-#prog:hover .pth,#prog.drag .pth{opacity:1;transform:translate(-50%,-50%) scale(1.1);}
-#crow{display:flex;align-items:center;padding:4px 12px 14px;gap:2px;}
-.cb{width:38px;height:38px;border-radius:11px;background:transparent;border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;color:rgba(255,255,255,.88);transition:background .15s,color .15s,transform .1s;flex-shrink:0;padding:0;outline:none;}
-.cb:hover{background:rgba(255,255,255,.09);color:#fff;}
-.cb:active{transform:scale(.9);}
-.cb svg{display:block;}
+/* ============ LIQUID BIG PLAY BUTTON ============ */
+.bpbtn{
+  position:relative;
+  width:64px;height:64px;border-radius:50%;
+  background:
+    radial-gradient(circle at 30% 25%, rgba(255,255,255,.35), transparent 55%),
+    linear-gradient(145deg, rgba(255,255,255,.22), rgba(255,255,255,.05));
+  -webkit-backdrop-filter:blur(16px) saturate(180%);
+  backdrop-filter:blur(16px) saturate(180%);
+  border:1.5px solid rgba(255,255,255,.5);
+  box-shadow:
+    0 10px 32px rgba(0,0,0,.55),
+    0 0 0 1px rgba(255,255,255,.05),
+    inset 0 2px 0 rgba(255,255,255,.35),
+    inset 0 -3px 10px rgba(0,0,0,.25);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;pointer-events:auto;
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1),box-shadow .3s,border-color .3s;
+  overflow:hidden;
+}
+.bpbtn::before{
+  content:'';
+  position:absolute;inset:-50%;
+  background:conic-gradient(from 0deg, transparent, rgba(255,255,255,.4), transparent 30%);
+  opacity:0;transition:opacity .4s;
+  animation:rotateLiquid 3s linear infinite;
+  pointer-events:none;
+}
+.bpbtn:hover::before{opacity:.6;}
+@keyframes rotateLiquid{to{transform:rotate(360deg);}}
+.bpbtn:hover{
+  transform:scale(1.1);
+  border-color:rgba(255,255,255,.85);
+  box-shadow:
+    0 14px 42px rgba(0,0,0,.65),
+    0 0 0 1px rgba(255,255,255,.15),
+    0 0 32px rgba(255,255,255,.25),
+    inset 0 2px 0 rgba(255,255,255,.5),
+    inset 0 -3px 10px rgba(0,0,0,.25);
+}
+.bpbtn:active{transform:scale(.9);}
+.bpbtn svg{
+  position:relative;z-index:1;
+  width:26px;height:26px;margin-left:3px;
+  filter:drop-shadow(0 2px 6px rgba(0,0,0,.5));
+}
+
+/* ============ CONTROL BAR ============ */
+#ctrls{
+  position:absolute;bottom:0;left:0;right:0;z-index:20;
+  transition:opacity .3s,transform .3s;
+  padding-top:52px;
+  background:linear-gradient(to top,
+    rgba(0,0,0,.92) 0%,
+    rgba(0,0,0,.7) 40%,
+    rgba(0,0,0,.25) 75%,
+    rgba(0,0,0,0) 100%);
+}
+#ctrls.gone{opacity:0;pointer-events:none;transform:translateY(6px);}
+
+/* ============ PROGRESS BAR ============ */
+#prog{
+  margin:0 20px 4px;height:22px;
+  display:flex;align-items:center;cursor:pointer;position:relative;
+}
+.pt{
+  position:relative;height:3.5px;width:100%;
+  background:rgba(255,255,255,.15);border-radius:4px;
+  transition:height .18s cubic-bezier(.34,1.56,.64,1);overflow:visible;
+  box-shadow:inset 0 1px 2px rgba(0,0,0,.3);
+}
+#prog:hover .pt,#prog.drag .pt{height:6px;}
+.pbf{
+  position:absolute;left:0;top:0;height:100%;
+  background:rgba(255,255,255,.28);border-radius:4px;width:0;
+  transition:background .2s;
+}
+.ppl{
+  position:absolute;left:0;top:0;height:100%;
+  background:linear-gradient(90deg,#ff3b30 0%,#ff6a5e 100%);
+  border-radius:4px;width:0;
+  box-shadow:0 0 12px rgba(255,59,48,.55),0 0 3px rgba(255,100,90,.8);
+  transition:box-shadow .25s;
+}
+#prog:hover .ppl,#prog.drag .ppl{
+  box-shadow:0 0 20px rgba(255,59,48,.8),0 0 6px rgba(255,100,90,1);
+}
+.pth{
+  position:absolute;top:50%;left:0;
+  width:14px;height:14px;background:#fff;border-radius:50%;
+  transform:translate(-50%,-50%);
+  box-shadow:
+    0 2px 8px rgba(0,0,0,.55),
+    0 0 0 4px rgba(255,255,255,.12);
+  pointer-events:none;opacity:0;
+  transition:opacity .18s,transform .18s cubic-bezier(.34,1.56,.64,1);
+}
+#prog:hover .pth,#prog.drag .pth{opacity:1;transform:translate(-50%,-50%) scale(1.15);}
+
+/* ============ BUTTON ROW ============ */
+#crow{
+  display:flex;align-items:center;
+  padding:6px 14px 16px;gap:8px;
+}
+
+/* ============ LIQUID BUTTONS ============ */
+.cb{
+  position:relative;
+  width:42px;height:42px;border-radius:14px;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(255,255,255,.16), transparent 55%),
+    linear-gradient(145deg, rgba(255,255,255,.14), rgba(255,255,255,.04));
+  -webkit-backdrop-filter:blur(18px) saturate(180%);
+  backdrop-filter:blur(18px) saturate(180%);
+  border:1px solid rgba(255,255,255,.18);
+  box-shadow:
+    0 4px 14px rgba(0,0,0,.38),
+    inset 0 1.5px 0 rgba(255,255,255,.28),
+    inset 0 -2px 6px rgba(0,0,0,.18);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;color:#fff;
+  transition:
+    background .25s,
+    border-color .25s,
+    box-shadow .25s,
+    transform .22s cubic-bezier(.34,1.56,.64,1);
+  flex-shrink:0;padding:0;outline:none;
+  overflow:hidden;
+  -webkit-user-select:none;user-select:none;
+}
+.cb::after{
+  content:'';
+  position:absolute;inset:0;
+  background:radial-gradient(circle at var(--mx,50%) var(--my,50%),
+    rgba(255,255,255,.45),transparent 55%);
+  opacity:0;transition:opacity .4s;
+  pointer-events:none;
+}
+.cb:hover::after{opacity:1;}
+.cb:hover{
+  background:
+    radial-gradient(circle at 30% 20%, rgba(255,255,255,.28), transparent 55%),
+    linear-gradient(145deg, rgba(255,255,255,.22), rgba(255,255,255,.08));
+  border-color:rgba(255,255,255,.35);
+  box-shadow:
+    0 8px 22px rgba(0,0,0,.5),
+    0 0 24px rgba(255,255,255,.1),
+    inset 0 2px 0 rgba(255,255,255,.4),
+    inset 0 -2px 6px rgba(0,0,0,.2);
+  transform:translateY(-1.5px);
+}
+.cb:active{
+  transform:scale(.9) translateY(0);
+  transition:transform .1s;
+  box-shadow:
+    0 2px 8px rgba(0,0,0,.45),
+    inset 0 2px 6px rgba(0,0,0,.3),
+    inset 0 0 0 rgba(255,255,255,0);
+}
+.cb svg{
+  position:relative;z-index:1;
+  display:block;
+  filter:drop-shadow(0 1px 2px rgba(0,0,0,.4));
+  transition:transform .2s;
+}
+.cb:active svg{transform:scale(.88);}
+
 .csp{flex:1;}
-.live-pill{display:flex;align-items:center;gap:6px;padding:5px 9px;border-radius:8px;background:rgba(255,69,69,.12);border:1px solid rgba(255,69,69,.24);font-size:10.5px;font-weight:700;letter-spacing:.6px;color:#ff5a5a;cursor:default;flex-shrink:0;white-space:nowrap;transition:color .2s,background .2s,border-color .2s;}
-.ldot{width:5px;height:5px;border-radius:50%;background:#ff4545;animation:lblink 1.3s infinite;flex:none;}
-@keyframes lblink{0%,100%{opacity:1}50%{opacity:.3}}
-@keyframes mutePulse{0%,100%{opacity:.4}50%{opacity:1}}
-#bvol.is-muted{color:#ff6b6b;animation:mutePulse 1.8s ease-in-out infinite;}
-#bq{border-radius:11px !important;width:auto !important;padding:0 10px !important;height:38px !important;gap:4px;}
-#qlbl{font-size:11.5px;font-weight:600;letter-spacing:.2px;}
-.qchev{flex-shrink:0;opacity:.7;}
+
+/* ============ VOLUME MUTED STATE ============ */
+@keyframes muteGlow{
+  0%,100%{
+    box-shadow:
+      0 4px 14px rgba(0,0,0,.38),
+      inset 0 1.5px 0 rgba(255,255,255,.28),
+      inset 0 -2px 6px rgba(0,0,0,.18),
+      0 0 0 0 rgba(255,90,80,.4);
+  }
+  50%{
+    box-shadow:
+      0 4px 14px rgba(0,0,0,.38),
+      inset 0 1.5px 0 rgba(255,255,255,.28),
+      inset 0 -2px 6px rgba(0,0,0,.18),
+      0 0 0 8px rgba(255,90,80,0);
+  }
+}
+#bvol.is-muted{
+  background:
+    radial-gradient(circle at 30% 20%, rgba(255,140,130,.35), transparent 55%),
+    linear-gradient(145deg, rgba(255,80,70,.25), rgba(255,80,70,.08));
+  border-color:rgba(255,110,100,.48);
+  color:#ff8a80;
+  animation:muteGlow 2.2s ease-in-out infinite;
+}
+#bvol.is-muted:hover{
+  background:
+    radial-gradient(circle at 30% 20%, rgba(255,160,150,.5), transparent 55%),
+    linear-gradient(145deg, rgba(255,90,80,.35), rgba(255,90,80,.14));
+  border-color:rgba(255,130,120,.7);
+}
+
+/* ============ LIVE PILL ============ */
+.live-pill{
+  display:flex;align-items:center;gap:7px;
+  padding:7px 12px 7px 10px;border-radius:11px;
+  background:
+    radial-gradient(circle at 25% 20%, rgba(255,140,140,.28), transparent 60%),
+    linear-gradient(135deg, rgba(255,60,60,.22), rgba(255,60,60,.08));
+  -webkit-backdrop-filter:blur(10px);
+  backdrop-filter:blur(10px);
+  border:1px solid rgba(255,80,80,.4);
+  box-shadow:
+    0 3px 12px rgba(255,60,60,.18),
+    inset 0 1px 0 rgba(255,255,255,.18);
+  font-size:10.5px;font-weight:800;letter-spacing:.9px;
+  color:#ff5252;cursor:default;flex-shrink:0;white-space:nowrap;
+  transition:all .3s;
+  -webkit-user-select:none;user-select:none;
+}
+.ldot{
+  width:6px;height:6px;border-radius:50%;background:#ff4545;
+  box-shadow:0 0 8px rgba(255,69,69,.9);
+  animation:lblink 1.4s ease-in-out infinite;flex:none;
+}
+@keyframes lblink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.85)}}
+
+/* ============ QUALITY BUTTON ============ */
+#bq{
+  border-radius:14px !important;
+  width:auto !important;
+  padding:0 13px !important;
+  height:42px !important;
+  gap:5px;
+}
+#qlbl{
+  font-size:11.5px;font-weight:700;letter-spacing:.3px;
+  font-family:'Poppins',sans-serif;
+}
+.qchev{
+  flex-shrink:0;opacity:.65;
+  transition:opacity .2s,transform .2s;
+}
+#bq:hover .qchev{opacity:1;transform:translateY(1px);}
+
+/* ============ PLYR WRAP ============ */
 #plyrWrap{position:absolute;inset:0;z-index:9;display:none;background:#000;}
 #plyrWrap.on{display:block;}
 #plyrWrap,#plyrWrap .plyr{width:100%;height:100%;}
@@ -192,6 +404,28 @@ body{width:100%;height:100%;min-height:100dvh;background:#000;overflow:hidden;fo
 #plyrWrap .plyr__control--overlaid{background:rgba(255,90,0,.9);}
 #plyrWrap .plyr__control--overlaid:hover{background:#ff5a00;}
 #plyrWrap .plyr--live .plyr__progress__buffer{background:rgba(255,90,0,.35);}
+
+/* ============ UNMUTE HINT ============ */
+#muteHint{
+  position:absolute;
+  bottom:96px;left:50%;
+  transform:translateX(-50%) translateY(8px);
+  z-index:22;
+  display:flex;align-items:center;gap:8px;
+  padding:9px 16px 9px 12px;
+  border-radius:50px;
+  background:linear-gradient(135deg, rgba(255,60,60,.9), rgba(255,90,80,.85));
+  -webkit-backdrop-filter:blur(12px);
+  backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,.25);
+  box-shadow:0 8px 24px rgba(255,60,60,.35),inset 0 1px 0 rgba(255,255,255,.35);
+  font-size:12px;font-weight:700;color:#fff;letter-spacing:.3px;
+  opacity:0;pointer-events:none;
+  transition:opacity .5s,transform .5s cubic-bezier(.34,1.56,.64,1);
+  white-space:nowrap;
+}
+#muteHint.show{opacity:1;transform:translateX(-50%) translateY(0);}
+#muteHint svg{width:16px;height:16px;flex-shrink:0;filter:drop-shadow(0 1px 2px rgba(0,0,0,.3));}
 </style>
 </head>
 <body>
@@ -242,8 +476,16 @@ body{width:100%;height:100%;min-height:100dvh;background:#000;overflow:hidden;fo
 
   <div id="bigplay" class="gone">
     <div class="bpbtn" id="bpbtn" role="button" tabindex="0" aria-label="Play video">
-      <svg viewBox="0 0 24 24" fill="#fff"><path d="M8 5.14v13.72a1 1 0 0 0 1.5.87l11-6.86a1 1 0 0 0 0-1.72L9.5 4.27A1 1 0 0 0 8 5.14z"/></svg>
+      <svg viewBox="0 0 24 24" fill="#fff"><path d="M7 4.5v15l13-7.5L7 4.5z"/></svg>
     </div>
+  </div>
+
+  <div id="muteHint">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4 9v6h4l5 5V4L8 9H4z" fill="currentColor" stroke="none"/>
+      <path d="M16.5 8.5l5 5m0-5l-5 5" stroke="#fff" stroke-width="2"/>
+    </svg>
+    <span>Tap the speaker to unmute</span>
   </div>
 
   <div id="ctrls">
@@ -256,36 +498,36 @@ body{width:100%;height:100%;min-height:100dvh;background:#000;overflow:hidden;fo
     </div>
     <div id="crow">
       <button class="cb" id="bplay" title="Play / Pause" aria-label="Play or pause">
-        <svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor" id="pico">
-          <rect x="6" y="5" width="4" height="14" rx="1.5"/><rect x="14" y="5" width="4" height="14" rx="1.5"/>
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" id="pico">
+          <rect x="6" y="4.5" width="4" height="15" rx="1.2"/><rect x="14" y="4.5" width="4" height="15" rx="1.2"/>
         </svg>
       </button>
-      <button class="cb" id="bvol" title="Mute / Unmute" aria-label="Mute or unmute">
-        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" id="vico">
+      <button class="cb" id="bvol" title="Tap to unmute" aria-label="Unmute">
+        <svg viewBox="0 0 24 24" width="19" height="19" fill="none" id="vico">
           <path d="M4 9v6h4l5 5V4L8 9H4z" fill="currentColor"/>
-          <path d="M16.5 8.5a5 5 0 0 1 0 7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" fill="none"/>
-          <path d="M19 6a9 9 0 0 1 0 12" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" fill="none"/>
+          <path d="M16.5 8.5a5 5 0 0 1 0 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+          <path d="M19 6a9 9 0 0 1 0 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/>
         </svg>
       </button>
       <div class="live-pill" id="livepill"><span class="ldot"></span><span id="lpitext">LIVE</span></div>
       <div class="csp"></div>
       <button class="cb" id="bq" title="Quality" aria-label="Change video quality" style="display:none">
         <span id="qlbl">–</span>
-        <svg class="qchev" width="9" height="9" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polyline points="2,3 5,7 8,3"/></svg>
+        <svg class="qchev" width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,3.5 5,6.5 8,3.5"/></svg>
       </button>
-      <button class="cb" id="bfill" title="Fill / Fit" aria-label="Change video fit mode">
-        <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" id="fillico">
+      <button class="cb" id="bfill" title="Fit" aria-label="Change video fit mode">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" id="fillico">
           <path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/>
           <path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/>
         </svg>
       </button>
       <button class="cb" id="bpip" title="Picture in Picture" aria-label="Picture in picture">
-        <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="3" y="5" width="18" height="14" rx="2"/><rect x="12.5" y="11.5" width="7" height="5" rx="1.5" fill="currentColor" stroke="none"/>
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="5" width="18" height="14" rx="2.5"/><rect x="12.5" y="11.5" width="7" height="5" rx="1.5" fill="currentColor" stroke="none"/>
         </svg>
       </button>
       <button class="cb" id="bfs" title="Fullscreen" aria-label="Toggle fullscreen">
-        <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" id="fsico">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" id="fsico">
           <path d="M9 4H4v5"/><path d="M15 4h5v5"/><path d="M9 20H4v-5"/><path d="M15 20h5v-5"/>
         </svg>
       </button>
@@ -341,26 +583,29 @@ var fsico    = document.getElementById('fsico');
 var bigplay  = document.getElementById('bigplay');
 var bpbtn    = document.getElementById('bpbtn');
 var plyrWrap = document.getElementById('plyrWrap');
+var muteHint = document.getElementById('muteHint');
 
 var shakaPlayer = null;
 var hlsInst = null;
 var qStreams = {}, currentQ = DEFAULT_Q;
 var currentPxUrl = null;
 var isLive = true, isDragging = false, uPaused = false, hasError = false;
-var fillModeIdx = 0, isMuted = false;
-var hideTimer = null, retryTimer = null;
+var fillModeIdx = 0;
+var userUnmuted = false;
+var hideTimer = null, retryTimer = null, hintTimer = null;
 var qCooldown = false;
 
 var pxVideo = null, plyrInst = null, pxRetries = 0;
 var pxLibsPromise = null;
+var pxUserUnmuted = false;
 
 var FILL_MODES = [
   {fit:'contain', scale:1,   title:'Fit',
-   icon:'<rect x="2" y="4" width="20" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/><rect x="7" y="8" width="10" height="8" rx="1" fill="currentColor" opacity=".45"/>'},
+   icon:'<path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/>'},
   {fit:'cover',   scale:1,   title:'Fill',
-   icon:'<rect x="2" y="4" width="20" height="16" rx="2" fill="currentColor" opacity=".2" stroke="currentColor" stroke-width="1.7"/><path d="M2 4l20 16M22 4L2 20" stroke="currentColor" stroke-width="1" opacity=".35"/>'},
+   icon:'<rect x="3" y="5" width="18" height="14" rx="2" fill="currentColor" opacity=".3" stroke="currentColor" stroke-width="1.8"/><path d="M3 5l18 14M21 5L3 19" stroke="currentColor" stroke-width="1.2" opacity=".5"/>'},
   {fit:'contain', scale:1.4, title:'Zoom',
-   icon:'<circle cx="10.5" cy="10.5" r="7" fill="none" stroke="currentColor" stroke-width="1.7"/><line x1="16" y1="16" x2="21.5" y2="21.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><line x1="10.5" y1="7.5" x2="10.5" y2="13.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><line x1="7.5" y1="10.5" x2="13.5" y2="10.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>'}
+   icon:'<circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><line x1="15.5" y1="15.5" x2="21" y2="21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="10.5" y1="7.5" x2="10.5" y2="13.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="7.5" y1="10.5" x2="13.5" y2="10.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>'}
 ];
 
 var WA_CHANNEL = 'https://whatsapp.com/channel/0029VaeylYYBPzjVNomWuZ0T';
@@ -454,6 +699,18 @@ function hideOverlay(){
   setTimeout(function(){ overlay.classList.add('gone'); }, 360);
 }
 
+function showMuteHint(){
+  if (userUnmuted) return;
+  clearTimeout(hintTimer);
+  muteHint.classList.add('show');
+  hintTimer = setTimeout(function(){ muteHint.classList.remove('show'); }, 5000);
+}
+
+function hideMuteHint(){
+  clearTimeout(hintTimer);
+  muteHint.classList.remove('show');
+}
+
 function toFriendlyMessage(raw){
   raw = String(raw || '');
   if (/timeout/i.test(raw)) return 'Connection timed out. Please check your internet and try again.';
@@ -470,6 +727,7 @@ function showErr(title, msg, retry){
   if (msg) console.error('[Player] ' + title + ':', msg);
   bigplay.classList.remove('shown');
   bigplay.classList.add('gone');
+  hideMuteHint();
   overlay.style.opacity = '0';
   overlay.style.pointerEvents = 'none';
   setTimeout(function(){ overlay.classList.add('gone'); }, 360);
@@ -500,11 +758,6 @@ function loadPxLibs(){
     return loadScript(HLS_JS).catch(function(){ return null; });
   });
   return pxLibsPromise;
-}
-
-function loadHlsLib(){
-  if (window.Hls) return Promise.resolve();
-  return loadScript(HLS_JS).catch(function(){ return null; });
 }
 
 function fetchJSON(url){
@@ -585,25 +838,26 @@ function showCtrls(){
   ctrls.classList.remove('gone');
   clearTimeout(hideTimer);
   if (!vid.paused) {
-    hideTimer = setTimeout(function(){ ctrls.classList.add('gone'); }, 3200);
+    hideTimer = setTimeout(function(){ ctrls.classList.add('gone'); }, 3500);
   }
 }
 
 function syncPlayIcon(){
   pico.innerHTML = vid.paused
-    ? '<path d="M8 5.14v13.72a1 1 0 0 0 1.5.87l11-6.86a1 1 0 0 0 0-1.72L9.5 4.27A1 1 0 0 0 8 5.14z" fill="currentColor"/>'
-    : '<rect x="6" y="5" width="4" height="14" rx="1.5" fill="currentColor"/><rect x="14" y="5" width="4" height="14" rx="1.5" fill="currentColor"/>';
+    ? '<path d="M7 4.5v15l13-7.5L7 4.5z" fill="currentColor"/>'
+    : '<rect x="6" y="4.5" width="4" height="15" rx="1.2" fill="currentColor"/><rect x="14" y="4.5" width="4" height="15" rx="1.2" fill="currentColor"/>';
   bplay.setAttribute('aria-label', vid.paused ? 'Play' : 'Pause');
 }
 
 function syncVol(){
-  isMuted = vid.muted;
-  bvol.classList.toggle('is-muted', isMuted);
-  bvol.setAttribute('aria-label', isMuted ? 'Unmute' : 'Mute');
-  if (isMuted) {
-    vico.innerHTML = '<path d="M4 9v6h4l5 5V4L8 9H4z" fill="currentColor"/><line x1="16.5" y1="9.5" x2="22.5" y2="15.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><line x1="22.5" y1="9.5" x2="16.5" y2="15.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>';
+  var m = vid.muted;
+  bvol.classList.toggle('is-muted', m);
+  bvol.setAttribute('aria-label', m ? 'Unmute' : 'Mute');
+  bvol.title = m ? 'Tap to unmute' : 'Mute';
+  if (m) {
+    vico.innerHTML = '<path d="M4 9v6h4l5 5V4L8 9H4z" fill="currentColor"/><path d="M16.5 8.5l5 5m0-5l-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/>';
   } else {
-    vico.innerHTML = '<path d="M4 9v6h4l5 5V4L8 9H4z" fill="currentColor"/><path d="M16.5 8.5a5 5 0 0 1 0 7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" fill="none"/><path d="M19 6a9 9 0 0 1 0 12" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" fill="none"/>';
+    vico.innerHTML = '<path d="M4 9v6h4l5 5V4L8 9H4z" fill="currentColor"/><path d="M16.5 8.5a5 5 0 0 1 0 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/><path d="M19 6a9 9 0 0 1 0 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/>';
   }
 }
 
@@ -617,6 +871,7 @@ function applyFillMode(idx){
   vid.style.transform = m.scale !== 1 ? 'scale(' + m.scale + ')' : 'none';
   fillico.innerHTML = m.icon;
   bfill.title = m.title;
+  bfill.setAttribute('aria-label', 'Fit mode: ' + m.title);
 }
 
 function syncFs(){
@@ -780,7 +1035,14 @@ async function loadStream(url, fallbacks, pxUrl){
   }
 
   vid.muted = true;
-  await vid.play().catch(function(){ syncBig(); });
+  try {
+    await vid.play();
+  } catch(e) {
+    syncBig();
+  }
+  if (userUnmuted) {
+    try { vid.muted = false; } catch(e){}
+  }
   syncVol();
   armPlaybackWatchers();
 }
@@ -805,6 +1067,7 @@ function setupPx(url){
   pxVideo.setAttribute('webkit-playsinline', '');
   pxVideo.setAttribute('crossorigin', 'anonymous');
   pxVideo.preload = 'auto';
+  pxVideo.muted = true;
   plyrWrap.appendChild(pxVideo);
 
   plyrInst = new Plyr(pxVideo, {
@@ -826,6 +1089,10 @@ function setupPx(url){
     hasError = false;
     errOv.classList.remove('show');
     hideOverlay();
+  });
+
+  pxVideo.addEventListener('volumechange', function(){
+    if (!pxVideo.muted && pxVideo.volume > 0) pxUserUnmuted = true;
   });
 
   pxVideo.addEventListener('error', function(){
@@ -851,17 +1118,8 @@ function setupPx(url){
       capLevelToPlayerSize: true
     });
     hlsInst.on(Hls.Events.MANIFEST_PARSED, function(){
-      try { pxVideo.muted = false; } catch(e){}
-      var p;
-      try { p = pxVideo.play(); } catch(e){ p = null; }
-      if (p && typeof p.catch === 'function') {
-        p.catch(function(err){
-          if (err && (err.name === 'NotAllowedError' || err.name === 'SecurityError')) {
-            try { pxVideo.muted = true; } catch(e){}
-            try { pxVideo.play().catch(function(){}); } catch(e){}
-          }
-        });
-      }
+      try { pxVideo.muted = !pxUserUnmuted; } catch(e){}
+      try { pxVideo.play().catch(function(){}); } catch(e){}
     });
     hlsInst.on(Hls.Events.ERROR, function(evt, data){
       if (!data || !data.fatal) return;
@@ -880,9 +1138,8 @@ function setupPx(url){
   } else if (pxVideo.canPlayType('application/vnd.apple.mpegurl')) {
     pxVideo.src = url;
     pxVideo.addEventListener('loadedmetadata', function(){
-      var p;
-      try { p = pxVideo.play(); } catch(e){ p = null; }
-      if (p && typeof p.catch === 'function') p.catch(function(){});
+      try { pxVideo.muted = !pxUserUnmuted; } catch(e){}
+      try { pxVideo.play().catch(function(){}); } catch(e){}
     }, {once:true});
   } else {
     showErr('Unsupported Browser', 'HLS playback is not supported on this browser', false);
@@ -956,12 +1213,21 @@ vid.addEventListener('pause', syncBig);
 player.addEventListener('click', function(e){
   if (e.target.closest('#crow')) return;
   if (e.target.closest('.bpbtn')) return;
+  if (e.target.closest('#muteHint')) return;
   if (qCooldown) return;
   showCtrls();
 });
 
 player.addEventListener('mousemove', showCtrls);
 player.addEventListener('touchstart', showCtrls, {passive:true});
+
+document.querySelectorAll('.cb').forEach(function(btn){
+  btn.addEventListener('pointermove', function(e){
+    var r = btn.getBoundingClientRect();
+    btn.style.setProperty('--mx', ((e.clientX - r.left) / r.width * 100) + '%');
+    btn.style.setProperty('--my', ((e.clientY - r.top) / r.height * 100) + '%');
+  });
+});
 
 function togglePlay(){
   if (vid.paused) { uPaused = false; vid.play().catch(function(){}); }
@@ -972,6 +1238,10 @@ bplay.addEventListener('click', function(e){ e.stopPropagation(); togglePlay(); 
 
 vid.addEventListener('play', function(){ syncPlayIcon(); showCtrls(); });
 vid.addEventListener('pause', function(){ syncPlayIcon(); showCtrls(); });
+
+vid.addEventListener('playing', function(){
+  if (vid.muted && !userUnmuted) showMuteHint();
+});
 
 vid.addEventListener('pause', function(){
   if (!vid.ended && !uPaused) {
@@ -986,6 +1256,10 @@ setInterval(function(){
 bvol.addEventListener('click', function(e){
   e.stopPropagation();
   vid.muted = !vid.muted;
+  if (!vid.muted) {
+    userUnmuted = true;
+    hideMuteHint();
+  }
   syncVol();
 });
 
