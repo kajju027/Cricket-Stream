@@ -10,15 +10,13 @@
 <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
 <meta name="googlebot" content="index, follow">
 
-<!-- Open Graph: no specific match, tournament, or poster image -->
 <meta property="og:type"        content="website">
 <meta property="og:title"       content="CRICKET NEWS POINT - Live Stream | Live Score, Match Updates & Cricket News">
 <meta property="og:description" content="All your live cricket in one place — live matches, live scores and instant alerts from CnpTV.">
-<meta property="og:url"         content="https://spoortshub.pages.dev/">
+<meta property="og:url"         content="https://matchdekho.pages.dev/">
 <meta property="og:site_name"   content="CRICKET NEWS POINT">
 <meta property="og:locale"      content="en_US">
 
-<!-- Twitter Card: no image or poster -->
 <meta name="twitter:card"        content="summary">
 <meta name="twitter:title"       content="CRICKET NEWS POINT - Live Stream | Live Score, Match Updates & Cricket News">
 <meta name="twitter:description" content="All your live cricket in one place — live matches, live scores and instant alerts from CnpTV.">
@@ -39,7 +37,7 @@
 
 <link rel="icon"             href="/gop-gop-moww.png" type="image/png">
 <link rel="apple-touch-icon" href="/gop-gop-moww.png">
-<link rel="canonical"        href="https://spoortshub.pages.dev/">
+<link rel="canonical"        href="https://matchdekho.pages.dev/">
 
 <script type="application/ld+json">
 {
@@ -47,19 +45,19 @@
   "@graph": [
     {
       "@type": "WebSite",
-      "@id": "https://spoortshub.pages.dev/#website",
+      "@id": "https://matchdekho.pages.dev/#website",
       "name": "CRICKET NEWS POINT",
       "alternateName": "CnpTV",
-      "url": "https://spoortshub.pages.dev/",
+      "url": "https://matchdekho.pages.dev/",
       "description": "Live cricket scores, exclusive streams, and instant match updates",
       "inLanguage": "en",
-      "publisher": { "@id": "https://spoortshub.pages.dev/#organization" }
+      "publisher": { "@id": "https://matchdekho.pages.dev/#organization" }
     },
     {
       "@type": "Organization",
-      "@id": "https://spoortshub.pages.dev/#organization",
+      "@id": "https://matchdekho.pages.dev/#organization",
       "name": "CnpTV",
-      "url": "https://spoortshub.pages.dev/",
+      "url": "https://matchdekho.pages.dev/",
       "logo": {
         "@type": "ImageObject",
         "url": "/gop-gop-moww.png",
@@ -252,7 +250,7 @@ body{width:100%;height:100%;min-height:100dvh;background:#000;overflow:hidden;fo
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
         Retry Now
       </button>
-      <a href="https://sayan.info/" target="_blank" rel="noopener noreferrer" class="elink">
+      <a href="https://matchdekho.pages.dev/" target="_blank" rel="noopener noreferrer" class="elink">
         <svg viewBox="0 0 24 24"><path d="M9.993 15.674l-.398 5.604c.57 0 .817-.245 1.113-.54l2.67-2.557 5.53 4.047c1.014.558 1.734.264 1.987-.939l3.6-16.86c.3-1.4-.506-1.95-1.496-1.58L1.27 9.64c-1.37.53-1.35 1.29-.233 1.64l5.68 1.77 13.337-8.418c.59-.39 1.13-.175.69.215"/></svg>
         Contact Support
       </a>
@@ -655,8 +653,7 @@ function syncFs(){
 
 async function tryShaka(url){
   if (!shakaPlayer) {
-    shakaPlayer = new shaka.Player();
-    await shakaPlayer.attach(vid);
+    shakaPlayer = new shaka.Player(vid);
     shakaPlayer.configure({
       streaming: {
         bufferingGoal: 6,
@@ -669,13 +666,78 @@ async function tryShaka(url){
         retryParameters: { timeout: 15000, maxAttempts: 3, baseDelay: 400, backoffFactor: 1.5, fuzzFactor: 0.5 }
       }
     });
-    shakaPlayer.getNetworkingEngine().registerRequestFilter(function(type, req){
-      req.allowCrossSiteCredentials = true;
-    });
   } else {
     try { await shakaPlayer.unload(); } catch(e){}
   }
   await shakaPlayer.load(url);
+}
+
+async function tryHlsjsFallback(urls){
+  if (!window.Hls) {
+    try { await loadScript(HLS_JS); } catch(e){ return false; }
+  }
+  if (!window.Hls || !Hls.isSupported()) return false;
+  if (hlsInst) { try { hlsInst.destroy(); } catch(e){} hlsInst = null; }
+
+  for (var i = 0; i < urls.length; i++) {
+    var u = urls[i];
+    if (!u) continue;
+    var ok = await new Promise(function(resolve){
+      var h = null;
+      var settled = false;
+      var timer = setTimeout(function(){
+        if (settled) return;
+        settled = true;
+        try { if (h) h.destroy(); } catch(e){}
+        resolve(false);
+      }, 8000);
+      try {
+        h = new Hls({
+          enableWorker: true,
+          lowLatencyMode: false,
+          backBufferLength: 15,
+          maxBufferLength: 20,
+          manifestLoadingTimeOut: 8000,
+          manifestLoadingMaxRetry: 0,
+          levelLoadingTimeOut: 8000,
+          fragLoadingTimeOut: 15000
+        });
+      } catch(e) {
+        clearTimeout(timer);
+        settled = true;
+        resolve(false);
+        return;
+      }
+      h.on(Hls.Events.MANIFEST_PARSED, function(){
+        if (settled) return;
+        settled = true;
+        clearTimeout(timer);
+        hlsInst = h;
+        resolve(true);
+      });
+      h.on(Hls.Events.ERROR, function(evt, data){
+        if (!settled && data && data.fatal) {
+          settled = true;
+          clearTimeout(timer);
+          try { h.destroy(); } catch(e){}
+          resolve(false);
+        }
+      });
+      try {
+        h.loadSource(u);
+        h.attachMedia(vid);
+      } catch(e) {
+        if (!settled) {
+          settled = true;
+          clearTimeout(timer);
+          try { h.destroy(); } catch(e2){}
+          resolve(false);
+        }
+      }
+    });
+    if (ok) return true;
+  }
+  return false;
 }
 
 function armPlaybackWatchers(){
@@ -688,7 +750,7 @@ function tryNativeCascade(all, lastShakaErr){
   var idx = 0;
   function attempt(){
     if (idx >= all.length || !all[idx]) {
-      showErr('Playback Error', lastShakaErr || 'No playable stream found', false);
+      showErr('Playback Error', lastShakaErr || 'No playable stream found', true);
       return;
     }
     var url = all[idx++];
@@ -727,12 +789,17 @@ async function loadStream(url, fallbacks){
   }
 
   if (lastErr) {
-    if (vid.canPlayType('application/vnd.apple.mpegurl')) {
+    var usedHlsjs = false;
+    try { usedHlsjs = await tryHlsjsFallback(all); } catch(e){ usedHlsjs = false; }
+    if (usedHlsjs) {
+      lastErr = null;
+    } else if (vid.canPlayType('application/vnd.apple.mpegurl')) {
       tryNativeCascade(all, lastErr);
       return;
+    } else {
+      showErr('Playback Error', lastErr, true);
+      return;
     }
-    showErr('Playback Error', lastErr, false);
-    return;
   }
 
   tryPlayUnmuted(vid).then(syncVol);
