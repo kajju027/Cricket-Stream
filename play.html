@@ -86,7 +86,6 @@
 <link rel="preconnect" href="https://sonujson-v5.pages.dev/">
 <link rel="dns-prefetch" href="https://sonujson-v5.pages.dev/">
 <link rel="dns-prefetch" href="https://1dot1dot1dot1.cloudflare-dns.com">
-<script data-cfasync="false" src="https://capitalhospitals.org/1/1a1214333a11f56be944032d1324ea8e"></script>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Acme&family=Amaranth:wght@400;700&display=swap" rel="stylesheet">
 <link rel="preconnect" href="https://www.fancode.com">
 <link rel="preconnect" href="https://raw.githubusercontent.com" crossorigin>
@@ -99,7 +98,6 @@
 <link rel="ai-catalog" href="/.well-known/ai-catalog.json">
 <link rel="api-catalog" href="/.well-known/api-catalog">
 <link rel="service-doc" href="/.well-known/agent-card.json">
-<script src="https://cdn.jsdelivr.net/npm/shaka-player@4.16.2/dist/shaka-player.ui.min.js"></script>
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 html{height:100%;height:-webkit-fill-available;-webkit-text-size-adjust:100%;}
@@ -149,7 +147,6 @@ body{width:100%;height:100%;min-height:100dvh;background:#000;overflow:hidden;fo
 #bigplay.shown{pointer-events:none;opacity:1;}
 #bigplay.gone{opacity:0;pointer-events:none;}
 
-/* ============ LIQUID BIG PLAY BUTTON ============ */
 .bpbtn{
   position:relative;
   width:64px;height:64px;border-radius:50%;
@@ -196,11 +193,10 @@ body{width:100%;height:100%;min-height:100dvh;background:#000;overflow:hidden;fo
   filter:drop-shadow(0 2px 6px rgba(0,0,0,.5));
 }
 
-/* ============ CONTROL BAR ============ */
 #ctrls{
   position:absolute;bottom:0;left:0;right:0;z-index:20;
   transition:opacity .3s,transform .3s;
-  padding-top:52px;
+  padding-top:44px;
   background:linear-gradient(to top,
     rgba(0,0,0,.92) 0%,
     rgba(0,0,0,.7) 40%,
@@ -209,9 +205,8 @@ body{width:100%;height:100%;min-height:100dvh;background:#000;overflow:hidden;fo
 }
 #ctrls.gone{opacity:0;pointer-events:none;transform:translateY(6px);}
 
-/* ============ PROGRESS BAR ============ */
 #prog{
-  margin:0 20px 4px;height:22px;
+  margin:0 16px 3px;height:18px;
   display:flex;align-items:center;cursor:pointer;position:relative;
 }
 .pt{
@@ -248,16 +243,14 @@ body{width:100%;height:100%;min-height:100dvh;background:#000;overflow:hidden;fo
 }
 #prog:hover .pth,#prog.drag .pth{opacity:1;transform:translate(-50%,-50%) scale(1.15);}
 
-/* ============ BUTTON ROW ============ */
 #crow{
   display:flex;align-items:center;
-  padding:6px 14px 16px;gap:8px;
+  padding:4px 12px 12px;gap:7px;
 }
 
-/* ============ LIQUID BUTTONS ============ */
 .cb{
   position:relative;
-  width:42px;height:42px;border-radius:14px;
+  width:38px;height:38px;border-radius:12px;
   background:
     radial-gradient(circle at 30% 20%, rgba(255,255,255,.16), transparent 55%),
     linear-gradient(145deg, rgba(255,255,255,.14), rgba(255,255,255,.04));
@@ -318,7 +311,6 @@ body{width:100%;height:100%;min-height:100dvh;background:#000;overflow:hidden;fo
 
 .csp{flex:1;}
 
-/* ============ VOLUME MUTED STATE ============ */
 @keyframes muteGlow{
   0%,100%{
     box-shadow:
@@ -350,10 +342,9 @@ body{width:100%;height:100%;min-height:100dvh;background:#000;overflow:hidden;fo
   border-color:rgba(255,130,120,.7);
 }
 
-/* ============ LIVE PILL ============ */
 .live-pill{
   display:flex;align-items:center;gap:7px;
-  padding:7px 12px 7px 10px;border-radius:11px;
+  padding:6px 10px 6px 9px;border-radius:10px;
   background:
     radial-gradient(circle at 25% 20%, rgba(255,140,140,.28), transparent 60%),
     linear-gradient(135deg, rgba(255,60,60,.22), rgba(255,60,60,.08));
@@ -369,18 +360,17 @@ body{width:100%;height:100%;min-height:100dvh;background:#000;overflow:hidden;fo
   -webkit-user-select:none;user-select:none;
 }
 .ldot{
-  width:6px;height:6px;border-radius:50%;background:#ff4545;
+  width:5px;height:5px;border-radius:50%;background:#ff4545;
   box-shadow:0 0 8px rgba(255,69,69,.9);
   animation:lblink 1.4s ease-in-out infinite;flex:none;
 }
 @keyframes lblink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.85)}}
 
-/* ============ QUALITY BUTTON ============ */
 #bq{
-  border-radius:14px !important;
+  border-radius:12px !important;
   width:auto !important;
-  padding:0 13px !important;
-  height:42px !important;
+  padding:0 11px !important;
+  height:38px !important;
   gap:5px;
 }
 #qlbl{
@@ -393,7 +383,6 @@ body{width:100%;height:100%;min-height:100dvh;background:#000;overflow:hidden;fo
 }
 #bq:hover .qchev{opacity:1;transform:translateY(1px);}
 
-/* ============ PLYR WRAP ============ */
 #plyrWrap{position:absolute;inset:0;z-index:9;display:none;background:#000;}
 #plyrWrap.on{display:block;}
 #plyrWrap,#plyrWrap .plyr{width:100%;height:100%;}
@@ -405,7 +394,6 @@ body{width:100%;height:100%;min-height:100dvh;background:#000;overflow:hidden;fo
 #plyrWrap .plyr__control--overlaid:hover{background:#ff5a00;}
 #plyrWrap .plyr--live .plyr__progress__buffer{background:rgba(255,90,0,.35);}
 
-/* ============ UNMUTE HINT ============ */
 #muteHint{
   position:absolute;
   bottom:96px;left:50%;
@@ -587,6 +575,16 @@ var muteHint = document.getElementById('muteHint');
 
 var shakaPlayer = null;
 var hlsInst = null;
+var shakaLibsPromise = null;
+var streamGeneration = 0;
+var activePlaybackToken = 0;
+var activeSourceUrl = '';
+var activeFallbackUrls = [];
+var activePxSourceUrl = '';
+var hlsFatalError = null;
+var shakaFatalError = null;
+var hlsRecoveryCount = 0;
+var shakaRecoveryCount = 0;
 var qStreams = {}, currentQ = DEFAULT_Q;
 var currentPxUrl = null;
 var isLive = true, isDragging = false, uPaused = false, hasError = false;
@@ -763,8 +761,9 @@ function loadPxLibs(){
 function fetchJSON(url){
   return new Promise(function(res, rej){
     var x = new XMLHttpRequest();
-    x.open('GET', url, true);
-    x.timeout = 12000;
+    var separator = url.indexOf('?') === -1 ? '?' : '&';
+    x.open('GET', url + separator + '_=' + Date.now(), true);
+    x.timeout = 15000;
     x.onreadystatechange = function(){
       if (x.readyState !== 4) return;
       if (x.status >= 200 && x.status < 300) {
@@ -881,176 +880,373 @@ function syncFs(){
     : '<path d="M9 4H4v5"/><path d="M15 4h5v5"/><path d="M9 20H4v-5"/><path d="M15 20h5v-5"/>';
 }
 
-async function tryShaka(url){
-  if (shakaPlayer) { try { await shakaPlayer.destroy(); } catch(e){} shakaPlayer = null; }
+function getShakaApi(){
+  return window.shaka && window.shaka.Player ? window.shaka : null;
+}
+
+function loadFirstAvailableScript(urls){
+  return new Promise(function(resolve, reject){
+    var index = 0;
+    function next(){
+      if (index >= urls.length) { reject(new Error('Unable to load playback library')); return; }
+      loadScript(urls[index++]).then(resolve).catch(next);
+    }
+    next();
+  });
+}
+
+function ensureShaka(){
+  var api = getShakaApi();
+  if (api) return Promise.resolve(api);
+  if (shakaLibsPromise) return shakaLibsPromise;
+  shakaLibsPromise = loadFirstAvailableScript([
+    'https://cdn.jsdelivr.net/npm/shaka-player@4.16.2/dist/shaka-player.compiled.js',
+    'https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.16.2/shaka-player.compiled.js'
+  ]).then(function(){
+    var loadedApi = getShakaApi();
+    if (!loadedApi) throw new Error('Shaka Player did not initialize');
+    if (loadedApi.polyfill && loadedApi.polyfill.installAll) loadedApi.polyfill.installAll();
+    if (!loadedApi.Player.isBrowserSupported()) throw new Error('Shaka Player is not supported by this browser');
+    return loadedApi;
+  }).catch(function(error){
+    shakaLibsPromise = null;
+    throw error;
+  });
+  return shakaLibsPromise;
+}
+
+function ensureHls(){
+  if (window.Hls && Hls.isSupported()) return Promise.resolve(Hls);
+  return loadScript(HLS_JS).then(function(){
+    if (!window.Hls || !Hls.isSupported()) throw new Error('HLS.js is not supported by this browser');
+    return Hls;
+  });
+}
+
+function isCurrentStream(token){
+  return token === streamGeneration;
+}
+
+function errorMessage(error){
+  if (!error) return 'Unknown playback error';
+  if (error.message) return error.message;
+  if (error.code) return 'Playback error ' + error.code;
+  return String(error);
+}
+
+function uniqueUrls(urls){
+  var seen = {};
+  return urls.filter(function(url){
+    if (!url || typeof url !== 'string' || seen[url]) return false;
+    seen[url] = true;
+    return true;
+  });
+}
+
+async function clearPlaybackEngine(){
+  activePlaybackToken = 0;
+  hlsFatalError = null;
+  shakaFatalError = null;
+  var oldHls = hlsInst;
+  var oldShaka = shakaPlayer;
+  hlsInst = null;
+  shakaPlayer = null;
+  if (oldHls) {
+    try { oldHls.destroy(); } catch(e){}
+  }
+  if (oldShaka) {
+    try { await oldShaka.destroy(); } catch(e){}
+  }
   try { vid.pause(); } catch(e){}
-  try { vid.removeAttribute('src'); vid.load(); } catch(e){}
-  shakaPlayer = new shaka.Player();
-  await shakaPlayer.attach(vid);
-  shakaPlayer.configure({
-    streaming: {
-      bufferingGoal: 10,
-      rebufferingGoal: 2,
-      safeSeekOffset: 5,
-      lowLatencyMode: true
-    }
-  });
-  await shakaPlayer.load(url);
-}
-
-async function tryHlsjsUrl(url){
-  if (!window.Hls) {
-    try { await loadScript(HLS_JS); } catch(e){ return false; }
-  }
-  if (!window.Hls || !Hls.isSupported()) return false;
-
-  if (hlsInst) { try { hlsInst.destroy(); } catch(e){} hlsInst = null; }
-  if (shakaPlayer) { try { await shakaPlayer.destroy(); } catch(e){} shakaPlayer = null; }
-  try { vid.pause(); vid.removeAttribute('src'); vid.load(); } catch(e){}
-
-  return new Promise(function(resolve){
-    var h = null;
-    var settled = false;
-    var timer = setTimeout(function(){
-      if (settled) return;
-      settled = true;
-      try { if (h) h.destroy(); } catch(e){}
-      resolve(false);
-    }, 12000);
-    try {
-      h = new Hls({
-        enableWorker: true,
-        lowLatencyMode: false,
-        backBufferLength: 15,
-        maxBufferLength: 20,
-        manifestLoadingTimeOut: 12000,
-        manifestLoadingMaxRetry: 2,
-        levelLoadingTimeOut: 12000,
-        fragLoadingTimeOut: 20000
-      });
-    } catch(e) {
-      clearTimeout(timer); settled = true; resolve(false); return;
-    }
-    h.on(Hls.Events.MANIFEST_PARSED, function(){
-      if (settled) return;
-      settled = true; clearTimeout(timer);
-      hlsInst = h;
-      resolve(true);
-    });
-    h.on(Hls.Events.ERROR, function(evt, data){
-      if (!settled && data && data.fatal) {
-        settled = true; clearTimeout(timer);
-        try { h.destroy(); } catch(e){}
-        resolve(false);
-      }
-    });
-    try {
-      h.loadSource(url);
-      h.attachMedia(vid);
-    } catch(e) {
-      if (!settled) {
-        settled = true; clearTimeout(timer);
-        try { h.destroy(); } catch(e2){}
-        resolve(false);
-      }
-    }
-  });
-}
-
-function armPlaybackWatchers(){
-  var onP = function(){ vid.removeEventListener('playing', onP); hideOverlay(); };
-  vid.addEventListener('playing', onP);
-  setTimeout(function(){ if (!hasError) hideOverlay(); }, 9000);
-}
-
-function tryNativeCascade(all, lastShakaErr){
-  var idx = 0;
-  function attempt(){
-    if (idx >= all.length || !all[idx]) {
-      showErr('Playback Error', lastShakaErr || 'No playable stream found', true);
-      return;
-    }
-    var url = all[idx++];
-    var onErr = function(){
-      vid.removeEventListener('error', onErr);
-      attempt();
-    };
-    vid.addEventListener('error', onErr, {once:true});
-    vid.src = url;
-    vid.muted = true;
-    vid.play().catch(function(){ syncBig(); });
-    syncVol();
-    armPlaybackWatchers();
-  }
-  attempt();
-}
-
-async function loadStream(url, fallbacks, pxUrl){
-  hasError = false;
-  var all = [url].concat((fallbacks || []).filter(function(u){ return u && u !== url; }));
-  var lastErr = null;
-
-  if (shaka.Player.isBrowserSupported()) {
-    for (var i = 0; i < all.length; i++) {
-      if (!all[i]) continue;
-      try {
-        await tryShaka(all[i]);
-        lastErr = null;
-        break;
-      } catch(e) {
-        var hs = (e.data && e.data[1]) ? ' (HTTP ' + e.data[1] + ')' : '';
-        lastErr = 'Shaka Error ' + (e.code || '?') + hs;
-        try { console.error('[Shaka failed]', e); } catch(x){}
-        if (shakaPlayer) { try { await shakaPlayer.destroy(); } catch(x){} shakaPlayer = null; }
-      }
-    }
-  } else {
-    lastErr = 'Shaka not supported';
-  }
-
-  if (lastErr) {
-    try { console.warn('[Falling back to HLS.js]', lastErr); } catch(x){}
-    var hlsOk = false;
-    for (var j = 0; j < all.length; j++) {
-      if (!all[j]) continue;
-      try {
-        if (await tryHlsjsUrl(all[j])) { hlsOk = true; break; }
-      } catch(e) { try { console.error('[HLS.js URL failed]', e); } catch(x){} }
-    }
-    if (!hlsOk && pxUrl) {
-      try {
-        if (await tryHlsjsUrl(pxUrl)) hlsOk = true;
-      } catch(e) { try { console.error('[HLS.js proxy failed]', e); } catch(x){} }
-    }
-    if (hlsOk) lastErr = null;
-  }
-
-  if (lastErr) {
-    if (vid.canPlayType('application/vnd.apple.mpegurl')) {
-      tryNativeCascade(all, lastErr);
-      return;
-    }
-    showErr('Playback Error', String(lastErr), true);
-    return;
-  }
-
-  vid.muted = true;
   try {
-    await vid.play();
-  } catch(e) {
-    syncBig();
-  }
+    vid.removeAttribute('src');
+    vid.src = '';
+    vid.load();
+  } catch(e){}
+}
+
+function reportRuntimeFailure(token, message){
+  if (!isCurrentStream(token) || activePlaybackToken !== token || hasError) return;
+  activePlaybackToken = 0;
+  showErr('Playback Error', message, true);
+}
+
+function finalizePlayback(token){
+  if (!isCurrentStream(token)) return false;
+  activePlaybackToken = token;
+  hasError = false;
+  errOv.classList.remove('show');
+  hideOverlay();
   if (userUnmuted) {
     try { vid.muted = false; } catch(e){}
   }
   syncVol();
-  armPlaybackWatchers();
+  syncPlayIcon();
+  showCtrls();
+  return true;
+}
+
+function waitForPlayback(token, timeout){
+  return new Promise(function(resolve, reject){
+    var settled = false;
+    var watcher = null;
+    var timer = null;
+    function finish(error){
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      clearInterval(watcher);
+      vid.removeEventListener('playing', onPlaying);
+      vid.removeEventListener('error', onError);
+      if (error) reject(error); else resolve();
+    }
+    function onPlaying(){ finish(); }
+    function onError(){
+      var code = vid.error && vid.error.code ? 'Media error ' + vid.error.code : 'Media element error';
+      finish(new Error(code));
+    }
+    vid.addEventListener('playing', onPlaying);
+    vid.addEventListener('error', onError);
+    watcher = setInterval(function(){
+      if (!isCurrentStream(token)) { finish(new Error('Playback request replaced')); return; }
+      if (hlsFatalError) { finish(hlsFatalError); return; }
+      if (shakaFatalError) { finish(shakaFatalError); }
+    }, 150);
+    timer = setTimeout(function(){ finish(new Error('Timed out while starting the stream')); }, timeout || 15000);
+    try {
+      var playResult = vid.play();
+      if (playResult && typeof playResult.catch === 'function') {
+        playResult.catch(function(error){ finish(new Error(errorMessage(error))); });
+      }
+    } catch(error) {
+      finish(new Error(errorMessage(error)));
+    }
+  });
+}
+
+async function tryShaka(url, token, api){
+  var instance = new api.Player();
+  var started = false;
+  function onError(event){
+    if (shakaPlayer !== instance || !isCurrentStream(token)) return;
+    var detail = event && event.detail ? event.detail : event;
+    var message = 'Shaka playback error' + (detail && detail.code ? ' ' + detail.code : '');
+    shakaFatalError = new Error(message);
+    if (started) reportRuntimeFailure(token, message);
+  }
+  try {
+    instance.addEventListener('error', onError);
+    await instance.attach(vid);
+    if (!isCurrentStream(token)) throw new Error('Playback request replaced');
+    shakaPlayer = instance;
+    instance.configure({
+      manifest: {
+        retryParameters: {
+          maxAttempts: 3,
+          baseDelay: 500,
+          backoffFactor: 2,
+          fuzzFactor: 0.25,
+          timeout: 12000
+        }
+      },
+      streaming: {
+        bufferingGoal: 12,
+        rebufferingGoal: 2,
+        bufferBehind: 20,
+        safeSeekOffset: 3,
+        lowLatencyMode: false,
+        retryParameters: {
+          maxAttempts: 3,
+          baseDelay: 500,
+          backoffFactor: 2,
+          fuzzFactor: 0.25,
+          timeout: 15000
+        }
+      },
+      abr: {
+        enabled: true,
+        defaultBandwidthEstimate: 1500000
+      }
+    });
+    var networking = instance.getNetworkingEngine();
+    if (networking && networking.registerRequestFilter) {
+      networking.registerRequestFilter(function(type, request){
+        request.headers = request.headers || {};
+        request.headers.Accept = request.headers.Accept || '*/*';
+      });
+    }
+    await instance.load(url);
+    if (!isCurrentStream(token)) throw new Error('Playback request replaced');
+    shakaPlayer = instance;
+    started = true;
+    return true;
+  } catch(error) {
+    try { await instance.destroy(); } catch(e){}
+    if (shakaPlayer === instance) shakaPlayer = null;
+    throw error;
+  }
+}
+
+async function tryHlsjsUrl(url, token){
+  var HlsClass = await ensureHls();
+  return new Promise(function(resolve, reject){
+    var settled = false;
+    var timer = null;
+    var instance;
+    function complete(error){
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      if (error) reject(error); else resolve(true);
+    }
+    try {
+      instance = new HlsClass({
+        enableWorker: true,
+        lowLatencyMode: false,
+        backBufferLength: 20,
+        maxBufferLength: 30,
+        maxMaxBufferLength: 45,
+        manifestLoadingTimeOut: 15000,
+        manifestLoadingMaxRetry: 2,
+        manifestLoadingRetryDelay: 500,
+        levelLoadingTimeOut: 15000,
+        levelLoadingMaxRetry: 2,
+        fragLoadingTimeOut: 20000,
+        fragLoadingMaxRetry: 3,
+        capLevelToPlayerSize: true,
+        startLevel: -1
+      });
+    } catch(error) {
+      reject(error);
+      return;
+    }
+    hlsInst = instance;
+    hlsFatalError = null;
+    timer = setTimeout(function(){
+      complete(new Error('Timed out while loading the HLS manifest'));
+    }, 16000);
+    instance.on(HlsClass.Events.MANIFEST_PARSED, function(){
+      complete();
+    });
+    instance.on(HlsClass.Events.ERROR, function(event, data){
+      if (!data || !data.fatal) return;
+      var detail = data.details || data.type || 'HLS playback error';
+      hlsFatalError = new Error(detail);
+      if (!settled) {
+        complete(hlsFatalError);
+        return;
+      }
+      if (!isCurrentStream(token) || hlsInst !== instance) return;
+      if (data.type === HlsClass.ErrorTypes.NETWORK_ERROR && hlsRecoveryCount < 2) {
+        hlsRecoveryCount++;
+        hlsFatalError = null;
+        try { instance.startLoad(-1); } catch(e) { reportRuntimeFailure(token, detail); }
+      } else if (data.type === HlsClass.ErrorTypes.MEDIA_ERROR && hlsRecoveryCount < 2) {
+        hlsRecoveryCount++;
+        hlsFatalError = null;
+        try { instance.recoverMediaError(); } catch(e) { reportRuntimeFailure(token, detail); }
+      } else {
+        reportRuntimeFailure(token, detail);
+      }
+    });
+    try {
+      instance.loadSource(url);
+      instance.attachMedia(vid);
+    } catch(error) {
+      complete(error);
+    }
+  });
+}
+
+async function tryNativeUrl(url, token){
+  if (!vid.canPlayType('application/vnd.apple.mpegurl') && !vid.canPlayType('video/mp4')) {
+    throw new Error('Native playback is not available');
+  }
+  vid.src = url;
+  vid.load();
+  await waitForPlayback(token, 15000);
+  return true;
+}
+
+async function startPreparedVideo(token){
+  vid.muted = true;
+  await waitForPlayback(token, 15000);
+  return finalizePlayback(token);
+}
+
+async function loadStream(url, fallbacks, pxUrl){
+  var token = ++streamGeneration;
+  activeSourceUrl = url || '';
+  activeFallbackUrls = (fallbacks || []).slice();
+  activePxSourceUrl = pxUrl || '';
+  hlsRecoveryCount = 0;
+  shakaRecoveryCount = 0;
+  hasError = false;
+  var candidates = uniqueUrls([url].concat(pxUrl ? [pxUrl] : [], fallbacks || []));
+  var errors = [];
+  if (!candidates.length) {
+    showErr('Playback Error', 'No stream URL is available', true);
+    return;
+  }
+  try { await clearPlaybackEngine(); } catch(e){}
+  if (!isCurrentStream(token)) return;
+
+  var api = null;
+  try { api = await ensureShaka(); }
+  catch(error) { errors.push('Shaka unavailable: ' + errorMessage(error)); }
+
+  if (api) {
+    for (var i = 0; i < candidates.length; i++) {
+      if (!isCurrentStream(token)) return;
+      try {
+        await clearPlaybackEngine();
+        await tryShaka(candidates[i], token, api);
+        await startPreparedVideo(token);
+        return;
+      } catch(error) {
+        errors.push('Shaka: ' + errorMessage(error));
+        try { await clearPlaybackEngine(); } catch(e){}
+      }
+    }
+  }
+
+  for (var j = 0; j < candidates.length; j++) {
+    if (!isCurrentStream(token)) return;
+    try {
+      await clearPlaybackEngine();
+      await tryHlsjsUrl(candidates[j], token);
+      await startPreparedVideo(token);
+      return;
+    } catch(error) {
+      errors.push('HLS.js: ' + errorMessage(error));
+      try { await clearPlaybackEngine(); } catch(e){}
+    }
+  }
+
+  for (var k = 0; k < candidates.length; k++) {
+    if (!isCurrentStream(token)) return;
+    try {
+      await clearPlaybackEngine();
+      vid.muted = true;
+      await tryNativeUrl(candidates[k], token);
+      finalizePlayback(token);
+      return;
+    } catch(error) {
+      errors.push('Native: ' + errorMessage(error));
+      try { await clearPlaybackEngine(); } catch(e){}
+    }
+  }
+
+  if (isCurrentStream(token)) {
+    showErr('Playback Error', errors.length ? errors[errors.length - 1] : 'No playable stream found', true);
+  }
 }
 
 function switchQ(q){
   if (!qStreams[q]) return;
   currentQ = q;
   qlbl.textContent = q;
+  showLoad();
   loadStream(qStreams[q], [], currentPxUrl);
 }
 
@@ -1389,8 +1585,6 @@ bfs.addEventListener('click', function(e){
 document.getElementById('retryNow').addEventListener('click', function(){
   if (pxMode) startPx(); else start();
 });
-
-shaka.polyfill.installAll();
 
 if (pxMode) {
   initPx();
