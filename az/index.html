@@ -10,11 +10,18 @@
 <meta name="color-scheme" content="dark">
 <meta name="referrer" content="no-referrer">
 <link rel="icon" href="/gop-gop-moww.png">
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-G5NE717HVD"></script>
-<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-G5NE717HVD');</script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-BSW772KQX6"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-BSW772KQX6');
+  </script>
+  
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700;14..32,800;14..32,900&family=Acme&family=Amaranth:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shaka-player@5.2.9/dist/controls.css">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
@@ -317,6 +324,17 @@ video.mode-cover{object-fit:cover}
 .shaka-spinner-container,.shaka-spinner,.shaka-spinner-svg{display:none!important}
 .shaka-controls-container button{color:#fff!important}
 .shaka-video-container{background-color:#000!important}
+.popup-overlay{position:fixed;inset:0;background:rgba(0,0,0,.88);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);display:none;align-items:center;justify-content:center;padding:20px;z-index:2147483647}
+.popup-overlay.visible{display:flex}
+.popup-wrap{position:relative;width:100%;max-width:358px;padding:2px;background:linear-gradient(145deg,rgba(255,204,0,.8) 0%,rgba(255,224,80,.4) 50%,rgba(255,204,0,.8) 100%);border-radius:18px;box-shadow:0 0 50px rgba(255,204,0,.14),0 30px 70px rgba(0,0,0,.72);animation:popIn .42s cubic-bezier(.175,.885,.32,1.275) both}
+@keyframes popIn{from{opacity:0;transform:scale(.87) translateY(24px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.popup-box{background:linear-gradient(168deg,#1e1e26 0%,#0e0e13 100%);border-radius:16px;padding:34px 24px 26px;text-align:center}
+.popup-title{color:#ffcc00;font-family:'Acme',sans-serif;font-size:30px;letter-spacing:.5px;margin-bottom:12px}
+.popup-text{color:#a0a0a8;font-size:14px;line-height:1.65;margin-bottom:24px}
+.popup-text b{color:#fff;font-family:'Amaranth',sans-serif;font-size:17px;display:block;margin-top:7px}
+.btn-popup{width:100%;padding:14px;border:none;border-radius:13px;font-family:'Amaranth',sans-serif;cursor:pointer;transition:transform .18s,box-shadow .18s;-webkit-user-select:none;user-select:none;-webkit-appearance:none;appearance:none;touch-action:manipulation;display:block}
+.btn-popup:active{transform:scale(.95)}
+.btn-joined-main{background:transparent;color:#484850;font-size:12px;font-weight:400;width:auto;margin:0 auto;padding:7px 14px;text-align:center}
 @media(max-width:360px){
   #ch-cards{padding:0 10px}
   .header h1{font-size:24px}
@@ -325,7 +343,7 @@ video.mode-cover{object-fit:cover}
   .card-info{padding:14px}
 }
 </style>
-  <script src="https://pl31630399.profitableratecpmnetwork.com/1e/ad/c3/1eadc3dd7604b2436ca0409b43cf0a34.js"></script>
+<script src="https://pl31454107.profitableratecpmnetwork.com/81/35/3d/81353d2f6f821e8f6deb4dda320cfcfc.js"></script>
 </head>
 <body>
 <div id="overlay">
@@ -361,6 +379,20 @@ video.mode-cover{object-fit:cover}
   <div id="video-loading"><div class="video-spinner"></div></div>
 </div>
 <div id="status"></div>
+<div class="popup-overlay" id="popup" role="dialog" aria-modal="true">
+  <div class="popup-wrap">
+    <div class="popup-box">
+      <div class="popup-title">Follow Us !!</div>
+      <div class="popup-text">
+        Join our Telegram channel<br>
+        <b>OHHO CRICKET &#8482;</b>
+        For Instant Updates &amp; Exclusive Links.
+      </div>
+      <iframe id="joinFrame" title="Join WhatsApp Channel" scrolling="no" style="width:100%;height:46px;border:0;outline:0;display:block;overflow:hidden;background:transparent;margin-bottom:9px;"></iframe>
+      <button class="btn-popup btn-joined-main" id="popupSkipBtn" type="button">No, Thanks</button>
+    </div>
+  </div>
+</div>
 <script src="https://cdn.jsdelivr.net/npm/shaka-player@5.2.9/dist/shaka-player.ui.min.js"></script>
 <script>
 (function(){
@@ -376,15 +408,26 @@ var SERVER_MAP = [
 ];
 var FITS = ["contain","fill","cover"];
 var FIT_LABELS = {contain:"Fit",fill:"Fill",cover:"Zoom"};
+var JOIN_URL = "https://t.me/+ArpfTHw1QvIxOGU1";
+var POPUP_DELAY = 4000;
+var JOIN_SCHEMES = [
+  {bg:"linear-gradient(90deg,#1bcc26,#17b823)",shadow:"rgba(27,204,38,0.38)",color:"#fff"},
+  {bg:"linear-gradient(90deg,#11f7e0,#0dcaba)",shadow:"rgba(17,247,224,0.38)",color:"#003d36"},
+  {bg:"linear-gradient(90deg,#ffff00,#e6e600)",shadow:"rgba(230,230,0,0.42)",color:"#333300"}
+];
 var $overlay = document.getElementById("overlay");
 var $status = document.getElementById("status");
 var $list = document.getElementById("channel-list");
 var $cards = document.getElementById("ch-cards");
 var $pc = document.getElementById("pc");
 var $vid = document.getElementById("v");
+var $popup = document.getElementById("popup");
+var $joinFrame = document.getElementById("joinFrame");
+var $popupSkipBtn = document.getElementById("popupSkipBtn");
 var _stTmr = null;
 var _channels = [];
 var _currentFilter = "all";
+var _popupLoadTimer = null;
 
 function toast(msg, type, dur){
   $status.innerHTML = '<span class="st-dot"></span><span>' + msg + '</span>';
@@ -404,6 +447,82 @@ function hideOverlay(){
   $overlay.style.opacity = "0";
   setTimeout(function(){ $overlay.style.display = "none"; }, 420);
 }
+
+function openTab(url){
+  if(!url) return;
+  var a = document.createElement("a");
+  a.href = url;
+  a.target = "_blank";
+  a.rel = "noopener noreferrer";
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(function(){ if(a.parentNode) a.parentNode.removeChild(a); }, 150);
+}
+
+function isMobileDevice(){
+  var ua = navigator.userAgent || navigator.vendor || "";
+  if(/android|iphone|ipad|ipod|iemobile|blackberry|opera mini|mobile/i.test(ua)) return true;
+  if(navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1) return true;
+  return false;
+}
+
+function showPopup(){
+  if(!$popup) return;
+  $popup.classList.add("visible");
+  setTimeout(function(){
+    try{ $joinFrame.contentWindow.postMessage({type:"measureNow"},"*"); }catch(e){}
+  }, 60);
+}
+
+function hidePopup(){
+  if(!$popup) return;
+  $popup.style.opacity = "0";
+  $popup.style.transition = "opacity .2s";
+  setTimeout(function(){
+    $popup.classList.remove("visible");
+    $popup.style.opacity = "";
+    $popup.style.transition = "";
+  }, 220);
+}
+(function buildJoinFrame(){
+  var scheme = JOIN_SCHEMES[Math.floor(Math.random() * JOIN_SCHEMES.length)];
+  var html = '<!DOCTYPE html><html><head><meta charset="UTF-8">' +
+    '<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">' +
+    '<link rel="preconnect" href="https://fonts.googleapis.com">' +
+    '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>' +
+    '<link href="https://fonts.googleapis.com/css2?family=Amaranth:wght@700&display=swap" rel="stylesheet">' +
+    '<style>*{margin:0;padding:0;box-sizing:border-box}html,body{width:100%;background:transparent;overflow:hidden;-webkit-tap-highlight-color:transparent}' +
+    'button{width:100%;padding:14px;border:none;border-radius:13px;font-family:"Amaranth",sans-serif;font-size:18px;font-weight:700;letter-spacing:.6px;line-height:1;text-align:center;cursor:pointer;-webkit-user-select:none;user-select:none;-webkit-appearance:none;appearance:none;touch-action:manipulation;display:block;transition:transform .18s;background:' + scheme.bg + ';box-shadow:0 5px 20px ' + scheme.shadow + ';color:' + scheme.color + '}' +
+    'button:active{transform:scale(.95)}</style></head><body>' +
+    '<button type="button" id="jb">JOIN NOW</button>' +
+    '<script>(function(){document.getElementById("jb").addEventListener("click",function(e){e.preventDefault();try{parent.postMessage({type:"joinNowClicked"},"*");}catch(e){}},false);function reportHeight(){try{parent.postMessage({type:"joinFrameHeight",height:document.body.scrollHeight},"*");}catch(e){}}window.addEventListener("load",function(){reportHeight();if(document.fonts&&document.fonts.ready){document.fonts.ready.then(reportHeight);}else{setTimeout(reportHeight,300);}});window.addEventListener("message",function(e){if(e&&e.data&&e.data.type==="measureNow")reportHeight();},false);})();<\/script>' +
+    '</body></html>';
+  $joinFrame.setAttribute("srcdoc", html);
+})();
+
+window.addEventListener("message", function(ev){
+  if(!$joinFrame || ev.source !== $joinFrame.contentWindow) return;
+  var d = ev.data;
+  if(!d || typeof d !== "object") return;
+  if(d.type === "joinNowClicked"){
+    if(isMobileDevice()){
+      window.location.href = JOIN_URL;
+    } else {
+      openTab(JOIN_URL);
+    }
+    hidePopup();
+  } else if(d.type === "joinFrameHeight" && typeof d.height === "number" && d.height > 0){
+    $joinFrame.style.height = Math.max(40, d.height) + "px";
+  }
+}, false);
+
+$popupSkipBtn.addEventListener("click", hidePopup);
+
+window.closeJoinPopup = hidePopup;
+
+_popupLoadTimer = setTimeout(function(){
+  showPopup();
+}, POPUP_DELAY);
 
 function getStreamInfo(){
   var s = location.search;
@@ -692,6 +811,9 @@ function renderLanding(channels){
 }
 
 function startPlayer(ch, srvNum){
+  if(_popupLoadTimer){ clearTimeout(_popupLoadTimer); _popupLoadTimer = null; }
+  showPopup();
+
   $list.style.display = "none";
   $pc.style.display = "flex";
   shaka.polyfill.installAll();
