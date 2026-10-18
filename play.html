@@ -343,13 +343,15 @@ var bpbtn    = document.getElementById('bpbtn');
 var plyrWrap = document.getElementById('plyrWrap');
 
 var shakaPlayer = null;
+var hlsInst = null;
 var qStreams = {}, currentQ = DEFAULT_Q;
+var currentPxUrl = null;
 var isLive = true, isDragging = false, uPaused = false, hasError = false;
-var fillModeIdx = 0, isMuted = true;
+var fillModeIdx = 0, isMuted = false;
 var hideTimer = null, retryTimer = null;
 var qCooldown = false;
 
-var pxVideo = null, hlsInst = null, plyrInst = null, pxRetries = 0;
+var pxVideo = null, plyrInst = null, pxRetries = 0;
 var pxLibsPromise = null;
 
 var FILL_MODES = [
@@ -477,21 +479,6 @@ function showErr(title, msg, retry){
   errOv.classList.add('show');
 }
 
-function tryPlayUnmuted(video){
-  try { video.muted = false; } catch(e){}
-  var p;
-  try { p = video.play(); } catch(e){ p = null; }
-  if (p && typeof p.catch === 'function') {
-    return p.catch(function(err){
-      if (err && (err.name === 'NotAllowedError' || err.name === 'SecurityError')) {
-        try { video.muted = true; } catch(e){}
-        try { video.play().catch(function(){}); } catch(e){}
-      }
-    });
-  }
-  return Promise.resolve();
-}
-
 function loadScript(src){
   return new Promise(function(res, rej){
     var s = document.createElement('script');
@@ -513,6 +500,11 @@ function loadPxLibs(){
     return loadScript(HLS_JS).catch(function(){ return null; });
   });
   return pxLibsPromise;
+}
+
+function loadHlsLib(){
+  if (window.Hls) return Promise.resolve();
+  return loadScript(HLS_JS).catch(function(){ return null; });
 }
 
 function fetchJSON(url){
@@ -562,11 +554,11 @@ function resolve(data){
     var lang = pickLanguageKey(m);
     var al = as[lang];
     if (!al || !al.streams || !Object.keys(al.streams).length) throw new Error('Stream URLs empty for this match');
-    return { type:'multi', streams:al.streams, fallbacks:fb };
+    return { type:'multi', streams:al.streams, fallbacks:fb, pxUrl: al.sonu_px || null };
   }
   var u = si === 1 ? s.fancode_lk_cdn : si === 2 ? s.fancode_np_cdn : si === 3 ? s.fancode_bd_cdn : null;
   if (!u) throw new Error('Regional stream (s=' + si + ') not available');
-  return { type:'single', url:u, fallbacks:fb };
+  return { type:'single', url:u, fallbacks:fb, pxUrl: null };
 }
 
 function getPxUrl(m){
@@ -636,6 +628,8 @@ function syncFs(){
 
 async function tryShaka(url){
   if (shakaPlayer) { try { await shakaPlayer.destroy(); } catch(e){} shakaPlayer = null; }
+  try { vid.pause(); } catch(e){}
+  try { vid.removeAttribute('src'); vid.load(); } catch(e){}
   shakaPlayer = new shaka.Player();
   await shakaPlayer.attach(vid);
   shakaPlayer.configure({
@@ -646,10 +640,66 @@ async function tryShaka(url){
       lowLatencyMode: true
     }
   });
-  shakaPlayer.getNetworkingEngine().registerRequestFilter(function(t, req){
-    req.allowCrossSiteCredentials = true;
-  });
   await shakaPlayer.load(url);
+}
+
+async function tryHlsjsUrl(url){
+  if (!window.Hls) {
+    try { await loadScript(HLS_JS); } catch(e){ return false; }
+  }
+  if (!window.Hls || !Hls.isSupported()) return false;
+
+  if (hlsInst) { try { hlsInst.destroy(); } catch(e){} hlsInst = null; }
+  if (shakaPlayer) { try { await shakaPlayer.destroy(); } catch(e){} shakaPlayer = null; }
+  try { vid.pause(); vid.removeAttribute('src'); vid.load(); } catch(e){}
+
+  return new Promise(function(resolve){
+    var h = null;
+    var settled = false;
+    var timer = setTimeout(function(){
+      if (settled) return;
+      settled = true;
+      try { if (h) h.destroy(); } catch(e){}
+      resolve(false);
+    }, 12000);
+    try {
+      h = new Hls({
+        enableWorker: true,
+        lowLatencyMode: false,
+        backBufferLength: 15,
+        maxBufferLength: 20,
+        manifestLoadingTimeOut: 12000,
+        manifestLoadingMaxRetry: 2,
+        levelLoadingTimeOut: 12000,
+        fragLoadingTimeOut: 20000
+      });
+    } catch(e) {
+      clearTimeout(timer); settled = true; resolve(false); return;
+    }
+    h.on(Hls.Events.MANIFEST_PARSED, function(){
+      if (settled) return;
+      settled = true; clearTimeout(timer);
+      hlsInst = h;
+      resolve(true);
+    });
+    h.on(Hls.Events.ERROR, function(evt, data){
+      if (!settled && data && data.fatal) {
+        settled = true; clearTimeout(timer);
+        try { h.destroy(); } catch(e){}
+        resolve(false);
+      }
+    });
+    try {
+      h.loadSource(url);
+      h.attachMedia(vid);
+    } catch(e) {
+      if (!settled) {
+        settled = true; clearTimeout(timer);
+        try { h.destroy(); } catch(e2){}
+        resolve(false);
+      }
+    }
+  });
 }
 
 function armPlaybackWatchers(){
@@ -680,7 +730,7 @@ function tryNativeCascade(all, lastShakaErr){
   attempt();
 }
 
-async function loadStream(url, fallbacks){
+async function loadStream(url, fallbacks, pxUrl){
   hasError = false;
   var all = [url].concat((fallbacks || []).filter(function(u){ return u && u !== url; }));
   var lastErr = null;
@@ -695,11 +745,29 @@ async function loadStream(url, fallbacks){
       } catch(e) {
         var hs = (e.data && e.data[1]) ? ' (HTTP ' + e.data[1] + ')' : '';
         lastErr = 'Shaka Error ' + (e.code || '?') + hs;
+        try { console.error('[Shaka failed]', e); } catch(x){}
         if (shakaPlayer) { try { await shakaPlayer.destroy(); } catch(x){} shakaPlayer = null; }
       }
     }
   } else {
-    lastErr = 'unsupported';
+    lastErr = 'Shaka not supported';
+  }
+
+  if (lastErr) {
+    try { console.warn('[Falling back to HLS.js]', lastErr); } catch(x){}
+    var hlsOk = false;
+    for (var j = 0; j < all.length; j++) {
+      if (!all[j]) continue;
+      try {
+        if (await tryHlsjsUrl(all[j])) { hlsOk = true; break; }
+      } catch(e) { try { console.error('[HLS.js URL failed]', e); } catch(x){} }
+    }
+    if (!hlsOk && pxUrl) {
+      try {
+        if (await tryHlsjsUrl(pxUrl)) hlsOk = true;
+      } catch(e) { try { console.error('[HLS.js proxy failed]', e); } catch(x){} }
+    }
+    if (hlsOk) lastErr = null;
   }
 
   if (lastErr) {
@@ -707,7 +775,7 @@ async function loadStream(url, fallbacks){
       tryNativeCascade(all, lastErr);
       return;
     }
-    showErr('Playback Error', lastErr, true);
+    showErr('Playback Error', String(lastErr), true);
     return;
   }
 
@@ -721,7 +789,7 @@ function switchQ(q){
   if (!qStreams[q]) return;
   currentQ = q;
   qlbl.textContent = q;
-  loadStream(qStreams[q], []);
+  loadStream(qStreams[q], [], currentPxUrl);
 }
 
 function setupPx(url){
@@ -783,7 +851,17 @@ function setupPx(url){
       capLevelToPlayerSize: true
     });
     hlsInst.on(Hls.Events.MANIFEST_PARSED, function(){
-      tryPlayUnmuted(pxVideo);
+      try { pxVideo.muted = false; } catch(e){}
+      var p;
+      try { p = pxVideo.play(); } catch(e){ p = null; }
+      if (p && typeof p.catch === 'function') {
+        p.catch(function(err){
+          if (err && (err.name === 'NotAllowedError' || err.name === 'SecurityError')) {
+            try { pxVideo.muted = true; } catch(e){}
+            try { pxVideo.play().catch(function(){}); } catch(e){}
+          }
+        });
+      }
     });
     hlsInst.on(Hls.Events.ERROR, function(evt, data){
       if (!data || !data.fatal) return;
@@ -801,7 +879,11 @@ function setupPx(url){
     hlsInst.attachMedia(pxVideo);
   } else if (pxVideo.canPlayType('application/vnd.apple.mpegurl')) {
     pxVideo.src = url;
-    pxVideo.addEventListener('loadedmetadata', function(){ tryPlayUnmuted(pxVideo); }, {once:true});
+    pxVideo.addEventListener('loadedmetadata', function(){
+      var p;
+      try { p = pxVideo.play(); } catch(e){ p = null; }
+      if (p && typeof p.catch === 'function') p.catch(function(){});
+    }, {once:true});
   } else {
     showErr('Unsupported Browser', 'HLS playback is not supported on this browser', false);
   }
@@ -834,15 +916,17 @@ function start(){
     catch(e){ showErr('Stream Unavailable', e.message, true); retryTimer = setTimeout(start, 8000); return; }
     if (r.type === 'multi') {
       qStreams = r.streams;
+      currentPxUrl = r.pxUrl;
       var url = r.streams[DEFAULT_Q] || r.streams['720p'] || r.streams['480p'] || r.streams['1080p'] || r.streams['360p'] || r.streams['240p'];
       if (!url) { showErr('No Stream URL', 'All quality URLs empty for this match', true); return; }
       currentQ = Q_ORDER.find(function(q){ return r.streams[q] === url; }) || DEFAULT_Q;
       qlbl.textContent = currentQ;
       bq.style.display = '';
-      loadStream(url, r.fallbacks);
+      loadStream(url, r.fallbacks, currentPxUrl);
     } else {
       bq.style.display = 'none';
-      loadStream(r.url, r.fallbacks);
+      currentPxUrl = r.pxUrl;
+      loadStream(r.url, r.fallbacks, currentPxUrl);
     }
   }).catch(function(e){
     showErr('Could Not Load Data', e.message, true);
