@@ -331,13 +331,36 @@ setTimeout(function(){
   }, 60);
 }, 4000);
 
+// Only delay initialization. The original provider owns its click layer and ad frequency.
+// This guard is per document, not an ad limit: every full refresh resets it.
+// Do not persist a "shown" flag, clear provider cookies, or modify provider settings.
+var popunderScriptAddedThisPage = false;
+var initialPopupClosed = false;
+var popupClosing = false;
+
+function startPopunder() {
+  // Being hidden before the initial popup appears is not permission to load ads.
+  if (!initialPopupClosed || popunderScriptAddedThisPage || popup.classList.contains('visible')) return;
+  popunderScriptAddedThisPage = true;
+  var adScript = document.createElement('script');
+  adScript.setAttribute('data-cfasync', 'false');
+  adScript.src = 'https://capitalhospitals.org/1/1a1214333a11f56be944032d1324ea8e';
+  document.body.appendChild(adScript);
+}
+
 function closePopup() {
+  if (popupClosing || !popup.classList.contains('visible')) return;
+  popupClosing = true;
   popup.style.opacity    = '0';
   popup.style.transition = 'opacity .2s';
   setTimeout(function(){
     popup.classList.remove('visible');
     popup.style.opacity    = '';
     popup.style.transition = '';
+    popupClosing = false;
+    initialPopupClosed = true;
+    // The closing click has finished; only now can the ad attach listeners.
+    startPopunder();
   }, 220);
 }
 
@@ -507,6 +530,5 @@ if (navigator.modelContext && typeof navigator.modelContext.registerTool === 'fu
 
 })();
 </script>
-  <script data-cfasync="false" src="https://capitalhospitals.org/1/1a1214333a11f56be944032d1324ea8e"></script>
 </body>
 </html>
