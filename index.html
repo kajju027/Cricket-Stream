@@ -234,6 +234,10 @@ var FALLBACK_JSON = 'https://allrounder3-0.pages.dev/id.json';
 var CONTACT_LINK  = 'https://t.me/CnpTVOfficial';
 var WA_CHANNEL    = 'https://whatsapp.com/channel/0029VaeylYYBPzjVNomWuZ0T';
 
+// Main ad executed after the popup closes. Set to null (no quotes) to disable.
+// The separate nonexecuting preload in <head> is intentionally unchanged.
+var POPUNDER_AD_URL = 'https://capitalhospitals.org/1/1a1214333a11f56be944032d1324ea8e';
+
 var AD3 = 'https://auctionr.org/4/ece4808c567a0636c1e3c34d0422b25d';
 
 var FETCH_TIMEOUT = 8000;
@@ -348,6 +352,7 @@ var initialPopupClosed = false;
 var popupClosing = false;
 
 function startPopunder() {
+  if (typeof POPUNDER_AD_URL !== 'string' || !POPUNDER_AD_URL.trim()) return;
   if (!initialPopupClosed || popup.classList.contains('visible')) return;
   if (popunderState === 'loading' || popunderState === 'ready') return;
   if (navigator.onLine === false) return; // Resume on the normal online event.
@@ -373,7 +378,7 @@ function startPopunder() {
     }
   };
   // Same URL and default classic-script credentials mode as the head preload.
-  adScript.src = 'https://capitalhospitals.org/1/1a1214333a11f56be944032d1324ea8e';
+  adScript.src = POPUNDER_AD_URL;
   document.body.appendChild(adScript);
 }
 
@@ -634,5 +639,5 @@ try {
 
 })();
 </script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a4d6304069b0d988',t:'MTc5MjQ4MDA3Ng=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</body>
 </html>
