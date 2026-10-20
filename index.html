@@ -32,7 +32,7 @@
 <meta http-equiv="Pragma"        content="no-cache">
 <meta http-equiv="Expires"       content="0">
 
-<title>CRICKET NEWS POINT : MAIN 2026 — Live Cricket, Match Updates & Scores | Cricket News Point 2026</title></title>
+<title>CRICKET NEWS POINT : MAIN 2026 — Live Cricket, Match Updates & Scores | Cricket News Point 2026</title>
 <link rel="icon"             href="/gop-gop-moww.png" type="image/png">
 <link rel="apple-touch-icon" href="/gop-gop-moww.png">
 <link rel="canonical"        href="https://matchdekho.pages.dev/">
@@ -149,6 +149,7 @@ body{width:100%;height:100%;min-height:100vh;min-height:100dvh;min-height:-webki
 .error-contact-btn svg{width:18px;height:18px;fill:#2aed74;flex-shrink:0}
 .error-contact-btn.retry-now-btn{font-family:inherit;margin-bottom:12px}
 .error-contact-btn.retry-now-btn svg{fill:none}
+#error-retry-btn:disabled{opacity:.5;cursor:default;transform:none}
 @media(hover:none){.logo-btn:hover{opacity:1}.btn-join-main:hover{box-shadow:none}.revenue-btn:hover{box-shadow:0 3px 14px rgba(255,160,0,.55)}.error-contact-btn:hover{background:linear-gradient(135deg,rgba(37,211,102,.18) 0%,rgba(0,180,80,.1) 100%);transform:none;box-shadow:0 4px 18px rgba(37,211,102,.15)}}
 </style>
 </head>
@@ -256,6 +257,7 @@ var popup      = document.getElementById('popup');
 var joinFrame  = document.getElementById('joinFrame');
 var skipBtn    = document.getElementById('popupSkipBtn');
 var revenueBtn = document.getElementById('revenueBtn');
+var retryBtn   = document.getElementById('error-retry-btn');
 
 contactBtn.href = CONTACT_LINK;
 
@@ -407,25 +409,39 @@ revenueBtn.addEventListener('click', function(e){
 });
 
 var loaderHidden = false;
-var safetyTimer  = null;
+var safetyTimer = null;
+var loaderFadeTimer = null;
+var activeStreamAssigned = false;
 
 function hideLoader() {
-  if (loaderHidden) return;
+  if (!activeStreamAssigned || loaderHidden || errScreen.classList.contains('show')) return;
   loaderHidden = true;
   clearTimeout(safetyTimer);
+  clearTimeout(loaderFadeTimer);
   loadScreen.style.transition = 'opacity .35s';
   loadScreen.style.opacity    = '0';
   iframe.style.visibility     = 'visible';
-  setTimeout(function(){ loadScreen.style.display = 'none'; }, 370);
+  loaderFadeTimer = setTimeout(function(){ loadScreen.style.display = 'none'; }, 370);
 }
-iframe.addEventListener('load', hideLoader);
+iframe.addEventListener('load', function(){
+  if (!activeStreamAssigned) return;
+  // Ignore the initial empty iframe, not a real player navigation.
+  try { if (iframe.contentWindow.location.href === 'about:blank') return; } catch(e){}
+  hideLoader();
+});
 
 var retryTimer = null;
 
 function showError(id, reason) {
+  clearTimeout(safetyTimer);
+  clearTimeout(loaderFadeTimer);
+  activeStreamAssigned = false;
+  loaderHidden = true;
   loadScreen.style.display = 'none';
   iframe.style.visibility  = 'hidden';
   clearTimeout(retryTimer);
+  retryBtn.disabled = reason === 'missing';
+  retryBtn.removeAttribute('aria-busy');
   if (reason === 'missing') {
     errTitle.textContent = 'No Channel Selected';
     errBody.textContent  = 'No Channel ID Was Given In The Link. Please Use A Valid Channel Link.';
@@ -447,7 +463,7 @@ function showError(id, reason) {
   }
   errScreen.classList.add('show');
 }
-document.getElementById('error-retry-btn').addEventListener('click', function(){
+retryBtn.addEventListener('click', function(){
   var id = getStreamId();
   if (id) fetchAndLoad(id);
 });
@@ -459,7 +475,12 @@ function hideError() {
 function onFSChange() {
   var el = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement;
   if (el) {
-    if (screen.orientation && screen.orientation.lock) screen.orientation.lock('landscape').catch(function(){});
+    if (screen.orientation && typeof screen.orientation.lock === 'function') {
+      try {
+        var lockResult = screen.orientation.lock('landscape');
+        if (lockResult && typeof lockResult.catch === 'function') lockResult.catch(function(){});
+      } catch(e){} // Unsupported/rejected orientation must not interrupt playback.
+    }
   } else {
     if (screen.orientation && screen.orientation.unlock) try { screen.orientation.unlock(); } catch(e){}
   }
@@ -474,13 +495,20 @@ function fetchJSON(url) {
   var ctrl  = new AbortController();
   var timer = setTimeout(function(){ ctrl.abort(); }, FETCH_TIMEOUT);
   return fetch(freshUrl(url), {cache:'no-store', signal:ctrl.signal})
-    .then(function(r){ clearTimeout(timer); if (!r.ok) throw 0; return r.json(); })
-    .catch(function(e){ clearTimeout(timer); throw e; });
+    // Keep the timeout active until the body is read and parsed, not just headers.
+    .then(function(r){ if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+    .then(function(data){ clearTimeout(timer); return data; }, function(e){ clearTimeout(timer); throw e; });
 }
 
 function getStreamId() {
   var s = window.location.search, raw = null;
   if (s.length > 1) {
+    // Prefer an explicit ID even when tracking parameters appear before it.
+    var params = new URLSearchParams(s);
+    if (params.has('id')) {
+      raw = params.get('id');
+      return raw && raw.trim() ? raw.trim() : null;
+    }
     raw = s.slice(1);
     var eq = raw.indexOf('=');
     if (eq !== -1) raw = raw.slice(eq + 1);
@@ -501,9 +529,9 @@ var twDescEl    = document.querySelector('meta[name="twitter:description"]');
 var canonicalEl = document.querySelector('link[rel="canonical"]');
 
 function updatePageMeta(channelName){
-  channelName = (channelName || '').trim();
+  channelName = channelName == null ? '' : String(channelName).trim();
   if (!channelName) return;
-  var title = channelName + ' -  Streaming By CnpTV | CRICKET NEWS POINT';
+  var title = channelName + ' - Streaming By CnpTV | CRICKET NEWS POINT';
   var desc  = 'Watch ' + channelName + ' Live Streaming Free On Cricket News Point. Live Cricket Scores, IPL Updates & Instant Match Alerts - Join Our WhatsApp Channel Now.';
   document.title = title;
   if (metaDescEl)  metaDescEl.setAttribute('content', desc);
@@ -516,52 +544,95 @@ function updatePageMeta(channelName){
 
 function applyStream(item) {
   clearTimeout(safetyTimer);
-  iframe.src  = item.iframeSrc;
-  safetyTimer = setTimeout(hideLoader, SAFETY_MS);
+  clearTimeout(loaderFadeTimer);
+  loaderHidden = false;
+  activeStreamAssigned = true;
   hideError();
+  loadScreen.style.transition = '';
+  loadScreen.style.opacity = '';
+  loadScreen.style.display = 'flex';
+  iframe.style.visibility = 'hidden';
+  iframe.src = item.iframeSrc;
+  // This safeguard depends on player loading only, never on ad availability.
+  safetyTimer = setTimeout(hideLoader, SAFETY_MS);
   updatePageMeta(item.name);
   if (item.hit) fetch(item.hit, {cache:'no-store'}).catch(function(){});
 }
 
+function findStream(data, id) {
+  var list = data && Array.isArray(data.iframes) ? data.iframes : [];
+  for (var i = 0; i < list.length; i++) {
+    var item = list[i];
+    if (!item || typeof item !== 'object' || String(item.id) !== String(id)) continue;
+    if (typeof item.iframeSrc !== 'string' || !item.iframeSrc.trim()) continue;
+    try {
+      var target = new URL(item.iframeSrc, window.location.href);
+      if (target.protocol !== 'https:' && target.protocol !== 'http:') continue;
+      return {iframeSrc:target.href, name:item.name, hit:item.hit};
+    } catch(e){} // Ignore invalid entries and try the remaining/fallback data.
+  }
+  return null;
+}
+
+var streamFetchInProgress = false;
 function fetchAndLoad(id) {
-  Promise.allSettled([
-    fetchJSON(PRIMARY_JSON),
-    FALLBACK_JSON ? fetchJSON(FALLBACK_JSON) : Promise.resolve(null)
-  ])
-    .then(function(res){
-      var pd   = res[0].status === 'fulfilled' ? res[0].value : null;
-      var fd   = res[1].status === 'fulfilled' ? res[1].value : null;
-      var list = ((pd && pd.iframes) || []).concat((fd && fd.iframes) || []);
-      var item = null;
-      for (var i = 0; i < list.length; i++) {
-        if (String(list[i].id) === String(id) && list[i].iframeSrc) { item = list[i]; break; }
-      }
-      if (item) {
-        applyStream(item);
-      } else {
-        var reachedServer = !!(pd || fd);
-        showError(id, reachedServer ? null : 'network');
-      }
+  if (!id || streamFetchInProgress) return;
+  streamFetchInProgress = true;
+  clearTimeout(retryTimer);
+  retryBtn.disabled = true;
+  retryBtn.setAttribute('aria-busy', 'true');
+
+  function completeFetch() {
+    streamFetchInProgress = false;
+    retryBtn.disabled = false;
+    retryBtn.removeAttribute('aria-busy');
+  }
+  function fulfilled(data) { return {ok:true, data:data}; }
+  function rejected() { return {ok:false, data:null}; }
+
+  // Start both requests concurrently, but do not make a valid primary wait for
+  // a slow fallback. Primary-source priority is preserved for duplicate IDs.
+  var primary = fetchJSON(PRIMARY_JSON).then(fulfilled, rejected);
+  var fallback = FALLBACK_JSON ? fetchJSON(FALLBACK_JSON).then(fulfilled, rejected) : Promise.resolve({ok:false, data:null});
+  primary.then(function(p){
+    var item = findStream(p.data, id);
+    if (item) {
+      completeFetch();
+      applyStream(item);
+      return;
+    }
+    return fallback.then(function(f){
+      var fallbackItem = findStream(f.data, id);
+      completeFetch();
+      if (fallbackItem) applyStream(fallbackItem);
+      else showError(id, (p.ok || f.ok) ? null : 'network');
     });
+  }).catch(function(){
+    completeFetch();
+    showError(id, 'network');
+  });
 }
 
 var sid = getStreamId();
 if (sid) { fetchAndLoad(sid); } else { showError(null, 'missing'); }
 
-if (navigator.modelContext && typeof navigator.modelContext.registerTool === 'function') {
-  var openTelegramAbort = new AbortController();
-  navigator.modelContext.registerTool({
-    name: 'open_telegram_channel',
-    description: 'Open the official CnpTVOfficial Telegram channel in a new tab',
-    inputSchema: { type: 'object', properties: {} },
-    execute: function(){
-      openTab(CONTACT_LINK);
-      return { status: 'opened', url: CONTACT_LINK };
-    }
-  }, { signal: openTelegramAbort.signal });
-}
+// Optional experimental browser tooling must never break the normal website.
+try {
+  if (navigator.modelContext && typeof navigator.modelContext.registerTool === 'function') {
+    var openTelegramAbort = new AbortController();
+    navigator.modelContext.registerTool({
+      name: 'open_telegram_channel',
+      description: 'Open the official CnpTVOfficial Telegram channel in a new tab',
+      inputSchema: { type: 'object', properties: {} },
+      execute: function(){
+        openTab(CONTACT_LINK);
+        return { status: 'opened', url: CONTACT_LINK };
+      }
+    }, { signal: openTelegramAbort.signal });
+  }
+} catch(e){}
 
 })();
 </script>
-</body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a4d6304069b0d988',t:'MTc5MjQ4MDA3Ng=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
