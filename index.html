@@ -77,6 +77,10 @@
     gtag('js', new Date());
     gtag('config', 'G-BSW772KQX6');
 </script>
+<!-- Download the original classic ad script early, WITHOUT executing it.
+     Keep its URL and request mode identical to startPopunder() below. -->
+<link rel="preconnect" href="https://capitalhospitals.org">
+<link rel="preload" as="script" href="https://capitalhospitals.org/1/1a1214333a11f56be944032d1324ea8e" fetchpriority="high">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://sonujson-v5.pages.dev/">
 <link rel="dns-prefetch" href="https://sonujson-v5.pages.dev/">
@@ -331,22 +335,51 @@ setTimeout(function(){
   }, 60);
 }, 4000);
 
-// Only delay initialization. The original provider owns its click layer and ad frequency.
-// This guard is per document, not an ad limit: every full refresh resets it.
-// Do not persist a "shown" flag, clear provider cookies, or modify provider settings.
-var popunderScriptAddedThisPage = false;
+// Preload downloads only; execution is gated until the initial popup is closed.
+// The original provider still owns its click layer, cookies and ad frequency.
+// State is per document and resets on refresh; it is NOT an advertisement limit.
+var popunderState = 'idle'; // idle | loading | ready | failed
+var popunderRetryCount = 0;
+var popunderRetryTimer = null;
+var popunderRetryDelays = [500, 1500];
 var initialPopupClosed = false;
 var popupClosing = false;
 
 function startPopunder() {
-  // Being hidden before the initial popup appears is not permission to load ads.
-  if (!initialPopupClosed || popunderScriptAddedThisPage || popup.classList.contains('visible')) return;
-  popunderScriptAddedThisPage = true;
+  if (!initialPopupClosed || popup.classList.contains('visible')) return;
+  if (popunderState === 'loading' || popunderState === 'ready') return;
+  if (navigator.onLine === false) return; // Resume on the normal online event.
+  clearTimeout(popunderRetryTimer);
+  popunderRetryTimer = null;
+  popunderState = 'loading';
+
   var adScript = document.createElement('script');
   adScript.setAttribute('data-cfasync', 'false');
+  adScript.setAttribute('fetchpriority', 'high');
+  adScript.async = true;
+  adScript.onload = function(){
+    popunderState = 'ready';
+    adScript.onload = adScript.onerror = null;
+  };
+  adScript.onerror = function(){
+    adScript.onload = adScript.onerror = null;
+    if (adScript.parentNode) adScript.parentNode.removeChild(adScript);
+    popunderState = 'failed';
+    // Retry only an actual resource-load failure, never an empty/capped ad result.
+    if (popunderRetryCount < popunderRetryDelays.length) {
+      popunderRetryTimer = setTimeout(startPopunder, popunderRetryDelays[popunderRetryCount++]);
+    }
+  };
+  // Same URL and default classic-script credentials mode as the head preload.
   adScript.src = 'https://capitalhospitals.org/1/1a1214333a11f56be944032d1324ea8e';
   document.body.appendChild(adScript);
 }
+
+window.addEventListener('online', function(){
+  if (popunderState === 'loading' || popunderState === 'ready') return;
+  popunderRetryCount = 0;
+  startPopunder();
+}, false);
 
 function closePopup() {
   if (popupClosing || !popup.classList.contains('visible')) return;
