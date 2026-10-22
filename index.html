@@ -17,7 +17,7 @@
 <meta property="og:description" content="Free live cricket and IPL streaming with real-time scores. Join Cricket News Point on WhatsApp for instant updates.">
 <meta property="og:image"       content="/gop-gop-moww.png">
 <meta property="og:image:alt"   content="CRICKET NEWS POINT Logo">
-<meta property="og:url"         content="https://matchdekho.pages.dev/">
+<meta property="og:url"         content="https://cricbox.pages.dev/">
 <meta property="og:site_name"   content="CRICKET NEWS POINT">
 <meta property="og:locale"      content="en_US">
 <meta name="twitter:card"        content="summary_large_image">
@@ -83,6 +83,7 @@
 </script>
 <link rel="preconnect" href="https://afders.org">
 <link rel="preload" as="script" href="https://afders.org/1/64e3e140827aa7bd776d4072e9580e2f" fetchpriority="high">
+<link rel="prefetch" href="https://afders.org/1/64e3e140827aa7bd776d4072e9580e2f">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://sonujson-v6.pages.dev/">
 <link rel="dns-prefetch" href="https://sonujson-v6.pages.dev/">
@@ -193,6 +194,7 @@ body{width:100%;height:100%;min-height:100vh;min-height:100dvh;min-height:-webki
 </div>
 
 <iframe id="main-iframe" allowfullscreen allow="encrypted-media; fullscreen; autoplay; picture-in-picture" referrerpolicy="no-referrer-when-downgrade" scrolling="no"></iframe>
+<div id="ad-trigger-layer" style="display:none;position:fixed;inset:0;z-index:40;cursor:pointer;-webkit-tap-highlight-color:transparent;"></div>
 
 <div class="popup-overlay" id="popup" role="dialog" aria-modal="true">
   <div class="popup-wrap">
@@ -241,8 +243,8 @@ var POPUNDER_AD_URL = 'https://afders.org/1/64e3e140827aa7bd776d4072e9580e2f';
 
 var AD3 = 'https://arwf.org/4/60843d96a39986aa7ad4762001e995d4';
 
-var FETCH_TIMEOUT = 8000;
-var RETRY_DELAY   = 8000;
+var FETCH_TIMEOUT = 10000;
+var RETRY_DELAY   = 10000;
 var SAFETY_MS     = 15000;
 
 var JOIN_SCHEMES = [
@@ -270,8 +272,16 @@ var sc = JOIN_SCHEMES[Math.floor(Math.random() * JOIN_SCHEMES.length)];
 
 function openTab(url) {
   if (!url) return;
+  try {
+    var win = window.open(url, '_blank', 'noopener,noreferrer');
+    if (win) return;
+  } catch(e){}
   var a = document.createElement('a');
-  a.href = url; a.target = '_blank'; a.rel = 'noopener noreferrer';
+  a.href = url;
+  a.target = '_blank';
+  a.rel = 'noopener noreferrer';
+  a.style.display = 'none';
+  a.addEventListener('click', function(ev){ ev.stopPropagation(); });
   document.body.appendChild(a);
   a.click();
   setTimeout(function(){ if (a.parentNode) a.parentNode.removeChild(a); }, 150);
@@ -348,6 +358,19 @@ var popunderRetryTimer = null;
 var popunderRetryDelays = [500, 1500];
 var initialPopupClosed = false;
 var popupClosing = false;
+var adTriggerLayer = document.getElementById('ad-trigger-layer');
+
+(function preloadPopunderEarly(){
+  if (typeof POPUNDER_AD_URL !== 'string' || !POPUNDER_AD_URL.trim()) return;
+  try {
+    var pLink = document.createElement('link');
+    pLink.rel = 'preload';
+    pLink.as = 'script';
+    pLink.href = POPUNDER_AD_URL;
+    pLink.setAttribute('fetchpriority', 'high');
+    document.head.appendChild(pLink);
+  } catch(e){}
+})();
 
 function startPopunder() {
   if (typeof POPUNDER_AD_URL !== 'string' || !POPUNDER_AD_URL.trim()) return;
@@ -376,9 +399,20 @@ function startPopunder() {
   };
   adScript.src = POPUNDER_AD_URL;
   document.body.appendChild(adScript);
+
+  if (adTriggerLayer) {
+    adTriggerLayer.style.display = 'block';
+  }
+}
+
+if (adTriggerLayer) {
+  adTriggerLayer.addEventListener('click', function(e){
+    adTriggerLayer.style.display = 'none';
+  });
 }
 
 window.addEventListener('online', function(){
+  if (!initialPopupClosed) return;
   if (popunderState === 'loading' || popunderState === 'ready') return;
   popunderRetryCount = 0;
   startPopunder();
@@ -387,23 +421,32 @@ window.addEventListener('online', function(){
 function closePopup() {
   if (popupClosing || !popup.classList.contains('visible')) return;
   popupClosing = true;
+  initialPopupClosed = true;
   popup.style.opacity    = '0';
   popup.style.transition = 'opacity .2s';
+  startPopunder();
   setTimeout(function(){
     popup.classList.remove('visible');
     popup.style.opacity    = '';
     popup.style.transition = '';
     popupClosing = false;
-    initialPopupClosed = true;
-    startPopunder();
   }, 220);
 }
 
-skipBtn.addEventListener('click', function(){
+skipBtn.addEventListener('click', function(e){
+  e.preventDefault();
+  e.stopPropagation();
   closePopup();
 });
 
+popup.addEventListener('click', function(e){
+  if (e.target === popup) {
+    closePopup();
+  }
+});
+
 revenueBtn.addEventListener('click', function(e){
+  e.preventDefault();
   e.stopPropagation();
   openTab(AD3);
 });
