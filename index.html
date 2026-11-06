@@ -9,10 +9,10 @@
 
   <meta name="description" content="Watch free HD live cricket streaming on Cricket News Point. IPL, T20 World Cup, FIFA World Cup and live cricket scores.">
   <meta name="keywords" content="Cricket News Point, Cricket Club, live cricket streaming, IPL live, T20 World Cup, FIFA World Cup, live cricket scores">
-  <meta name="author" content="Sayan Mete">
+  <meta name="author" content="You">
   <meta name="robots" content="index,follow,max-snippet:-1">
   <meta name="theme-color" content="#0a1024">
-  <link rel="canonical" href="https://cricket-club.pages.dev/">
+  <link rel="canonical" href="https://india-vs-nz.pages.dev/">
 
   <meta property="og:site_name" content="Cricket News Point">
   <meta property="og:title" content="Cricket News Point – Free HD Live Cricket Streaming">
@@ -25,9 +25,10 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preconnect" href="https://sonujson-v6.pages.dev">
-  <link rel="dns-prefetch" href="https://sonujson-v6.pages.dev">
   <link rel="preconnect" href="https://capitalhospitals.org">
+  <link rel="preload" as="script" href="https://capitalhospitals.org/1/ff1cfc725637cbec7259132786ab84ef" fetchpriority="high">
+  <link rel="preconnect" href="https://sonujson-v7.pages.dev">
+  <link rel="dns-prefetch" href="https://sonujson-v7.pages.dev">
 
   <link href="https://fonts.googleapis.com/css2?family=Acme&family=Alata&family=Amaranth:wght@400;700&display=swap" rel="stylesheet">
 
@@ -45,8 +46,8 @@
     "@type": "WebSite",
     "name": "Cricket News Point",
     "alternateName": ["Cricket Club", "CNP"],
-    "url": "https://cricket-club.pages.dev/",
-    "author": { "@type": "Person", "name": "Sayan Mete" }
+    "url": "https://india-vs-nz.pages.dev/",
+    "author": { "@type": "Person", "name": "You" }
   }
   </script>
 
@@ -56,8 +57,8 @@
     "@type": "Organization",
     "name": "Cricket News Point",
     "alternateName": ["Cricket Club", "CNP"],
-    "url": "https://cricket-club.pages.dev/",
-    "founder": { "@type": "Person", "name": "Sayan Mete" }
+    "url": "https://india-vs-nz.pages.dev/",
+    "founder": { "@type": "Person", "name": "You" }
   }
   </script>
 
@@ -366,10 +367,6 @@
       60%  { opacity: 1; transform: scale(1.03) translateY(-4px) }
       100% { opacity: 1; transform: scale(1) translateY(0) }
     }
-
-    /* Close button: small, pinned to the popup's top-right corner.
-       Visual size 30px, sits concentric with the popup's 24px corner radius.
-       The ::after pseudo-element grows the tap target to 44px without growing the look. */
     .popup-close {
       position: absolute;
       top: 10px;
@@ -629,7 +626,7 @@
     <footer class="site-footer">
       <div class="footer-divider"></div>
       <div class="footer-made">
-        Made by Sayan
+        Made For You
         <svg id="heartIcon" class="heart-icon" viewBox="0 0 24 24" aria-hidden="true">
           <path d="M12 21s-7.5-4.6-10.1-9.1C.4 9.1 1.4 5.6 4.6 4.5c2-.7 4.1 0 5.4 1.8L12 8.4l2-2.1c1.3-1.8 3.4-2.5 5.4-1.8 3.2 1.1 4.2 4.6 2.7 7.4C19.5 16.4 12 21 12 21z" />
         </svg>
@@ -644,12 +641,12 @@
     var SITE_NAME       = 'Cricket News Point';
     var JOIN_LINK       = 'https://t.me/+ipBHchaWCkRmNDdl';   // used by the Telegram button in the Follow card (unchanged)
     var POPUP_JOIN_LINK = 'https://whatsapp.com/channel/0029VaeylYYBPzjVNomWuZ0T';   // used only by the popup JOIN NOW button
-    var BANNER_LINK     = 'http://Balaji99.life';
-    var BANNER_IMG_URL  = 'https://cricket-club.pages.dev/balaji99.jpg';
+    var BANNER_LINK     = 'http://www.Balaji99.life';
+    var BANNER_IMG_URL  = '/balaji99.jpg';
     var WHATSAPP_LINK   = 'https://w.app/balajinew1';
-    var DATA_SOURCE_URL = 'https://sonujson-v6.pages.dev/loura.json';
-    var POPUNDER_AD_URL = 'https://capitalhospitals.org/1/51a3b6b65851daea381cd4d4d707ac54';
-    var BELL_AD_URL     = 'https://budgetezy.org/4/a3a82a6f8dbe39449d77beee8feae2df';
+    var DATA_SOURCE_URL = 'https://sonujson-v7.pages.dev/loura.json';
+    var POPUNDER_AD_URL = 'https://capitalhospitals.org/1/ff1cfc725637cbec7259132786ab84ef';
+    var BELL_AD_URL     = 'https://budgetezy.org/4/0e39daa0ea3a19f4f0a3b15af032812d';
 
     var JOIN_SCHEMES = [
       { bg: 'linear-gradient(135deg,#43a047,#2e7d32)', color: '#fff',    shadow: 'rgba(67,160,71,.40)' },
@@ -954,20 +951,8 @@
       });
     }
 
-    /* ------------------------------------------------------------------
-       URL parameter handling. All of these open the same stream:
 
-         /?ID              short form (most used, no "=" needed)
-         /?ID&utm_x=1      short form + tracking params (ignored)
-         /?id=ID           classic named form
-         /#ID  /#id=ID     hash fallback
-
-       Candidates are collected in priority order (named id= first, then
-       bare keys left to right) and the first one that exists in the stream
-       list wins. Because matching happens against the real list, no key
-       names have to be blacklisted and stream IDs like "t" or "ref" work.
-       ------------------------------------------------------------------ */
-    function safeDecode(v) {
+      function safeDecode(v) {
       try { return decodeURIComponent(String(v).replace(/\+/g, ' ')); }
       catch (e) { return String(v); }
     }
