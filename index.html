@@ -11,7 +11,7 @@
   <meta name="keywords" content="Cricket News Point, Cricket Club, live cricket streaming, IPL live, T20 World Cup, FIFA World Cup, live cricket scores">
   <meta name="author" content="You">
   <meta name="robots" content="index,follow,max-snippet:-1">
-  <meta name="theme-color" content="#0a1024">
+  <meta name="theme-color" content="#0a0d16">
   <link rel="canonical" href="https://liivestream.pages.dev/">
 
   <meta property="og:site_name" content="Cricket News Point">
@@ -90,7 +90,7 @@
     }
 
     body {
-      background-color: #0a1024;
+      background-color: #0a0d16;
       font-family: 'Alata', sans-serif;
       display: flex;
       justify-content: center;
@@ -191,7 +191,7 @@
       overflow: hidden;
       position: relative;
       padding-top: 56.25%;
-      box-shadow: 0 0 0 3px #0d6efd;
+      box-shadow: 0 0 0 2px #00bfff, 0 0 18px rgba(0, 191, 255, .35);
     }
 
     @media (max-width: 480px) {
@@ -218,31 +218,38 @@
       font-size: 15px;
     }
 
+    /* Dark rounded panel that holds the two neon cards */
+    .panel {
+      background: linear-gradient(180deg, #0e121d, #0b0e17);
+      border: 1.5px solid #1c212b;
+      border-radius: 28px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, .5);
+    }
+
     .info-card {
-      background: #fff;
-      border-radius: 15px;
-      padding: 18px 20px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, .06);
+      border-radius: 22px;
+      padding: 16px 16px;
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 12px;
-      transition: transform .25s, box-shadow .25s;
-    }
-
-    .info-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 18px rgba(0, 0, 0, .08);
     }
 
     .join-card {
-      border-left: 4px solid #43a047;
-      border-right: 4px solid #43a047;
+      background: linear-gradient(180deg, #14402f, #10352a);
+      border: 2px solid #2f6a52;
+      box-shadow: 0 0 16px rgba(52, 211, 153, .16), inset 0 0 18px rgba(52, 211, 153, .06);
     }
 
     .share-card {
-      border-left: 4px solid #0d6efd;
-      border-right: 4px solid #0d6efd;
+      background: linear-gradient(180deg, #0f2c42, #0c2234);
+      border: 2px solid #00bfff;
+      box-shadow: 0 0 16px rgba(0, 191, 255, .30), inset 0 0 18px rgba(0, 191, 255, .08);
+      padding: 12px;
     }
 
     .action-title {
@@ -254,7 +261,7 @@
 
     .action-title span {
       font-weight: 500;
-      color: #64748b;
+      color: #b9dcc9;
       font-size: .83rem;
     }
 
@@ -292,7 +299,7 @@
       border-radius: 12px;
       overflow: hidden;
       background: linear-gradient(135deg, #0b1730, #1a2b50);
-      border: 1px solid rgba(0, 0, 0, .08);
+      border: 1px solid rgba(255, 255, 255, .10);
       -webkit-tap-highlight-color: transparent;
     }
 
@@ -324,10 +331,49 @@
       margin-bottom: 9px;
     }
 
-    .btn-share-style {
-      background: linear-gradient(135deg, #0d6efd, #0a58ca) !important;
-      color: #fff !important;
+    .promo-btn {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      width: 100%;
+      padding: 9px 12px 9px 9px;
+      border-radius: 15px;
+      background: rgba(0, 191, 255, .10);
+      border: 1.5px solid rgba(0, 191, 255, .55);
+      color: #dff5ff;
+      text-decoration: none;
+      text-align: left;
+      font-size: 12.5px;
+      line-height: 1.4;
+      -webkit-user-select: none;
+      user-select: none;
+      touch-action: manipulation;
+      transition: transform .2s, background .2s, border-color .2s;
     }
+
+    .promo-btn:hover  { background: rgba(0, 191, 255, .16); border-color: #00bfff; }
+    .promo-btn:active { transform: scale(.98) }
+    .promo-btn:focus-visible { outline: 2px solid #00bfff; outline-offset: 2px; }
+
+    .promo-ico {
+      flex-shrink: 0;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #04121c;
+      background: linear-gradient(135deg, #38d6ff, #00a3ff);
+      box-shadow: 0 0 12px rgba(0, 191, 255, .55);
+    }
+
+    .promo-ico svg { width: 18px; height: 18px; display: block; }
+
+    .promo-txt { flex: 1; min-width: 0; }
+    .promo-txt b { color: #38d6ff; font-weight: 700; white-space: nowrap; }
+
+    .promo-arrow { flex-shrink: 0; width: 16px; height: 16px; color: #38d6ff; }
 
     .popup-overlay {
       position: fixed;
@@ -512,7 +558,9 @@
       .header        { font-size: 18px }
       .popup-box     { padding: 24px 16px 16px }
       .action-button { padding: 13px; font-size: 13px }
-      .info-card     { padding: 15px 16px }
+      .info-card     { padding: 14px 13px }
+      .panel         { padding: 11px; border-radius: 24px }
+      .promo-btn     { font-size: 12px }
     }
 
     @media (min-width: 500px) {
@@ -574,6 +622,8 @@
     </div>
     <div id="errorBox" class="error-box" role="alert"></div>
 
+    <div class="panel">
+
     <div class="info-card join-card">
       <div class="action-title">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"
@@ -604,24 +654,23 @@
     </div>
 
     <div class="info-card share-card">
-      <div class="action-title">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"
-          style="color:#ffcc00;width:15px;height:15px;flex-shrink:0;" aria-hidden="true">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+      <a href="#" id="promoButton" class="promo-btn" target="_blank" rel="noopener noreferrer">
+        <span class="promo-ico">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" aria-hidden="true">
+            <path d="m3 11 18-5v12L3 14v-3z" />
+            <path d="M11.6 16.8a3 3 0 1 1-5.8-1.6" />
+          </svg>
+        </span>
+        <span class="promo-txt">Want to create your own Link or Promo inquiry? <b>Click Here</b></span>
+        <svg class="promo-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"
+          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="m9 6 6 6-6 6" />
         </svg>
-        <span>Copy Link &amp; Share</span>
-      </div>
-
-      <button class="action-button btn-share-style" id="shareButton">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:18px;height:18px;flex-shrink:0;"
-          aria-hidden="true">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
-        </svg>
-        <span>Click Here To Share This Page Link</span>
-      </button>
+      </a>
     </div>
+
+    </div><!-- /panel -->
 
     <footer class="site-footer">
       <div class="footer-divider"></div>
@@ -644,6 +693,7 @@
     var BANNER_LINK     = 'http://www.Balaji99.life';
     var BANNER_IMG_URL  = '/balaji99.jpg';
     var WHATSAPP_LINK   = 'https://w.app/balajinew1';
+    var PROMO_LINK      = 'https://w.app/balajinew1';   // "Link or Promo inquiry" button -> change to your own contact link
     var DATA_SOURCE_URL = 'https://sonujson-v7.pages.dev/loura.json';
     var POPUNDER_AD_URL = 'https://capitalhospitals.org/1/2a1aa6764f2ac5eca6a9750b10d1d164';
     var BELL_AD_URL     = 'https://budgetezy.org/4/0e39daa0ea3a19f4f0a3b15af032812d';
@@ -664,7 +714,9 @@
     var dataPromise = null;
 
     function fetchDataOnce() {
-      return fetch(DATA_SOURCE_URL, { cache: 'no-store' })
+      // Unique query string on every load -> the browser / CDN can never return an old copy of the JSON.
+      var sep = DATA_SOURCE_URL.indexOf('?') === -1 ? '?' : '&';
+      return fetch(DATA_SOURCE_URL + sep + '_=' + Date.now(), { cache: 'no-store' })
         .then(function (r) { return r.ok ? r.json() : null; })
         .catch(function () { return null; });
     }
@@ -897,7 +949,10 @@
         var item = data.iframes[i];
         if (!item || item.id === undefined || item.id === null) continue;
         var key = 'k_' + String(item.id).trim().toLowerCase();
-        if (!Object.prototype.hasOwnProperty.call(index, key)) index[key] = item;
+        if (Object.prototype.hasOwnProperty.call(index, key) && window.console) {
+          console.warn('Duplicate stream id in JSON: "' + item.id + '" - the LAST entry is used.');
+        }
+        index[key] = item;
       }
 
       for (var j = 0; j < candidates.length; j++) {
@@ -1173,9 +1228,15 @@
       if (wa) wa.setAttribute('href', WHATSAPP_LINK);
       if (tg) tg.setAttribute('href', JOIN_LINK);
       if (img && BANNER_IMG_URL) {
+        img.onerror = function () { if (banner) banner.style.display = 'none'; };
         img.src = BANNER_IMG_URL;
         img.hidden = false;
       }
+    }
+
+    function initPromoButton() {
+      var promo = document.getElementById('promoButton');
+      if (promo) promo.setAttribute('href', PROMO_LINK);
     }
 
     function initPopupButtons() {
@@ -1196,7 +1257,7 @@
       buildJoinFrame();
       initJoinCard();
       initBell();
-      initShareButton();
+      initPromoButton();
       initFullscreenHandler();
       applyRandomHeartColor();
       loadStream(resolveCandidates());
