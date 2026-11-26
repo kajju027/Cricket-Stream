@@ -191,7 +191,7 @@
       overflow: hidden;
       position: relative;
       padding-top: 56.25%;
-      box-shadow: 0 0 0 2px #00bfff, 0 0 18px rgba(0, 191, 255, .35);
+      box-shadow: 0 0 0 2px rgba(0, 191, 255, .55), 0 0 10px rgba(0, 191, 255, .12);
     }
 
     @media (max-width: 480px) {
@@ -240,16 +240,9 @@
     }
 
     .join-card {
-      background: linear-gradient(180deg, #14402f, #10352a);
-      border: 2px solid #2f6a52;
-      box-shadow: 0 0 16px rgba(52, 211, 153, .16), inset 0 0 18px rgba(52, 211, 153, .06);
-    }
-
-    .share-card {
-      background: linear-gradient(180deg, #0f2c42, #0c2234);
-      border: 2px solid #00bfff;
-      box-shadow: 0 0 16px rgba(0, 191, 255, .30), inset 0 0 18px rgba(0, 191, 255, .08);
-      padding: 12px;
+      background: linear-gradient(180deg, #151c2c, #0f1523);
+      border: 2px solid #2a3550;
+      box-shadow: inset 0 0 18px rgba(120, 150, 210, .05);
     }
 
     .action-title {
@@ -261,7 +254,7 @@
 
     .action-title span {
       font-weight: 500;
-      color: #b9dcc9;
+      color: #a9b6cc;
       font-size: .83rem;
     }
 
@@ -316,8 +309,10 @@
     }
 
     .btn-telegram {
-      background: linear-gradient(135deg, #2AABEE, #1E88C7) !important;
+      background: linear-gradient(135deg, #0b5ad9 0%, #3f6fb5 55%, #6482a9 100%) !important;
       color: #fff !important;
+      text-shadow: 0 1px 1px rgba(0, 0, 0, .28);
+      box-shadow: 0 4px 14px rgba(11, 90, 217, .26);
     }
 
     .popup-join-frame {
@@ -331,49 +326,86 @@
       margin-bottom: 9px;
     }
 
-    .promo-btn {
+    .btn-row {
       display: flex;
-      align-items: center;
+      flex-direction: column;
       gap: 11px;
       width: 100%;
-      padding: 9px 12px 9px 9px;
-      border-radius: 15px;
-      background: rgba(0, 191, 255, .10);
-      border: 1.5px solid rgba(0, 191, 255, .55);
-      color: #dff5ff;
+    }
+
+    .promo-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      padding: 12px 14px 12px 12px;
+      border-radius: 20px;
+      background: linear-gradient(180deg, #0f2c42, #0c2234);
+      border: 1.5px solid rgba(0, 191, 255, .6);
+      box-shadow: 0 0 12px rgba(0, 191, 255, .16), inset 0 0 16px rgba(0, 191, 255, .06);
+      color: #fff;
       text-decoration: none;
       text-align: left;
-      font-size: 12.5px;
-      line-height: 1.4;
       -webkit-user-select: none;
       user-select: none;
       touch-action: manipulation;
-      transition: transform .2s, background .2s, border-color .2s;
+      transition: transform .2s, border-color .2s, box-shadow .2s;
     }
 
-    .promo-btn:hover  { background: rgba(0, 191, 255, .16); border-color: #00bfff; }
-    .promo-btn:active { transform: scale(.98) }
-    .promo-btn:focus-visible { outline: 2px solid #00bfff; outline-offset: 2px; }
+    .promo-card:hover {
+      border-color: #00bfff;
+      box-shadow: 0 0 16px rgba(0, 191, 255, .26), inset 0 0 16px rgba(0, 191, 255, .08);
+    }
+
+    .promo-card:active { transform: scale(.985) }
+
+    .promo-card:focus-visible {
+      outline: 2px solid #00bfff;
+      outline-offset: 3px;
+    }
 
     .promo-ico {
       flex-shrink: 0;
-      width: 34px;
-      height: 34px;
+      width: 42px;
+      height: 42px;
+      border-radius: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #04202f;
+      background: linear-gradient(135deg, #46dcff, #0a8cf0);
+      box-shadow: 0 4px 12px rgba(0, 163, 255, .38), inset 0 1px 0 rgba(255, 255, 255, .45);
+    }
+
+    .promo-ico svg { width: 23px; height: 23px; display: block; }
+
+    .promo-txt {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .promo-title { font-size: 13.5px; line-height: 1.3; color: #fff; }
+    .promo-sub   { font-size: 11.5px; line-height: 1.3; color: #8fd9f7; }
+
+    .promo-go {
+      flex-shrink: 0;
+      width: 30px;
+      height: 30px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #04121c;
-      background: linear-gradient(135deg, #38d6ff, #00a3ff);
-      box-shadow: 0 0 12px rgba(0, 191, 255, .55);
+      background: rgba(0, 191, 255, .14);
+      border: 1px solid rgba(0, 191, 255, .45);
+      color: #5fdcff;
+      transition: transform .2s;
     }
 
-    .promo-ico svg { width: 18px; height: 18px; display: block; }
-
-    .promo-txt { flex: 1; min-width: 0; }
-    .promo-txt b { color: #38d6ff; font-weight: 700; white-space: nowrap; }
-
-    .promo-arrow { flex-shrink: 0; width: 16px; height: 16px; color: #38d6ff; }
+    .promo-card:hover .promo-go { transform: translateX(2px) }
+    .promo-go svg { width: 14px; height: 14px; display: block; }
 
     .popup-overlay {
       position: fixed;
@@ -560,7 +592,8 @@
       .action-button { padding: 13px; font-size: 13px }
       .info-card     { padding: 14px 13px }
       .panel         { padding: 11px; border-radius: 24px }
-      .promo-btn     { font-size: 12px }
+      .promo-card    { padding: 11px 12px 11px 11px }
+      .promo-title   { font-size: 13px }
     }
 
     @media (min-width: 500px) {
@@ -568,6 +601,43 @@
         padding: 16px;
         padding-bottom: max(16px, env(safe-area-inset-bottom));
       }
+    }
+
+    /* ---------- Laptop & desktop: bigger player, buttons side by side ---------- */
+    @media (min-width: 768px) {
+      body { padding: 24px 20px; }
+
+      /* Wide enough for a large player, but never taller than the screen */
+      .container {
+        max-width: 760px;
+        max-width: min(1200px, max(680px, calc((100vh - 170px) * 1.7778)));
+        gap: 16px;
+      }
+
+      .card          { padding: 18px 26px; border-radius: 18px; }
+      .header        { font-size: 27px; }
+      .bell-container { width: 44px; height: 44px; }
+      .bell-svg      { width: 21px; height: 21px; }
+      .video-wrapper { border-radius: 18px; }
+
+      .panel         { padding: 18px; gap: 18px; border-radius: 32px; }
+      .info-card     { padding: 22px 24px; border-radius: 24px; gap: 16px; }
+      .action-title span { font-size: .95rem; }
+
+      .join-banner   { max-width: 640px; }
+      .btn-row       { flex-direction: row; gap: 14px; }
+      .btn-row .action-button { flex: 1; }
+      .action-button { padding: 15px 18px; font-size: 15px; cursor: pointer; }
+      .action-button:hover { transform: translateY(-1px); filter: brightness(1.07); }
+
+      .promo-card    { padding: 15px 20px 15px 16px; gap: 16px; }
+      .promo-ico     { width: 48px; height: 48px; border-radius: 15px; }
+      .promo-title   { font-size: 15.5px; }
+      .promo-sub     { font-size: 13px; }
+      .promo-go      { width: 34px; height: 34px; }
+
+      .site-footer   { padding-top: 14px; }
+      .footer-made   { font-size: 13px; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -592,13 +662,13 @@
           <line x1="9.5" y1="2.5" x2="2.5" y2="9.5" stroke="#FFCC00" stroke-width="2" stroke-linecap="round"/>
         </svg>
       </button>
-      <div class="popup-title" id="popupTitle">Follow Us !!</div>
+      <div class="popup-title" id="popupTitle">Follow us on WhatsApp</div>
       <div class="popup-text">
-         Join our WhatsApp channel !!
+         Get live match links and updates first on our WhatsApp channel.
         <b>CRICKET NEWS POINT</b>
       </div>
       <iframe id="joinFrame" class="popup-join-frame" title="Join" scrolling="no"></iframe>
-      <button class="btn-popup btn-joined-main" id="btnAlreadyJoined">No, Thanks</button>
+      <button class="btn-popup btn-joined-main" id="btnAlreadyJoined">No, thanks</button>
     </div>
   </div>
 
@@ -631,18 +701,19 @@
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
             d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
         </svg>
-        <span>Follow us for Updates !!</span>
+        <span>Get live updates &amp; match links</span>
       </div>
 
       <a href="#" id="bannerLink" class="join-banner" target="_blank" rel="noopener noreferrer" aria-label="Join">
         <img id="bannerImg" alt="" hidden>
       </a>
 
+      <div class="btn-row">
       <a href="#" id="waButton" target="_blank" rel="noopener noreferrer" class="action-button btn-whatsapp">
         <svg fill="currentColor" viewBox="0 0 24 24" style="width:20px;height:20px;flex-shrink:0;" aria-hidden="true">
           <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
         </svg>
-        <span>Message on WhatsApp</span>
+        <span>Chat on WhatsApp</span>
       </a>
 
       <a href="#" id="tgButton" target="_blank" rel="noopener noreferrer" class="action-button btn-telegram">
@@ -651,24 +722,31 @@
         </svg>
         <span>Join Telegram Channel</span>
       </a>
+      </div>
     </div>
 
-    <div class="info-card share-card">
-      <a href="#" id="promoButton" class="promo-btn" target="_blank" rel="noopener noreferrer">
-        <span class="promo-ico">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-            stroke-linejoin="round" aria-hidden="true">
-            <path d="m3 11 18-5v12L3 14v-3z" />
-            <path d="M11.6 16.8a3 3 0 1 1-5.8-1.6" />
-          </svg>
-        </span>
-        <span class="promo-txt">Want to create your own Link or Promo inquiry? <b>Click Here</b></span>
-        <svg class="promo-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"
-          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="m9 6 6 6-6 6" />
+    <a href="#" id="promoButton" class="promo-card" target="_blank" rel="noopener noreferrer"
+      aria-label="Send an inquiry for your own link or promotion">
+      <span class="promo-ico">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+          stroke-linejoin="round" aria-hidden="true">
+          <path d="M3 10v4a1 1 0 0 0 1 1h2l7 4V5L6 9H4a1 1 0 0 0-1 1z" fill="currentColor" fill-opacity=".22" />
+          <path d="M7 15.4 8.1 19.5h2.1" />
+          <path d="M16.4 9.4a3.8 3.8 0 0 1 0 5.2" />
+          <path d="M19 6.9a7.4 7.4 0 0 1 0 10.2" />
         </svg>
-      </a>
-    </div>
+      </span>
+      <span class="promo-txt">
+        <span class="promo-title">Want your own link or promotion?</span>
+        <span class="promo-sub">Send us an inquiry</span>
+      </span>
+      <span class="promo-go" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"
+          stroke-linejoin="round">
+          <path d="m9 5 7 7-7 7" />
+        </svg>
+      </span>
+    </a>
 
     </div><!-- /panel -->
 
@@ -697,17 +775,6 @@
     var DATA_SOURCE_URL = 'https://sonujson-v7.pages.dev/loura.json';
     var POPUNDER_AD_URL = 'https://capitalhospitals.org/1/2a1aa6764f2ac5eca6a9750b10d1d164';
     var BELL_AD_URL     = 'https://budgetezy.org/4/0e39daa0ea3a19f4f0a3b15af032812d';
-
-    var JOIN_SCHEMES = [
-      { bg: 'linear-gradient(135deg,#43a047,#2e7d32)', color: '#fff',    shadow: 'rgba(67,160,71,.40)' },
-      { bg: 'linear-gradient(90deg,#1bcc26,#17b823)',  color: '#fff',    shadow: 'rgba(27,204,38,.38)' },
-      { bg: 'linear-gradient(90deg,#11f7e0,#0dcaba)',  color: '#003d36', shadow: 'rgba(17,247,224,.38)' },
-      { bg: 'linear-gradient(90deg,#ffd60a,#ffb703)',  color: '#3d2b00', shadow: 'rgba(255,190,10,.42)' },
-      { bg: 'linear-gradient(90deg,#ff5fa2,#ff2d78)',  color: '#fff',    shadow: 'rgba(255,93,162,.38)' },
-      { bg: 'linear-gradient(90deg,#8e5bff,#6a35ff)',  color: '#fff',    shadow: 'rgba(142,91,255,.38)' }
-    ];
-
-    var joinScheme = JOIN_SCHEMES[Math.floor(Math.random() * JOIN_SCHEMES.length)];
 
     var HEART_COLORS = ['#ff4d6d', '#ff006e', '#f72585', '#ff8fa3', '#ffd60a', '#06d6a0', '#4cc9f0', '#9b5de5', '#ff9e00', '#ff5fa2'];
 
@@ -837,13 +904,21 @@
         '<style>' +
         '*{margin:0;padding:0;box-sizing:border-box}' +
         'html,body{width:100%;background:transparent;overflow:hidden;-webkit-tap-highlight-color:transparent}' +
-        'button{width:100%;padding:14px;border:none;border-radius:12px;font-family:"Amaranth",sans-serif;' +
-        'font-size:17px;font-weight:700;letter-spacing:.6px;line-height:1;text-align:center;cursor:pointer;' +
+        'body{padding:1px 1px 7px}' +
+        'button{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;height:50px;padding:0 18px;' +
+        'border:1px solid rgba(255,255,255,.2);border-radius:9px;font-family:"Amaranth",sans-serif;font-size:16px;' +
+        'font-weight:700;letter-spacing:.8px;color:#fff;cursor:pointer;' +
+        'background:linear-gradient(180deg,#1ba7ff 0%,#0a7fd8 100%);' +
+        'box-shadow:inset 0 1px 0 rgba(255,255,255,.28),0 6px 16px rgba(0,150,255,.28);' +
         '-webkit-user-select:none;user-select:none;-webkit-appearance:none;appearance:none;touch-action:manipulation;' +
-        'display:block;transition:transform .18s;background:' + joinScheme.bg + ';box-shadow:0 5px 20px ' + joinScheme.shadow + ';color:' + joinScheme.color + '}' +
-        'button:active{transform:scale(.95)}' +
+        'transition:transform .18s,filter .18s}' +
+        'button:hover{filter:brightness(1.07)}' +
+        'button:active{transform:scale(.97)}' +
+        'svg{width:19px;height:19px;flex-shrink:0;display:block}' +
         '</style></head><body>' +
-        '<button type="button" id="jb">JOIN NOW</button>' +
+        '<button type="button" id="jb">' +
+        '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>' +
+        '<span>Join Now</span></button>' +
         '<script>(function(){' +
         'document.getElementById("jb").addEventListener("click",function(e){' +
         'e.preventDefault();' +
@@ -967,7 +1042,7 @@
       var titleEl = document.getElementById('pageTitle');
 
       if (!candidates.length) {
-        showError('NO STREAM SELECTED', 'No stream ID found in this link. Open the link exactly as shared.');
+        showError('NO STREAM SELECTED', 'This link has no stream ID. Please open the full link exactly as it was shared.');
         return;
       }
 
@@ -975,7 +1050,7 @@
 
       prefetchData().then(function (data) {
         if (!data) {
-          showError('CONNECTION ERROR', 'Could not load the stream list. Check your internet connection and refresh the page.');
+          showError('CONNECTION ERROR', 'We couldn\u2019t load the stream list. Please check your internet connection and refresh the page.');
           return;
         }
 
@@ -1001,7 +1076,7 @@
           if (titleEl) titleEl.textContent = streamName;
           document.title = streamName + ' \u2013 ' + SITE_NAME;
         } else {
-          showError('STREAM NOT FOUND', 'Stream Not Found');
+          showError('STREAM NOT FOUND', 'We couldn\u2019t find this stream. The link may be incorrect or the match may have ended.');
         }
       });
     }
