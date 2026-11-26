@@ -72,8 +72,30 @@
       box-sizing: border-box;
     }
 
-    /* Buttons do NOT inherit the page font by default (browsers use the system UI font),
-       while <a> links do. This makes every control use the site font. */
+    :root {
+      --page-bg:   #0a0d16;
+      --page-glow: rgba(13, 110, 253, .16);
+
+      --video-border: rgba(0, 191, 255, .55);
+
+      --follow-card-bg:     linear-gradient(180deg, #151c2c, #0f1523);
+      --follow-card-border: #2a3550;
+
+      --poster-bg:     #ffffff;
+      --poster-pad:    0px;
+      --poster-border: rgba(255, 255, 255, .12);
+
+      --whatsapp-bg: linear-gradient(135deg, #25d366, #16a34a);
+      --telegram-bg: linear-gradient(135deg, #229ff2, #0b5ad9);
+
+      --promo-box-bg:     linear-gradient(180deg, #0f2c42, #0c2234);
+      --promo-box-border: #00bfff;
+      --promo-btn-bg:     rgba(0, 191, 255, .09);
+      --promo-btn-border: rgba(0, 191, 255, .45);
+    }
+
+    html { color-scheme: dark; }
+
     button,
     input,
     textarea,
@@ -90,7 +112,9 @@
     }
 
     body {
-      background-color: #0a0d16;
+      background-color: var(--page-bg);
+      background-image: radial-gradient(ellipse 85% 360px at 50% 0, var(--page-glow), transparent 72%);
+      background-repeat: no-repeat;
       font-family: 'Alata', sans-serif;
       display: flex;
       justify-content: center;
@@ -140,7 +164,6 @@
       flex: 1;
       text-align: center;
       word-break: break-word;
-      /* keep long titles clear of the bell button (40px + gap) */
       padding: 0 48px;
     }
 
@@ -191,7 +214,7 @@
       overflow: hidden;
       position: relative;
       padding-top: 56.25%;
-      box-shadow: 0 0 0 2px rgba(0, 191, 255, .55), 0 0 10px rgba(0, 191, 255, .12);
+      box-shadow: 0 0 0 2px var(--video-border), 0 0 10px rgba(0, 191, 255, .10);
     }
 
     @media (max-width: 480px) {
@@ -218,7 +241,6 @@
       font-size: 15px;
     }
 
-    /* Dark rounded panel that holds the two neon cards */
     .panel {
       background: linear-gradient(180deg, #0e121d, #0b0e17);
       border: 1.5px solid #1c212b;
@@ -227,7 +249,7 @@
       display: flex;
       flex-direction: column;
       gap: 14px;
-      box-shadow: 0 12px 32px rgba(0, 0, 0, .5);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, .4);
     }
 
     .info-card {
@@ -240,9 +262,15 @@
     }
 
     .join-card {
-      background: linear-gradient(180deg, #151c2c, #0f1523);
-      border: 2px solid #2a3550;
-      box-shadow: inset 0 0 18px rgba(120, 150, 210, .05);
+      background: var(--follow-card-bg);
+      border: 2px solid var(--follow-card-border);
+    }
+
+    .promo-box {
+      background: var(--promo-box-bg);
+      border: 2px solid var(--promo-box-border);
+      box-shadow: 0 0 14px rgba(0, 191, 255, .22);
+      padding: 12px;
     }
 
     .action-title {
@@ -289,10 +317,11 @@
       display: block;
       width: 100%;
       aspect-ratio: 1792 / 592;
+      padding: var(--poster-pad);
       border-radius: 12px;
       overflow: hidden;
-      background: linear-gradient(135deg, #0b1730, #1a2b50);
-      border: 1px solid rgba(255, 255, 255, .10);
+      background: var(--poster-bg);
+      border: 1px solid var(--poster-border);
       -webkit-tap-highlight-color: transparent;
     }
 
@@ -301,29 +330,21 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
+      border-radius: max(0px, calc(11px - var(--poster-pad)));
     }
 
     .btn-whatsapp {
-      background: linear-gradient(135deg, #25d366, #128c7e) !important;
+      background: var(--whatsapp-bg) !important;
       color: #fff !important;
+      text-shadow: 0 1px 1px rgba(0, 0, 0, .22);
+      box-shadow: 0 4px 14px rgba(37, 211, 102, .25);
     }
 
     .btn-telegram {
-      background: linear-gradient(135deg, #0b5ad9 0%, #3f6fb5 55%, #6482a9 100%) !important;
+      background: var(--telegram-bg) !important;
       color: #fff !important;
-      text-shadow: 0 1px 1px rgba(0, 0, 0, .28);
-      box-shadow: 0 4px 14px rgba(11, 90, 217, .26);
-    }
-
-    .popup-join-frame {
-      width: 100%;
-      height: 46px;
-      border: 0;
-      outline: 0;
-      display: block;
-      overflow: hidden;
-      background: transparent;
-      margin-bottom: 9px;
+      text-shadow: 0 1px 1px rgba(0, 0, 0, .22);
+      box-shadow: 0 4px 14px rgba(34, 159, 242, .28);
     }
 
     .btn-row {
@@ -338,23 +359,22 @@
       align-items: center;
       gap: 12px;
       width: 100%;
-      padding: 12px 14px 12px 12px;
-      border-radius: 20px;
-      background: linear-gradient(180deg, #0f2c42, #0c2234);
-      border: 1.5px solid rgba(0, 191, 255, .6);
-      box-shadow: 0 0 12px rgba(0, 191, 255, .16), inset 0 0 16px rgba(0, 191, 255, .06);
+      padding: 10px 12px 10px 10px;
+      border-radius: 14px;
+      background: var(--promo-btn-bg);
+      border: 1px solid var(--promo-btn-border);
       color: #fff;
       text-decoration: none;
       text-align: left;
       -webkit-user-select: none;
       user-select: none;
       touch-action: manipulation;
-      transition: transform .2s, border-color .2s, box-shadow .2s;
+      transition: transform .2s, border-color .2s, background .2s;
     }
 
     .promo-card:hover {
       border-color: #00bfff;
-      box-shadow: 0 0 16px rgba(0, 191, 255, .26), inset 0 0 16px rgba(0, 191, 255, .08);
+      background: rgba(0, 191, 255, .14);
     }
 
     .promo-card:active { transform: scale(.985) }
@@ -432,11 +452,8 @@
       text-align: center;
       position: relative;
       box-shadow:
-        0 0 12px rgba(0, 191, 255, .34),
-        0 0 32px rgba(0, 191, 255, .14),
-        inset 0 0 10px rgba(0, 191, 255, .10),
-        inset 0 0 0 1px rgba(120, 215, 255, .10),
-        0 24px 60px rgba(0, 0, 0, .6);
+        0 0 14px rgba(0, 191, 255, .30),
+        0 18px 40px rgba(0, 0, 0, .55);
       animation: popIn .5s cubic-bezier(.175, .885, .32, 1.275) both;
     }
 
@@ -506,18 +523,15 @@
     }
 
     .popup-text {
-      color: #a0a0a8;
-      font-size: clamp(12.5px, 3.8vw, 14px);
-      line-height: 1.58;
-      margin-bottom: 20px;
+      margin-bottom: 22px;
     }
 
     .popup-text b {
       color: #fff;
       font-family: 'Amaranth', sans-serif;
-      font-size: clamp(15px, 4.6vw, 17px);
+      font-size: clamp(16px, 4.8vw, 18px);
+      letter-spacing: .4px;
       display: block;
-      margin-top: 6px;
     }
 
     .btn-popup {
@@ -536,20 +550,48 @@
     .btn-popup:active { transform: scale(.95) }
 
     .btn-join-main {
-      font-size: clamp(16px, 4.8vw, 18px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      height: 50px;
+      padding: 0 18px;
+      margin-bottom: 10px;
+      border-radius: 9px;
+      font-size: 16px;
       font-weight: 700;
-      margin-bottom: 7px;
+      letter-spacing: .8px;
+      color: #fff;
+      background: linear-gradient(180deg, #1ba7ff, #0a7fd8);
+      box-shadow: 0 5px 18px rgba(0, 150, 255, .30);
+      transition: transform .18s, filter .18s;
+    }
+
+    .btn-join-main:hover { filter: brightness(1.07) }
+
+    .btn-join-main svg {
+      width: 19px;
+      height: 19px;
+      flex-shrink: 0;
       display: block;
     }
 
     .btn-joined-main {
-      background: transparent;
-      color: #7d808c;
-      font-size: 12px;
-      padding: 7px 14px;
-      width: auto;
-      margin: 0 auto;
       display: block;
+      height: 42px;
+      padding: 0 14px;
+      margin: 0;
+      background: transparent;
+      color: #aab0bd;
+      font-size: 14px;
+      border: 1px solid rgba(255, 255, 255, .14);
+      border-radius: 9px;
+      transition: color .18s, border-color .18s, transform .18s;
+    }
+
+    .btn-joined-main:hover {
+      color: #fff;
+      border-color: rgba(255, 255, 255, .32);
     }
 
     .site-footer {
@@ -603,11 +645,9 @@
       }
     }
 
-    /* ---------- Laptop & desktop: bigger player, buttons side by side ---------- */
     @media (min-width: 768px) {
       body { padding: 24px 20px; }
 
-      /* Wide enough for a large player, but never taller than the screen */
       .container {
         max-width: 760px;
         max-width: min(1200px, max(680px, calc((100vh - 170px) * 1.7778)));
@@ -630,7 +670,8 @@
       .action-button { padding: 15px 18px; font-size: 15px; cursor: pointer; }
       .action-button:hover { transform: translateY(-1px); filter: brightness(1.07); }
 
-      .promo-card    { padding: 15px 20px 15px 16px; gap: 16px; }
+      .promo-box     { padding: 16px; }
+      .promo-card    { padding: 14px 20px 14px 14px; gap: 16px; }
       .promo-ico     { width: 48px; height: 48px; border-radius: 15px; }
       .promo-title   { font-size: 15.5px; }
       .promo-sub     { font-size: 13px; }
@@ -662,12 +703,15 @@
           <line x1="9.5" y1="2.5" x2="2.5" y2="9.5" stroke="#FFCC00" stroke-width="2" stroke-linecap="round"/>
         </svg>
       </button>
-      <div class="popup-title" id="popupTitle">Follow us on WhatsApp</div>
-      <div class="popup-text">
-        <b>CRICKET NEWS POINT</b>
-      </div>
-      <iframe id="joinFrame" class="popup-join-frame" title="Join" scrolling="no"></iframe>
-      <button class="btn-popup btn-joined-main" id="btnAlreadyJoined">No, thanks</button>
+      <div class="popup-title" id="popupTitle">Follow Us</div>
+      <div class="popup-text"><b>CRICKET NEWS POINT</b></div>
+      <button type="button" class="btn-popup btn-join-main" id="btnJoinNow">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+        </svg>
+        <span>JOIN NOW</span>
+      </button>
+      <button type="button" class="btn-popup btn-joined-main" id="btnAlreadyJoined">Continue Watching</button>
     </div>
   </div>
 
@@ -700,7 +744,7 @@
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
             d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
         </svg>
-        <span>Get live updates &amp; match links</span>
+        <span>Get Live Updates &amp; Matchs Links</span>
       </div>
 
       <a href="#" id="bannerLink" class="join-banner" target="_blank" rel="noopener noreferrer" aria-label="Join">
@@ -724,6 +768,7 @@
       </div>
     </div>
 
+    <div class="info-card promo-box">
     <a href="#" id="promoButton" class="promo-card" target="_blank" rel="noopener noreferrer"
       aria-label="Send an inquiry for your own link or promotion">
       <span class="promo-ico">
@@ -736,8 +781,8 @@
         </svg>
       </span>
       <span class="promo-txt">
-        <span class="promo-title">Want your own link or promotion?</span>
-        <span class="promo-sub">Send us an inquiry</span>
+        <span class="promo-title">Want Your Own Live Link Or Promotion ?</span>
+        <span class="promo-sub">Click Here to Contact Us</span>
       </span>
       <span class="promo-go" aria-hidden="true">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"
@@ -746,8 +791,9 @@
         </svg>
       </span>
     </a>
+    </div>
 
-    </div><!-- /panel -->
+    </div>
 
     <footer class="site-footer">
       <div class="footer-divider"></div>
@@ -765,22 +811,31 @@
     'use strict';
 
     var SITE_NAME       = 'Cricket News Point';
-    var JOIN_LINK       = 'https://t.me/+ipBHchaWCkRmNDdl';   // used by the Telegram button in the Follow card (unchanged)
-    var POPUP_JOIN_LINK = 'https://whatsapp.com/channel/0029VaeylYYBPzjVNomWuZ0T';   // used only by the popup JOIN NOW button
+    var JOIN_LINK       = 'https://t.me/+ipBHchaWCkRmNDdl';
+    var POPUP_JOIN_LINK = 'https://whatsapp.com/channel/0029VaeylYYBPzjVNomWuZ0T';
     var BANNER_LINK     = 'http://www.Balaji99.life';
     var BANNER_IMG_URL  = '/balaji99.jpg';
     var WHATSAPP_LINK   = 'https://w.app/balajinew1';
-    var PROMO_LINK      = 'https://w.app/balajinew1';   // "Link or Promo inquiry" button -> change to your own contact link
+    var PROMO_LINK      = 'https://t.me/CnpCare_Bot';
     var DATA_SOURCE_URL = 'https://sonujson-v7.pages.dev/loura.json';
     var POPUNDER_AD_URL = 'https://capitalhospitals.org/1/2a1aa6764f2ac5eca6a9750b10d1d164';
     var BELL_AD_URL     = 'https://budgetezy.org/4/0e39daa0ea3a19f4f0a3b15af032812d';
+
+    var JOIN_SCHEMES = [
+      { bg: 'linear-gradient(135deg,#43a047,#2e7d32)', color: '#fff',    shadow: 'rgba(67,160,71,.40)' },
+      { bg: 'linear-gradient(90deg,#1bcc26,#17b823)',  color: '#fff',    shadow: 'rgba(27,204,38,.38)' },
+      { bg: 'linear-gradient(90deg,#11f7e0,#0dcaba)',  color: '#003d36', shadow: 'rgba(17,247,224,.38)' },
+      { bg: 'linear-gradient(90deg,#ffd60a,#ffb703)',  color: '#3d2b00', shadow: 'rgba(255,190,10,.42)' },
+      { bg: 'linear-gradient(90deg,#ff5fa2,#ff2d78)',  color: '#fff',    shadow: 'rgba(255,93,162,.38)' },
+      { bg: 'linear-gradient(90deg,#8e5bff,#6a35ff)',  color: '#fff',    shadow: 'rgba(142,91,255,.38)' }
+    ];
+    var joinScheme = JOIN_SCHEMES[Math.floor(Math.random() * JOIN_SCHEMES.length)];
 
     var HEART_COLORS = ['#ff4d6d', '#ff006e', '#f72585', '#ff8fa3', '#ffd60a', '#06d6a0', '#4cc9f0', '#9b5de5', '#ff9e00', '#ff5fa2'];
 
     var dataPromise = null;
 
     function fetchDataOnce() {
-      // Unique query string on every load -> the browser / CDN can never return an old copy of the JSON.
       var sep = DATA_SOURCE_URL.indexOf('?') === -1 ? '?' : '&';
       return fetch(DATA_SOURCE_URL + sep + '_=' + Date.now(), { cache: 'no-store' })
         .then(function (r) { return r.ok ? r.json() : null; })
@@ -891,70 +946,14 @@
       }, 220);
     }
 
-    function buildJoinFrame() {
-      var frame = document.getElementById('joinFrame');
-      if (!frame) return;
-      var html =
-        '<!DOCTYPE html><html><head><meta charset="UTF-8">' +
-        '<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">' +
-        '<link rel="preconnect" href="https://fonts.googleapis.com">' +
-        '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>' +
-        '<link href="https://fonts.googleapis.com/css2?family=Amaranth:wght@700&display=swap" rel="stylesheet">' +
-        '<style>' +
-        '*{margin:0;padding:0;box-sizing:border-box}' +
-        'html,body{width:100%;background:transparent;overflow:hidden;-webkit-tap-highlight-color:transparent}' +
-        'body{padding:1px 1px 7px}' +
-        'button{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;height:50px;padding:0 18px;' +
-        'border:1px solid rgba(255,255,255,.2);border-radius:9px;font-family:"Amaranth",sans-serif;font-size:16px;' +
-        'font-weight:700;letter-spacing:.8px;color:#fff;cursor:pointer;' +
-        'background:linear-gradient(180deg,#1ba7ff 0%,#0a7fd8 100%);' +
-        'box-shadow:inset 0 1px 0 rgba(255,255,255,.28),0 6px 16px rgba(0,150,255,.28);' +
-        '-webkit-user-select:none;user-select:none;-webkit-appearance:none;appearance:none;touch-action:manipulation;' +
-        'transition:transform .18s,filter .18s}' +
-        'button:hover{filter:brightness(1.07)}' +
-        'button:active{transform:scale(.97)}' +
-        'svg{width:19px;height:19px;flex-shrink:0;display:block}' +
-        '</style></head><body>' +
-        '<button type="button" id="jb">' +
-        '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>' +
-        '<span>Join Now</span></button>' +
-        '<script>(function(){' +
-        'document.getElementById("jb").addEventListener("click",function(e){' +
-        'e.preventDefault();' +
-        'try{parent.postMessage({type:"joinNowClicked"},"*");}catch(e){}' +
-        '},false);' +
-        'function reportHeight(){try{parent.postMessage({type:"joinFrameHeight",height:document.body.scrollHeight},"*");}catch(e){}}' +
-        'window.addEventListener("load",function(){' +
-        'reportHeight();' +
-        'if(document.fonts&&document.fonts.ready){document.fonts.ready.then(reportHeight);}else{setTimeout(reportHeight,300);}' +
-        '});' +
-        'window.addEventListener("message",function(e){' +
-        'if(e&&e.data&&e.data.type==="measureNow")reportHeight();' +
-        '},false);' +
-        '})();<\/script>' +
-        '</body></html>';
-      frame.setAttribute('srcdoc', html);
-      setTimeout(function () {
-        try { frame.contentWindow.postMessage({ type: 'measureNow' }, '*'); } catch (e) {}
-      }, 300);
-    }
-
-    window.addEventListener('message', function (ev) {
-      var frame = document.getElementById('joinFrame');
-      if (!frame || ev.source !== frame.contentWindow) return;
-      var d = ev.data;
-      if (!d || typeof d !== 'object') return;
-      if (d.type === 'joinNowClicked') {
-        if (isMobileDevice()) {
-          window.location.href = POPUP_JOIN_LINK;
-        } else {
-          openTab(POPUP_JOIN_LINK);
-        }
-        closePopup();
-      } else if (d.type === 'joinFrameHeight' && typeof d.height === 'number' && d.height > 0) {
-        frame.style.height = Math.max(40, d.height) + 'px';
+    function joinNow() {
+      if (isMobileDevice()) {
+        window.location.href = POPUP_JOIN_LINK;
+      } else {
+        openTab(POPUP_JOIN_LINK);
       }
-    }, false);
+      closePopup();
+    }
 
     function alreadyJoined() {
       closePopup();
@@ -975,15 +974,14 @@
       shimmer.setAttribute('aria-hidden', 'true');
       shimmer.style.cssText = [
         'position:absolute', 'top:0', 'right:0', 'bottom:0', 'left:0', 'border-radius:inherit',
-        'background:linear-gradient(90deg,#101a2e 25%,#1e2c4a 50%,#101a2e 75%)',
-        'background-size:200% 100%', 'animation:shimmerSlide 1.4s linear infinite',
+        'background:#16223a', 'animation:shimmerPulse 1.2s ease-in-out infinite alternate',
         'z-index:2', 'pointer-events:none'
       ].join(';');
 
       if (!document.getElementById('shimmerStyle')) {
         var st = document.createElement('style');
         st.id = 'shimmerStyle';
-        st.textContent = '@keyframes shimmerSlide{0%{background-position:200% 0}100%{background-position:-200% 0}}';
+        st.textContent = '@keyframes shimmerPulse{from{opacity:.55}to{opacity:1}}';
         document.head.appendChild(st);
       }
 
@@ -1196,7 +1194,6 @@
 
         if (navigator.share) {
           navigator.share({ title: title, text: text, url: url }).catch(function (err) {
-            // Cancelled by the user: do nothing. Any other failure: copy the link instead.
             if (err && err.name === 'AbortError') return;
             copyLink(url);
           });
@@ -1278,7 +1275,6 @@
 
         try {
           if (fsEl) {
-            // lock() returns undefined on some older browsers, so guard before .catch()
             var p = orientation.lock && orientation.lock('landscape');
             if (p && typeof p.catch === 'function') p.catch(function () {});
           } else if (orientation.unlock) {
@@ -1314,6 +1310,14 @@
     }
 
     function initPopupButtons() {
+      var btnJoin = document.getElementById('btnJoinNow');
+      if (btnJoin) {
+        btnJoin.style.background = joinScheme.bg;
+        btnJoin.style.color = joinScheme.color;
+        btnJoin.style.boxShadow = '0 5px 18px ' + joinScheme.shadow;
+        btnJoin.addEventListener('click', joinNow);
+      }
+
       var btnJoined = document.getElementById('btnAlreadyJoined');
       if (btnJoined) btnJoined.addEventListener('click', alreadyJoined);
 
@@ -1326,9 +1330,6 @@
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-      initPopupButtons();
-
-      buildJoinFrame();
       initJoinCard();
       initBell();
       initPromoButton();
@@ -1336,6 +1337,8 @@
       applyRandomHeartColor();
       loadStream(resolveCandidates());
     });
+
+    initPopupButtons();
   </script>
 </body>
 
