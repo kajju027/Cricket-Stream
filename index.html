@@ -72,22 +72,42 @@
       box-sizing: border-box;
     }
 
+    /* =====================================================================
+       EASY COLOR SETTINGS  -  change a colour code here, the whole page updates
+       (#ffffff = white, #000000 = black, #ff0000 = red, transparent = no colour)
+       ===================================================================== */
     :root {
+      /* ---- PAGE BACKGROUND ---- */
       --page-bg:   #0a0d16;
       --page-glow: rgba(13, 110, 253, .16);
 
+      /* ---- VIDEO PLAYER outline ---- */
       --video-border: rgba(0, 191, 255, .55);
 
+      /* ---- BIG DARK BOX behind the two cards (it has NO border now) ----
+         Want it invisible?  use:  --panel-bg: transparent;  */
+      --panel-bg: linear-gradient(180deg, #0e121d, #0b0e17);
+
+      /* ---- "FOLLOW" CARD (holds poster + WhatsApp + Telegram buttons) ---- */
       --follow-card-bg:     linear-gradient(180deg, #151c2c, #0f1523);
       --follow-card-border: #2a3550;
 
-      --poster-bg:     #ffffff;
+      /* =================================================================
+         >>>>>>>>>>  POSTER BACKGROUND COLOUR  -  CHANGE HERE  <<<<<<<<<<
+         This is the colour AROUND / BEHIND the poster image.
+           transparent  = automatically the SAME as the card behind it (recommended)
+           #0f1523      = any colour code you like (e.g. to test manually)
+         --poster-pad : thickness of the coloured frame around the poster (0px = none)
+         ================================================================= */
+      --poster-bg:     transparent;
       --poster-pad:    0px;
-      --poster-border: rgba(255, 255, 255, .12);
+      --poster-border: transparent;
 
+      /* ---- WHATSAPP & TELEGRAM buttons ---- */
       --whatsapp-bg: linear-gradient(135deg, #25d366, #16a34a);
       --telegram-bg: linear-gradient(135deg, #229ff2, #0b5ad9);
 
+      /* ---- PROMOTION BOX (separate box at the bottom) ---- */
       --promo-box-bg:     linear-gradient(180deg, #0f2c42, #0c2234);
       --promo-box-border: #00bfff;
       --promo-btn-bg:     rgba(0, 191, 255, .09);
@@ -242,14 +262,13 @@
     }
 
     .panel {
-      background: linear-gradient(180deg, #0e121d, #0b0e17);
-      border: 1.5px solid #1c212b;
+      background: var(--panel-bg);
+      border: none;
       border-radius: 28px;
       padding: 14px;
       display: flex;
       flex-direction: column;
       gap: 14px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, .4);
     }
 
     .info-card {
@@ -321,6 +340,7 @@
       border-radius: 12px;
       overflow: hidden;
       background: var(--poster-bg);
+      background-clip: padding-box;
       border: 1px solid var(--poster-border);
       -webkit-tap-highlight-color: transparent;
     }
@@ -578,12 +598,13 @@
 
     .btn-joined-main {
       display: block;
-      height: 42px;
+      width: 90%;          /* only the two sides are a little smaller */
+      height: 42px;        /* height stays exactly as it was */
       padding: 0 14px;
-      margin: 0;
+      margin: 0 auto;
       background: transparent;
       color: #aab0bd;
-      font-size: 14px;
+      font-size: 13px;     /* text a little smaller (was 14px) */
       border: 1px solid rgba(255, 255, 255, .14);
       border-radius: 9px;
       transition: color .18s, border-color .18s, transform .18s;
@@ -781,7 +802,7 @@
         </svg>
       </span>
       <span class="promo-txt">
-        <span class="promo-title">Want Your Own Live Link Or Promotion ?</span>
+        <span class="promo-title">Want Your Own Live Link Or Promotion&nbsp;?</span>
         <span class="promo-sub">Click Here to Contact Us</span>
       </span>
       <span class="promo-go" aria-hidden="true">
