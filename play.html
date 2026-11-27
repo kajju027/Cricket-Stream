@@ -12,7 +12,7 @@
 <link rel="apple-touch-icon" href="/gop-gop-moww.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&amp;family=Barlow+Condensed:wght@600;700;800&amp;display=swap" rel="stylesheet">
 
 <style>
 /* ══════════════════════════════════════════
@@ -49,7 +49,7 @@ body {
   font: 500 14px/1.55 Barlow, system-ui, -apple-system, 'Segoe UI', sans-serif;
   min-height: 100dvh;
   background: var(--bg);
-  /* reserve space for fixed bottom bar */
+  /* Reserve space for the fixed bottom bar */
   padding-bottom: calc(90px + env(safe-area-inset-bottom, 0px));
 }
 
@@ -117,16 +117,23 @@ a:focus-visible { outline: 2px solid var(--ac); outline-offset: 2px; }
 #jwp .jwplayer        { width: 100% !important; height: 100% !important; }
 #jwp .jw-wrapper      { position: absolute !important; inset: 0 !important; }
 #jwp .jw-media video  { width: 100% !important; height: 100% !important; object-fit: contain; }
-/* Hide JW Player UI when cover is showing */
+
+/* Force Plyr to fill the container (Plyr fallback player) */
+#jwp .plyr,
+#jwp .plyr__video-wrapper { width: 100% !important; height: 100% !important; }
+#jwp .plyr video          { width: 100% !important; height: 100% !important; object-fit: contain; }
+
+/* Hide the player UI while the cover is showing */
 .stage:not([data-s=play]) #jwp { visibility: hidden; }
 
-/* ── HLS.js fallback video element ── */
-#hlsVid {
+/* ── Fallback video elements ── */
+#hlsVid, #plyrVid {
   position: absolute; inset: 0;
   width: 100%; height: 100%;
   object-fit: contain; background: #000;
 }
-.stage:not([data-s=play]) #hlsVid { visibility: hidden; }
+.stage:not([data-s=play]) #hlsVid,
+.stage:not([data-s=play]) #plyrVid { visibility: hidden; }
 
 /* ══════════════════════════════════════════
    COVER OVERLAY  (shown when NOT playing)
@@ -140,7 +147,7 @@ a:focus-visible { outline: 2px solid var(--ac); outline-offset: 2px; }
 }
 .stage[data-s=play] .cover { display: none; }
 
-/* Match thumbnail shown as background in cover */
+/* Match thumbnail shown as cover background */
 .poster {
   position: absolute; inset: 0;
   width: 100%; height: 100%;
@@ -149,7 +156,7 @@ a:focus-visible { outline: 2px solid var(--ac); outline-offset: 2px; }
 }
 .poster.vis { opacity: 1; }
 
-/* Gradient shade over poster */
+/* Gradient shade over the poster */
 .shade {
   position: absolute; inset: 0;
   background: linear-gradient(
@@ -240,6 +247,7 @@ a:focus-visible { outline: 2px solid var(--ac); outline-offset: 2px; }
 
 /* ══════════════════════════════════════════
    UNMUTE HINT  (bottom-right of stage)
+   Only shown while the video is actually playing
 ══════════════════════════════════════════ */
 .unmute-hint {
   position: absolute; bottom: 56px; right: 10px; z-index: 20;
@@ -251,7 +259,7 @@ a:focus-visible { outline: 2px solid var(--ac); outline-offset: 2px; }
   font: 600 12px Barlow, sans-serif;
   cursor: pointer;
 }
-.unmute-hint.on { display: block; }
+.stage[data-s=play] .unmute-hint.on { display: block; }
 
 /* ══════════════════════════════════════════
    MATCH INFO SECTION
@@ -316,7 +324,7 @@ a:focus-visible { outline: 2px solid var(--ac); outline-offset: 2px; }
 .about-card h2 { font: 700 18px var(--fh); margin-bottom: 7px; }
 .about-card p  { color: var(--mu); font-size: 13px; line-height: 1.65; }
 
-/* Info rows inside about card */
+/* Info rows inside the about card */
 .info-rows { margin-top: 14px; border-top: 1px solid var(--line); }
 .info-row {
   display: flex; align-items: center;
@@ -398,7 +406,7 @@ a:focus-visible { outline: 2px solid var(--ac); outline-offset: 2px; }
       </svg>
     </a>
     <a class="brand" href="/" aria-label="Home">
-      <img id="logo" src="/gop-gop-moww.png" alt="FC - Cricket News Point"
+      <img id="logo" src="/gop-gop-moww.png" alt="FC – Cricket News Point"
            onerror="this.style.visibility='hidden'">
     </a>
     <div class="spacer"></div>
@@ -428,14 +436,15 @@ a:focus-visible { outline: 2px solid var(--ac); outline-offset: 2px; }
 
   <!-- Video Stage -->
   <div class="stage" id="stage" data-s="load">
-    <!-- JW Player will mount inside this div -->
+    <!-- Players mount inside this div -->
     <div id="jwp"></div>
 
-    <!-- Cover overlay: shown when video is NOT playing -->
+    <!-- Cover overlay: shown when the video is NOT playing -->
     <div class="cover" id="cover">
       <img class="poster" id="poster" alt="" loading="eager">
       <div class="shade"></div>
-      <div class="cv-body" id="cvBody">
+      <!-- aria-live lets screen readers announce countdown / error changes -->
+      <div class="cv-body" id="cvBody" aria-live="polite">
         <div class="spin"></div>
       </div>
     </div>
@@ -469,7 +478,7 @@ a:focus-visible { outline: 2px solid var(--ac); outline-offset: 2px; }
   <div class="free-bar-in">
     <div>
       <div class="free-price">
-        Watch @ <span class="free-badge">FREE</span>
+        Watch Live <span class="free-badge">FREE</span>
       </div>
       <div class="free-sub">No subscription · No sign-in · 100% free</div>
     </div>
@@ -482,53 +491,113 @@ a:focus-visible { outline: 2px solid var(--ac); outline-offset: 2px; }
 (function () {
 'use strict';
 
-
+/* ────────────────────────────────────────────
+   CONFIG  —  edit these to match your setup
+──────────────────────────────────────────── */
 var API_URL  = 'https://raw.githubusercontent.com/kajju027/Fancode-Events-Json/refs/heads/main/fancode.json';
-var JW_PATH  = '/jw.html';        
+var JW_PATH  = '/jw.html';        // Path to your jw.html on the same server
 var HLS_CDN  = 'https://cdn.jsdelivr.net/npm/hls.js@1.5.17/dist/hls.min.js';
-var DEF_Q    = 720;
-var SONUCDN_BASE = 'https://sonucdn-v5.pages.dev/player/jw?url=';               
-var IST_OFF  = 330 * 60000;       
+var PLYR_CSS = 'https://cdn.plyr.io/3.7.8/plyr.css';             // Plyr fallback player styles
+var PLYR_JS  = 'https://cdn.plyr.io/3.7.8/plyr.polyfilled.js';   // Plyr fallback player script
+var DEF_Q    = 720;               // Default quality: 720p
+var IST_OFF  = 330 * 60000;       // IST = UTC + 5h 30m
 
+// JW watchdog: if JW Player has not started playing within this time,
+// we immediately switch to the Plyr fallback player (ms).
+var JW_WATCHDOG_MS = 10000;
+// Plyr watchdog: same idea, per candidate URL, inside the Plyr path (ms).
+var PLYR_WATCHDOG_MS = 12000;
 
+/* ────────────────────────────────────────────
+   PROXY PREFIX  —  the fix for CDN 403 / CORS problems
+
+   Root cause found while testing: the FanCode CDN
+   (in-mc-vod.fancode.com, Google Edge Cache) answers with
+   HTTP 403 for some regions/IPs even though it sends
+   "Access-Control-Allow-Origin: *". The API sometimes also
+   provides signed cookies ("cookie" field) that a browser
+   is NOT allowed to set for another domain. In those cases
+   no client-side player can load the stream directly.
+
+   Fix: route every stream URL through a tiny server-side
+   proxy on your own domain (a free Cloudflare Worker is
+   enough). The proxy forwards the request (optionally
+   adding the cookie from the API) and returns the response
+   with "Access-Control-Allow-Origin: *".
+
+   HOW TO USE:
+     1. Deploy a worker that fetches "?url=<encoded m3u8>"
+        and streams it back.
+     2. Set:  var PROXY_PREFIX = 'https://your-worker.example.workers.dev/?url=';
+     3. Done — every candidate URL is automatically routed
+        through it.
+
+   Leave '' (default) to stream directly.
+──────────────────────────────────────────── */
+var PROXY_PREFIX = '';
+
+/* ────────────────────────────────────────────
+   URL PARAMS
+──────────────────────────────────────────── */
 var sp = new URLSearchParams(location.search);
-
+// Accept id as plain "4249676" or "4249676_eng" (legacy format)
 var rawId   = sp.get('id') || '';
 var idParts = rawId.split('_').filter(Boolean);
-var matchId = idParts[0] || '';
+var matchId  = idParts[0] || '';
 var wantLang = (sp.get('lang') || idParts[1] || 'eng').toLowerCase();
 
+/* ────────────────────────────────────────────
+   STATE
+──────────────────────────────────────────── */
+var matchData      = null;   // Normalized match object
+var streamStarted  = false;  // True once startStream() has been called
+var jwInst         = null;   // JW Player instance
+var hlsInst        = null;   // Bare hls.js instance (last-resort player)
+var plyrInst       = null;   // Plyr instance (fallback player)
+var plyrHls        = null;   // hls.js instance used by the Plyr path
+var curCands       = [];     // Candidate URLs for the current stream attempt
+var hlsCands       = [];     // Candidate list used by the active fallback path
+var hlsIdx         = 0;      // Current candidate index
 
-var matchData     = null;   
-var streamStarted = false;  
-var jwInst        = null;   
-var hlsInst       = null;   
-var hlsCands      = [];     
-var hlsIdx        = 0;      
+var jwFailCount    = 0;      // How many times JW failed to start playback
+var preferPlyr     = false;  // After 2 JW failures, start with Plyr directly
+var plyrSwitching  = false;  // Guards against double-switching to Plyr
+var lastFailReason = '';     // Human-readable reason of the last failure
 
-var jwLoadPromise  = null;  
-var hlsLoadPromise = null;  
+var jwLoadPromise  = null;   // Cached JW Player load promise
+var hlsLoadPromise = null;   // Cached hls.js load promise
+var plyrLoadPromise = null;  // Cached Plyr load promise
 
 var pollTimer  = 0;
 var tickTimer  = 0;
 var ctaTimer   = 0;
+var playGuard  = 0;          // Watchdog timer for the active player
 
-
+/* ────────────────────────────────────────────
+   DOM REFS
+──────────────────────────────────────────── */
 var stage      = $('stage');
-var cover      = $('cover');
 var cvBody     = $('cvBody');
 var poster     = $('poster');
 var liveBadge  = $('liveBadge');
 var unmuteHint = $('unmuteHint');
 var ctaBtn     = $('ctaBtn');
 
+/* ────────────────────────────────────────────
+   WINDOW RESIZE  (registered ONCE here)
+──────────────────────────────────────────── */
+window.addEventListener('resize', function () {
+  if (!jwInst || stage.dataset.s !== 'play') return;
+  try { jwInst.resize(stage.offsetWidth, stage.offsetHeight); } catch (e) { /* ignore */ }
+});
 
-function $(id)   { return document.getElementById(id); }
-function pad(n)  { return String(n).padStart(2, '0');  }
-function cap(s)  { return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase(); }
+/* ────────────────────────────────────────────
+   TINY UTILS
+──────────────────────────────────────────── */
+function $(id)  { return document.getElementById(id); }
+function pad(n) { return String(n).padStart(2, '0'); }
+function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase(); }
 function setState(s) { stage.dataset.s = s; }
-
-function wrapSonucdn(u) { return u ? SONUCDN_BASE + encodeURIComponent(u) : null; }
 
 function esc(v) {
   return String(v == null ? '' : v)
@@ -537,15 +606,44 @@ function esc(v) {
     });
 }
 
+/* ────────────────────────────────────────────
+   URL ROUTING  (mixed-content + proxy)
+   1. If the page is HTTPS and a stream URL is HTTP,
+      browsers block it as mixed content — upgrade to HTTPS.
+   2. If PROXY_PREFIX is configured, route through the proxy.
+──────────────────────────────────────────── */
+function applyRoute(u) {
+  if (!u) return u;
+  u = String(u);
+  if (location.protocol === 'https:' && /^http:\/\//i.test(u)) {
+    u = u.replace(/^http:/i, 'https:');
+  }
+  if (PROXY_PREFIX) u = PROXY_PREFIX + encodeURIComponent(u);
+  return u;
+}
 
+/* ────────────────────────────────────────────
+   FAILURE REASON HELPERS  (CORS / 403 diagnostics)
+──────────────────────────────────────────── */
+function failReason(d) {
+  var code = d && d.response && d.response.code;
+  if (code === 403) return 'HTTP 403 — CDN refused the request (geo-block or expired link)';
+  if (code === 404) return 'HTTP 404 — stream link expired';
+  if (!code) return 'network or CORS error';
+  return 'HTTP ' + code;
+}
 
+/* ────────────────────────────────────────────
+   LANGUAGE CODE MAP
+──────────────────────────────────────────── */
+// API key (ENGLISH) → short code (eng)
 var LANG_FWD = {
   ENGLISH:'eng', HINDI:'hin', BANGLA:'ban', BENGALI:'ban',
   TAMIL:'tam',   TELUGU:'tel', KANNADA:'kan', MARATHI:'mar',
   MALAYALAM:'mal', PUNJABI:'pan', GUJARATI:'guj', URDU:'urd',
   ODIA:'ori', ASSAMESE:'asm', BHOJPURI:'bho'
 };
-
+// Short code (eng) → API key (ENGLISH)
 var LANG_REV = {};
 (function () {
   Object.keys(LANG_FWD).forEach(function (k) {
@@ -558,12 +656,14 @@ function toLangCode(raw) {
   return LANG_FWD[k] || k.slice(0, 3).toLowerCase();
 }
 
-
+/* ────────────────────────────────────────────
+   IST TIME PARSING
+──────────────────────────────────────────── */
 function parseIST(str) {
   if (!str) return null;
   str = String(str).trim();
 
-  
+  // Primary format: H:MM:SS AM/PM D-M-YYYY  (or D/M/YYYY)
   var m = str.match(
     /^(\d{1,2}):(\d{2})(?::(\d{2}))?\s*(AM|PM)\s+(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})$/i
   );
@@ -573,11 +673,11 @@ function parseIST(str) {
     var D  = +m[5], MO = +m[6], Y = +m[7];
     if (AP === 'PM' && H < 12) H += 12;
     if (AP === 'AM' && H === 12) H = 0;
-    
+    // IST = UTC + 5:30  →  UTC ms = IST ms − IST_OFF
     return Date.UTC(Y, MO - 1, D, H, MI, SEC) - IST_OFF;
   }
 
-  
+  // Fallback: standard ISO / browser-parseable strings
   var t = Date.parse(str);
   return isNaN(t) ? null : t;
 }
@@ -605,55 +705,63 @@ function fmtDate(ms) {
   }
 }
 
-
+/* ────────────────────────────────────────────
+   NORMALIZE RAW API MATCH OBJECT
+──────────────────────────────────────────── */
 function normalize(raw) {
-  var title  = String(raw.title || 'Match');
+  var title  = String(raw.title || raw.name || 'Match');
   var parts  = title.split(/\s+vs\.?\s+/i);
   var groups = (raw.auto_streams && typeof raw.auto_streams === 'object')
                  ? raw.auto_streams : {};
 
-  
+  // Language keys that actually have stream URLs
   var langs = Object.keys(groups).filter(function (k) {
     var g = groups[k];
     return g && g.streams && Object.keys(g.streams).length > 0;
   });
 
   return {
-    id:         String(raw.match_id || ''),
+    id:         String(raw.match_id || raw.id || ''),
     title:      title,
     teams:      parts.length === 2 ? [parts[0].trim(), parts[1].trim()] : [title],
-    tournament: raw.tournament || '',
-    image:      raw.image      || '',
+    tournament: raw.tournament || raw.tournament_name || raw.series || '',
+    image:      raw.image || raw.thumbnail || raw.poster || '',
     status:     String(raw.status || '').toUpperCase(),
-    startMs:    parseIST(raw.startTime),
+    startMs:    parseIST(raw.startTime || raw.start_time || raw.start),
     langs:      langs,
     groups:     groups,
-    rawStreams:  raw.streams || {}
+    rawStreams: raw.streams || {}
   };
 }
 
-
+/* ────────────────────────────────────────────
+   RESOLVE STREAMS
+   Returns { qualities, langKeys, fallbacks }
+   or null when no streams are available.
+──────────────────────────────────────────── */
 function resolveStreams(raw) {
   var groups = (raw.auto_streams && typeof raw.auto_streams === 'object')
                  ? raw.auto_streams : {};
   var s      = raw.streams || {};
 
-  
+  /* -- Find the target language group -- */
   var langKeys = Object.keys(groups).filter(function (k) {
     var g = groups[k];
     return g && g.streams && Object.keys(g.streams).length > 0;
   });
 
-  var wantKey = (LANG_REV[wantLang] || wantLang).toUpperCase();
+  var wantKey   = (LANG_REV[wantLang] || wantLang).toUpperCase();
+  var wantCode  = toLangCode(wantLang);
   var targetKey = null;
 
   langKeys.forEach(function (k) {
-    if (k.toUpperCase() === wantKey) targetKey = k;
+    // Match either the full API key ("ENGLISH") or the short code ("eng")
+    if (k.toUpperCase() === wantKey || toLangCode(k) === wantCode) targetKey = k;
   });
-  if (!targetKey && langKeys.length) targetKey = langKeys[0]; 
+  if (!targetKey && langKeys.length) targetKey = langKeys[0]; // First available language
 
-  
-  var qualities = {}; 
+  /* -- Build quality map: { 720: 'url/720p.m3u8', 1080: '...', 0: 'index.m3u8' } -- */
+  var qualities = {}; // 0 = adaptive index.m3u8
   if (targetKey) {
     var stMap = groups[targetKey].streams || {};
     Object.keys(stMap).forEach(function (k) {
@@ -662,57 +770,130 @@ function resolveStreams(raw) {
     });
   }
 
-  
+  // Adaptive stream: fancode_cdn (index.m3u8) is the best adaptive source
   var adaptiveUrl = s.fancode_cdn || null;
   if (adaptiveUrl) qualities[0] = adaptiveUrl;
 
-  
+  /* -- Fallback list (tried in order if 720p/adaptive fail) -- */
   var fallbacks = [];
-  if (s.primary)         fallbacks.push(s.primary);
-  if (s.fancode_cdn)     fallbacks.push(s.fancode_cdn);
-  if (s.fancode_lk_cdn)  fallbacks.push(s.fancode_lk_cdn);
-  if (s.fancode_bd_cdn)  fallbacks.push(s.fancode_bd_cdn);
-  if (s.fancode_np_cdn)  fallbacks.push(s.fancode_np_cdn);
+  function addFallback(u) {
+    if (u && typeof u === 'string' && /^https?:\/\//i.test(u) &&
+        fallbacks.indexOf(u) === -1) fallbacks.push(u);
+  }
 
-  
+  if (s.primary)        addFallback(s.primary);
+  if (s.fancode_cdn)    addFallback(s.fancode_cdn);
+  if (s.fancode_lk_cdn) addFallback(s.fancode_lk_cdn);
+  if (s.fancode_bd_cdn) addFallback(s.fancode_bd_cdn);
+  if (s.fancode_np_cdn) addFallback(s.fancode_np_cdn);
+
+  // "backup" can be a string, an array or an object of URLs — accept all shapes
+  if (s.backup) {
+    if (typeof s.backup === 'string') {
+      addFallback(s.backup);
+    } else if (Array.isArray(s.backup)) {
+      s.backup.forEach(addFallback);
+    } else if (typeof s.backup === 'object') {
+      Object.keys(s.backup).forEach(function (k) { addFallback(s.backup[k]); });
+    }
+  }
+
+  // Generic scan: any other string URL field in "streams"
+  // (handles future mirrors like fancode_ae_cdn etc. automatically)
+  Object.keys(s).forEach(function (k) {
+    if (typeof s[k] === 'string') addFallback(s[k]);
+  });
+
+  // Check if we have anything at all
   var hasQualities = Object.keys(qualities).some(function (k) { return !!qualities[k]; });
-  var hasFallbacks = fallbacks.some(Boolean);
+  var hasFallbacks = fallbacks.length > 0;
   if (!hasQualities && !hasFallbacks) return null;
 
   return { qualities: qualities, langKeys: langKeys, fallbacks: fallbacks };
 }
 
-
+/* ────────────────────────────────────────────
+   BUILD ORDERED CANDIDATE URL LIST
+   720p first → other qualities → adaptive → extras
+   Every URL passes through applyRoute() (HTTPS upgrade
+   + optional proxy) before entering the list.
+──────────────────────────────────────────── */
 function buildCandidates(res) {
   var q  = res.qualities;
   var fb = res.fallbacks;
 
   var cands = [];
-  function push(u) { if (u && cands.indexOf(u) === -1) cands.push(u); }
+  function push(u) {
+    if (!u) return;
+    u = applyRoute(u);
+    if (cands.indexOf(u) === -1) cands.push(u);
+  }
 
-  
+  // 1. Preferred: exact DEF_Q (720p)
   push(q[DEF_Q]);
 
-  
+  // 2. Other specific qualities, sorted nearest-to-720 first
   var heights = Object.keys(q).map(Number)
     .filter(function (h) { return h > 0 && h !== DEF_Q; })
     .sort(function (a, b) { return Math.abs(a - DEF_Q) - Math.abs(b - DEF_Q); });
   heights.forEach(function (h) { push(q[h]); });
 
-  
+  // 3. Adaptive stream
   push(q[0]);
 
-  
+  // 4. Fallback URLs from the streams object
   fb.forEach(push);
 
   return cands;
 }
 
+/* ────────────────────────────────────────────
+   FULL PLAYER TEARDOWN
+   Destroys any running player (JW / Plyr / hls.js),
+   clears timers and resets state so the retry path
+   can start completely fresh.
+──────────────────────────────────────────── */
+function resetStream() {
+  clearInterval(tickTimer);
+  clearTimeout(pollTimer);
+  clearTimeout(playGuard);
 
+  if (jwInst) {
+    try { jwInst.remove(); } catch (e) { /* ignore */ }
+    jwInst = null;
+  }
+  if (hlsInst) {
+    try { hlsInst.destroy(); } catch (e) { /* ignore */ }
+    hlsInst = null;
+  }
+  if (plyrHls) {
+    try { plyrHls.destroy(); } catch (e) { /* ignore */ }
+    plyrHls = null;
+  }
+  if (plyrInst) {
+    try { plyrInst.destroy(); } catch (e) { /* ignore */ }
+    plyrInst = null;
+  }
+
+  // Remove any leftover <video> element from fallback paths
+  var jwpEl = $('jwp');
+  if (jwpEl) jwpEl.innerHTML = '';
+
+  hlsCands = [];
+  hlsIdx   = 0;
+  curCands = [];
+  streamStarted = false;
+  plyrSwitching = false;
+  lastFailReason = '';
+}
+
+/* ────────────────────────────────────────────
+   LOAD JW PLAYER  (via jw.html on same server)
+──────────────────────────────────────────── */
 function loadJWPlayer() {
   if (jwLoadPromise) return jwLoadPromise;
 
-  
+  // Already loaded globally?
   if (typeof jwplayer !== 'undefined') {
     jwLoadPromise = Promise.resolve();
     return jwLoadPromise;
@@ -725,15 +906,21 @@ function loadJWPlayer() {
         return r.text();
       })
       .then(function (html) {
-        
-        
-        var tmp = document.createElement('div');
-        tmp.innerHTML = html;
-        var sc = tmp.querySelector('script');
-        var content = sc ? sc.textContent : null;
+        // Extract the inline script element content from jw.html.
+        // NOTE: never write the literal closing script tag anywhere in
+        // this file's comments or strings — the HTML parser would end
+        // this page's own script block there (that exact bug silently
+        // killed the whole player in an earlier version of this file).
+        var content = null;
+        try {
+          var doc = new DOMParser().parseFromString(html, 'text/html');
+          var sc  = doc.querySelector('script');
+          content = sc ? sc.textContent : null;
+        } catch (e) { /* fall through to the regex path */ }
 
         if (!content || !content.trim()) {
-          
+          // Regex fallback: grab the body of an inline script element.
+          // The closing tag is written escaped (<\/script>) on purpose.
           var mm = html.match(/<script[^>]*>([\s\S]*?)<\/script>/i);
           content = mm ? mm[1] : null;
         }
@@ -742,12 +929,12 @@ function loadJWPlayer() {
           throw new Error('No script content found in jw.html');
         }
 
-        
+        // Inject the extracted JW Player script into this page
         var el = document.createElement('script');
         el.textContent = content;
         document.head.appendChild(el);
 
-        
+        // Poll until the jwplayer global is ready (max 7 seconds)
         var elapsed = 0;
         var interval = setInterval(function () {
           if (typeof jwplayer !== 'undefined') {
@@ -760,7 +947,7 @@ function loadJWPlayer() {
         }, 60);
       })
       .catch(function (err) {
-        jwLoadPromise = null; 
+        jwLoadPromise = null; // Allow a later retry
         reject(err);
       });
   });
@@ -768,7 +955,9 @@ function loadJWPlayer() {
   return jwLoadPromise;
 }
 
-
+/* ────────────────────────────────────────────
+   LOAD HLS.JS  (CDN, used by fallback players)
+──────────────────────────────────────────── */
 function loadHLSJS() {
   if (hlsLoadPromise) return hlsLoadPromise;
   if (window.Hls) {
@@ -788,16 +977,58 @@ function loadHLSJS() {
   return hlsLoadPromise;
 }
 
+/* ────────────────────────────────────────────
+   LOAD PLYR  (CDN, the fallback player UI)
+   Injects the stylesheet once, then the script.
+──────────────────────────────────────────── */
+function loadPlyr() {
+  if (plyrLoadPromise) return plyrLoadPromise;
+  if (window.Plyr) {
+    plyrLoadPromise = Promise.resolve();
+    return plyrLoadPromise;
+  }
 
+  plyrLoadPromise = new Promise(function (resolve, reject) {
+    // Plyr needs its CSS for the control bar
+    if (!document.querySelector('link[data-plyr-css]')) {
+      var css = document.createElement('link');
+      css.rel  = 'stylesheet';
+      css.href = PLYR_CSS;
+      css.setAttribute('data-plyr-css', '1');
+      document.head.appendChild(css);
+    }
+
+    if (window.Plyr) { resolve(); return; }
+
+    var el = document.createElement('script');
+    el.src = PLYR_JS;
+    el.async = true;
+    el.onload  = resolve;
+    el.onerror = function () { plyrLoadPromise = null; reject(new Error('Plyr load failed')); };
+    document.head.appendChild(el);
+  });
+
+  return plyrLoadPromise;
+}
+
+/* ────────────────────────────────────────────
+   UI  –  SHOW SPINNER
+──────────────────────────────────────────── */
 function showSpinner() {
   setState('load');
   cvBody.innerHTML = '<div class="spin"></div>';
 }
 
-
+/* ────────────────────────────────────────────
+   UI  –  SHOW ERROR
+   canRetry === false → no retry button, no auto-retry
+──────────────────────────────────────────── */
 function showError(title, msg, canRetry) {
-  clearInterval(tickTimer);
+  // Tear down any half-running player first, so the retry
+  // path (manual button or auto-poll) starts completely fresh.
+  resetStream();
   setState('error');
+
   cvBody.innerHTML =
     '<div class="error-box">' +
       '<div class="error-title">' + esc(title) + '</div>' +
@@ -809,6 +1040,7 @@ function showError(title, msg, canRetry) {
 
   var rb = $('retryBtn');
   if (rb) rb.addEventListener('click', function () {
+    clearTimeout(pollTimer);   // Avoid a duplicate fetch from a pending auto-retry
     showSpinner();
     fetchAndLoad();
   });
@@ -816,7 +1048,9 @@ function showError(title, msg, canRetry) {
   if (canRetry !== false) schedulePoll(12000);
 }
 
-
+/* ────────────────────────────────────────────
+   UI  –  SHOW COUNTDOWN  /  WAITING
+──────────────────────────────────────────── */
 function showWaiting() {
   clearInterval(tickTimer);
   setState('wait');
@@ -826,7 +1060,7 @@ function showWaiting() {
   var now     = Date.now();
   var startMs = m && m.startMs;
 
-  
+  /* Case 1: future start time known → show countdown */
   if (m && m.status !== 'LIVE' && startMs && startMs > now) {
     cvBody.innerHTML =
       '<div class="cv-label">Watch Live in</div>' +
@@ -838,28 +1072,23 @@ function showWaiting() {
       var timer = $('cdTimer');
       if (left <= 0) {
         clearInterval(tickTimer);
-        showWaiting();         
+        showWaiting();         // Re-evaluate (now inside the start window)
         schedulePoll(5000);
         return;
       }
       if (timer) timer.textContent = fmtCountdown(left);
     }, 1000);
 
-    
+    // Poll more frequently as the match approaches
     var timeLeft = startMs - now;
     schedulePoll(timeLeft < 180000 ? 10000 : 30000);
     return;
   }
 
-  
-  var msg;
-  if (m && m.status === 'LIVE') {
-    msg = 'Broadcasting soon… Stay on this page, the stream will begin automatically.';
-  } else if (m && m.status === 'COMPLETED') {
-    msg = 'This match has already ended.';
-  } else {
-    msg = 'Starting soon… Stay on this page, the stream will begin automatically.';
-  }
+  /* Case 2: past start time OR LIVE but no stream URLs yet */
+  var msg = (m && m.status === 'LIVE')
+    ? 'Broadcasting soon — stay on this page; the stream will begin automatically.'
+    : 'Starting soon — stay on this page; the stream will begin automatically.';
 
   cvBody.innerHTML =
     '<div class="cv-label">Coming Up</div>' +
@@ -868,8 +1097,11 @@ function showWaiting() {
   schedulePoll(15000);
 }
 
-
+/* ────────────────────────────────────────────
+   ON PLAY STARTED  (called by every player path)
+──────────────────────────────────────────── */
 function onPlayStarted() {
+  clearTimeout(playGuard);
   setState('play');
   if (matchData) {
     liveBadge.classList.toggle('on', matchData.status === 'LIVE');
@@ -877,20 +1109,25 @@ function onPlayStarted() {
   ctaBtn.textContent = 'Watch Now';
 }
 
-
+/* ────────────────────────────────────────────
+   INIT JW PLAYER  (primary attempt)
+──────────────────────────────────────────── */
 function initJWPlayer(cands, res) {
-  if (!cands.length) { showWaiting(); return; }
+  if (!cands.length) {
+    streamStarted = false;
+    showWaiting();
+    return;
+  }
 
   var q = res.qualities;
 
-  
-  
+  // Priority → adaptive (index.m3u8) if available, else 720p, else first candidate.
+  // The 'levels' handler below locks playback to 720p once the
+  // HLS manifest exposes its quality levels.
   var useAdaptive = !!q[0];
   var mainUrl     = useAdaptive ? q[0] : (q[DEF_Q] || cands[0]);
 
-  
-  
-  
+  // JW sources act as internal fallbacks — best option first
   var sources = [];
   var pushed  = {};
   function pushSrc(url, label) {
@@ -901,19 +1138,20 @@ function initJWPlayer(cands, res) {
 
   pushSrc(mainUrl, useAdaptive ? 'Auto' : DEF_Q + 'p');
   cands.forEach(function (u) { pushSrc(u); });
-  cands.forEach(function (u) { pushSrc(wrapSonucdn(u)); });
-  pushSrc(wrapSonucdn(mainUrl));
 
-  if (!sources.length) { showError('No Stream', 'No playable URL was found.', true); return; }
+  if (!sources.length) {
+    showError('No Stream', 'No playable URL was found.', true);
+    return;
+  }
 
-  
+  /* Get pixel dimensions from the actual stage element */
   var sw = stage.offsetWidth  || 640;
   var sh = stage.offsetHeight || Math.round(sw * 9 / 16);
 
   setState('load');
   cvBody.innerHTML = '<div class="spin"></div>';
 
-  
+  /* ── Setup JW Player ── */
   try {
     jwInst = jwplayer('jwp').setup({
       playlist: [{ sources: sources }],
@@ -927,27 +1165,26 @@ function initJWPlayer(cands, res) {
       hlshtml:     true,
       displaytitle: false,
       displaydescription: false,
-      controls:    true,
-      
-      defaultBandwidthEstimate: 2000000
+      controls:    true
     });
   } catch (err) {
     console.warn('[JW] setup() threw:', err);
-    fallbackToHLS(cands);
+    beginPlyr('JW setup threw an exception');
     return;
   }
 
-  
+  /* ── JW Events ── */
 
-  
+  // Quality levels loaded from the HLS manifest → lock to 720p
   jwInst.on('levels', function (e) {
+    if (!jwInst) return;
     if (!e || !e.levels || !e.levels.length) return;
     var lv = e.levels;
     var targetIdx = -1;
     for (var i = 0; i < lv.length; i++) {
       if (lv[i].height === DEF_Q) { targetIdx = i; break; }
     }
-    
+    // Fallback: nearest height to 720
     if (targetIdx === -1) {
       var best = Infinity, bestI = 0;
       lv.forEach(function (l, idx) {
@@ -956,114 +1193,191 @@ function initJWPlayer(cands, res) {
       });
       targetIdx = bestI;
     }
-    try { jwInst.setCurrentQuality(targetIdx); } catch (e2) {  }
+    try { jwInst.setCurrentQuality(targetIdx); } catch (e2) { /* ignore */ }
   });
 
-  
+  // First frame rendered
   jwInst.on('firstFrame', function () { onPlayStarted(); });
 
-  
+  // General play event (covers autoplay, resume, etc.)
   jwInst.on('play', function () {
     onPlayStarted();
     try {
       unmuteHint.classList.toggle('on', jwInst.getMute());
-    } catch (e2) {  }
+    } catch (e2) { /* ignore */ }
   });
 
-  
+  // Mute state change
   jwInst.on('mute', function (ev) {
     if (ev && ev.mute) unmuteHint.classList.add('on');
     else unmuteHint.classList.remove('on');
   });
 
-  
+  // Player error → IMMEDIATELY switch to the Plyr fallback player
   jwInst.on('error', function (ev) {
-    console.warn('[JW] error event:', ev && (ev.message || ev.code || ev));
-    fallbackToHLS(cands);
+    lastFailReason = 'JW error: ' + (ev && (ev.message || ev.code) || 'unknown');
+    console.warn('[JW] error event:', lastFailReason, '— switching to Plyr');
+    beginPlyr('JW error event');
   });
 
   jwInst.on('setupError', function (ev) {
-    console.warn('[JW] setupError:', ev && (ev.message || ev.code || ev));
-    fallbackToHLS(cands);
+    lastFailReason = 'JW setupError: ' + (ev && (ev.message || ev.code) || 'unknown');
+    console.warn('[JW] setupError:', lastFailReason, '— switching to Plyr');
+    beginPlyr('JW setupError event');
   });
 
-  
-  window.addEventListener('resize', function () {
-    if (!jwInst || stage.dataset.s !== 'play') return;
-    var w2 = stage.offsetWidth;
-    var h2 = stage.offsetHeight;
-    try { jwInst.resize(w2, h2); } catch (e3) {  }
-  });
+  /* ── WATCHDOG ──
+     Some failures (CDN 403, silent CORS blocks, stalled setup)
+     never raise a JW event. If playback has not started within
+     JW_WATCHDOG_MS, switch to Plyr automatically. */
+  clearTimeout(playGuard);
+  playGuard = setTimeout(function () {
+    if (stage.dataset.s !== 'play') {
+      lastFailReason = 'JW Player did not start playback within ' + (JW_WATCHDOG_MS / 1000) + 's';
+      beginPlyr('JW playback timeout');
+    }
+  }, JW_WATCHDOG_MS);
 }
 
+/* ────────────────────────────────────────────
+   SWITCH TO PLYR  (fallback player)
+   Called the moment JW fails to load, errors out,
+   or simply never starts playing (watchdog).
+──────────────────────────────────────────── */
+function beginPlyr(reason) {
+  // Never switch if playback already started, or a switch is in flight
+  if (plyrSwitching || stage.dataset.s === 'play') return;
+  plyrSwitching = true;
 
-function fallbackToHLS(cands) {
-  
+  jwFailCount++;
+  if (jwFailCount >= 2) preferPlyr = true; // Next attempts skip JW entirely
+
+  console.warn('[Player] switching to Plyr fallback:', reason || 'unknown reason');
+
+  clearTimeout(playGuard);
   if (jwInst) {
-    try { jwInst.remove(); } catch (e) {}
+    try { jwInst.remove(); } catch (e) { /* ignore */ }
     jwInst = null;
   }
+  showSpinner();
 
-  hlsCands = cands;
-  hlsIdx   = 0;
-
-  loadHLSJS()
-    .then(function () { attachHLS(hlsCands[0]); })
+  loadPlyr()
+    .then(function () { return loadHLSJS(); })
+    .then(function () {
+      hlsCands = curCands.slice();
+      hlsIdx   = 0;
+      if (!hlsCands.length) {
+        showError('Stream Unavailable', 'No stream URL is available right now.', true);
+        return;
+      }
+      attachPlyr(hlsCands[0]);
+    })
     .catch(function (err) {
-      console.error('[HLS.js] load failed:', err);
-      showError('Player Error', 'Video player could not be loaded. Try refreshing the page.', true);
+      console.warn('[Plyr] load failed:', err, '— using the plain HLS player instead');
+      fallbackToHLS(curCands);
     });
 }
 
-function attachHLS(url) {
+/* ────────────────────────────────────────────
+   PLYR PLAYER  (fallback #1 — Plyr + hls.js)
+──────────────────────────────────────────── */
+function attachPlyr(url) {
+  plyrSwitching = false;
+
   if (!url) {
     showError('Stream Unavailable',
       'The stream could not be loaded right now. We will keep retrying.', true);
-    schedulePoll(20000);
     return;
   }
 
-  
+  console.log('[Stream] Plyr trying candidate ' + (hlsIdx + 1) + '/' + hlsCands.length + ': ' + url);
+
   var jwpEl = $('jwp');
   if (!jwpEl) return;
 
-  if (hlsInst) { try { hlsInst.destroy(); } catch (e) {} hlsInst = null; }
+  if (plyrHls)  { try { plyrHls.destroy(); }  catch (e) { /* ignore */ } plyrHls  = null; }
+  if (plyrInst) { try { plyrInst.destroy(); } catch (e) { /* ignore */ } plyrInst = null; }
 
   jwpEl.innerHTML =
-    '<video id="hlsVid" playsinline ' +
+    '<video id="plyrVid" playsinline controls ' +
     'style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000">' +
     '</video>';
 
-  var vid = $('hlsVid');
+  var vid = $('plyrVid');
   if (!vid) return;
 
-  
+  var started = false; // Watchdog must never fire after playback began
+
+  /* -- Attach stream -- */
   if (window.Hls && window.Hls.isSupported()) {
-    hlsInst = new window.Hls({
+    plyrHls = new window.Hls({
       maxBufferLength: 30,
       enableWorker:    true,
       lowLatencyMode:  false
     });
 
-    hlsInst.on(window.Hls.Events.ERROR, function (evt, d) {
-      if (!d || !d.fatal) return;
-      console.warn('[HLS.js] fatal error type:', d.type);
-      hlsIdx++;
-      if (hlsIdx < hlsCands.length) {
-        hlsInst.destroy(); hlsInst = null;
-        attachHLS(hlsCands[hlsIdx]);
-      } else {
-        showError('Stream Unavailable',
-          'All streams failed. We are retrying automatically.', true);
-        schedulePoll(15000);
+    /* -- Error handling --
+       - Hard HTTP failures (4xx) kill the mirror almost immediately:
+         a 403/404 will never recover by retrying, so we jump to the
+         next candidate instead of waiting for the watchdog.
+       - Genuine network hiccups get a couple of startLoad() retries. */
+    var softRetries = 0;
+    var hardErrors  = 0;
+    var anyNetErrs  = 0;
+
+    plyrHls.on(window.Hls.Events.ERROR, function (evt, d) {
+      if (!d) return;
+
+      if (d.type === window.Hls.ErrorTypes.NETWORK_ERROR) {
+        if (d.response && d.response.code) lastFailReason = failReason(d);
+        else if (!lastFailReason) lastFailReason = 'network or CORS error';
+
+        anyNetErrs++;
+        var code = d.response && d.response.code;
+
+        // 4xx = the CDN permanently refused this URL → next candidate.
+        // Manifest-level 4xx and 401/403 are definitive (retrying a
+        // refused URL never works) — fail on the FIRST one.
+        if (code >= 400) {
+          var definitive = code === 401 || code === 403 ||
+                           d.details === 'manifestLoadError' ||
+                           d.details === 'levelLoadError';
+          hardErrors++;
+          if (definitive || hardErrors >= 2) {
+            console.warn('[HLS.js] HTTP ' + code + ' — mirror refused, moving to next candidate');
+            plyrFailNext();
+          }
+          return;
+        }
+
+        // Repeated dead network (CORS/timeout) — don't wait for the watchdog
+        if (anyNetErrs >= 4) {
+          console.warn('[HLS.js] repeated network failures — moving to next candidate');
+          plyrFailNext();
+          return;
+        }
+
+        // Temporary network problem → limited retries
+        if (d.fatal && softRetries < 2) {
+          softRetries++;
+          console.warn('[HLS.js] network error, retrying load (' + softRetries + '/2)');
+          try { plyrHls.startLoad(); } catch (e) { /* ignore */ }
+          return;
+        }
+        return;
       }
+
+      if (!d.fatal) return;
+      lastFailReason = failReason(d);
+      console.warn('[HLS.js] fatal (' + d.type + '):', lastFailReason);
+      plyrFailNext();
     });
 
-    hlsInst.loadSource(url);
-    hlsInst.attachMedia(vid);
+    plyrHls.loadSource(url);
+    plyrHls.attachMedia(vid);
 
   } else if (vid.canPlayType('application/vnd.apple.mpegurl')) {
-    
+    // Safari native HLS — Plyr wraps it with its control bar
     vid.src = url;
   } else {
     showError('Browser Not Supported',
@@ -1071,18 +1385,39 @@ function attachHLS(url) {
     return;
   }
 
-  
+  /* -- Plyr UI -- */
+  try {
+    plyrInst = new window.Plyr(vid, {
+      controls: ['play-large', 'restart', 'rewind', 'play', 'fast-forward',
+                 'progress', 'current-time', 'duration', 'mute', 'volume',
+                 'settings', 'pip', 'fullscreen'],
+      settings: ['speed'],
+      autoplay: true,
+      volume:   0.85,
+      seekTime: 10,
+      keyboard: { focused: true, global: false },
+      tooltips: { controls: true, seek: true }
+    });
+  } catch (e) {
+    // Plyr init failed — the raw video element still works
+    console.warn('[Plyr] init failed, using raw video:', e);
+    plyrInst = null;
+  }
+
+  /* -- Autoplay -- */
   var p = vid.play();
   if (p && p.catch) {
     p.catch(function () {
+      // Autoplay with sound blocked → retry muted
       vid.muted = true;
       var q2 = vid.play();
-      if (q2 && q2.catch) q2.catch(function () {});
+      if (q2 && q2.catch) q2.catch(function () { /* ignore */ });
     });
   }
 
-  
+  /* -- Events -- */
   vid.addEventListener('playing', function () {
+    started = true;
     onPlayStarted();
     unmuteHint.classList.toggle('on', vid.muted);
   });
@@ -1090,24 +1425,203 @@ function attachHLS(url) {
     if (!vid.muted) unmuteHint.classList.remove('on');
   });
   vid.addEventListener('error', function () {
-    
-    if (hlsInst) return;
-    hlsIdx++;
-    if (hlsIdx < hlsCands.length) attachHLS(hlsCands[hlsIdx]);
-    else {
-      showError('Stream Error', 'All streams failed. Retrying shortly.', true);
-      schedulePoll(15000);
-    }
+    // Don't double-handle when hls.js already owns the failure
+    if (plyrHls) return;
+    lastFailReason = 'video element error';
+    plyrFailNext();
   });
+
+  /* -- WATCHDOG: candidate never starts → try the next one -- */
+  clearTimeout(playGuard);
+  playGuard = setTimeout(function () {
+    if (started || stage.dataset.s === 'play') return;
+    if (!lastFailReason) lastFailReason = 'no playback within ' + (PLYR_WATCHDOG_MS / 1000) + 's';
+    console.warn('[Plyr] watchdog: candidate timed out —', lastFailReason);
+    plyrFailNext();
+  }, PLYR_WATCHDOG_MS);
 }
 
+function plyrFailNext() {
+  clearTimeout(playGuard);
+  hlsIdx++;
+  if (hlsIdx < hlsCands.length) {
+    attachPlyr(hlsCands[hlsIdx]);
+  } else {
+    console.warn('[Stream] all ' + hlsCands.length + ' candidates failed (' + lastFailReason + ').' +
+      (PROXY_PREFIX ? '' : ' Direct CDN access is blocked — configure PROXY_PREFIX to route through your own server.'));
+    showError('Stream Unavailable',
+      'All stream mirrors failed. ' + (lastFailReason || '') + ' Retrying automatically…', true);
+  }
+}
 
+/* ────────────────────────────────────────────
+   BARE HLS PLAYER  (fallback #2 — no Plyr UI)
+   Used only when the Plyr library itself fails to load.
+──────────────────────────────────────────── */
+function fallbackToHLS(cands) {
+  if (jwInst) {
+    try { jwInst.remove(); } catch (e) { /* ignore */ }
+    jwInst = null;
+  }
+
+  hlsCands = (cands && cands.length ? cands : curCands).slice();
+  hlsIdx   = 0;
+
+  loadHLSJS()
+    .then(function () { attachHLS(hlsCands[0]); })
+    .catch(function (err) {
+      console.error('[HLS.js] load failed:', err);
+      showError('Player Error', 'Video player libraries could not be loaded. Try refreshing the page.', true);
+    });
+}
+
+function attachHLS(url) {
+  if (!url) {
+    showError('Stream Unavailable',
+      'The stream could not be loaded right now. We will keep retrying.', true);
+    return;
+  }
+
+  console.log('[Stream] HLS trying candidate ' + (hlsIdx + 1) + '/' + hlsCands.length + ': ' + url);
+
+  var jwpEl = $('jwp');
+  if (!jwpEl) return;
+
+  if (hlsInst) { try { hlsInst.destroy(); } catch (e) { /* ignore */ } hlsInst = null; }
+
+  jwpEl.innerHTML =
+    '<video id="hlsVid" playsinline controls ' +
+    'style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000">' +
+    '</video>';
+
+  var vid = $('hlsVid');
+  if (!vid) return;
+
+  var started = false;
+
+  if (window.Hls && window.Hls.isSupported()) {
+    hlsInst = new window.Hls({
+      maxBufferLength: 30,
+      enableWorker:    true,
+      lowLatencyMode:  false
+    });
+
+    /* -- Error handling: fast-fail on 4xx, limited retries otherwise -- */
+    var softRetries = 0;
+    var hardErrors  = 0;
+    var anyNetErrs  = 0;
+
+    hlsInst.on(window.Hls.Events.ERROR, function (evt, d) {
+      if (!d) return;
+
+      if (d.type === window.Hls.ErrorTypes.NETWORK_ERROR) {
+        if (d.response && d.response.code) lastFailReason = failReason(d);
+        else if (!lastFailReason) lastFailReason = 'network or CORS error';
+
+        anyNetErrs++;
+        var code = d.response && d.response.code;
+
+        if (code >= 400) {
+          var definitive = code === 401 || code === 403 ||
+                           d.details === 'manifestLoadError' ||
+                           d.details === 'levelLoadError';
+          hardErrors++;
+          if (definitive || hardErrors >= 2) {
+            console.warn('[HLS.js] HTTP ' + code + ' — mirror refused, moving to next candidate');
+            hlsFailNext();
+          }
+          return;
+        }
+
+        if (anyNetErrs >= 4) {
+          console.warn('[HLS.js] repeated network failures — moving to next candidate');
+          hlsFailNext();
+          return;
+        }
+
+        if (d.fatal && softRetries < 2) {
+          softRetries++;
+          console.warn('[HLS.js] network error, retrying load (' + softRetries + '/2)');
+          try { hlsInst.startLoad(); } catch (e) { /* ignore */ }
+          return;
+        }
+        return;
+      }
+
+      if (!d.fatal) return;
+      lastFailReason = failReason(d);
+      console.warn('[HLS.js] fatal (' + d.type + '):', lastFailReason);
+      hlsFailNext();
+    });
+
+    hlsInst.loadSource(url);
+    hlsInst.attachMedia(vid);
+
+  } else if (vid.canPlayType('application/vnd.apple.mpegurl')) {
+    vid.src = url;
+  } else {
+    showError('Browser Not Supported',
+      'Your browser cannot play this stream. Please try Chrome or Firefox.', false);
+    return;
+  }
+
+  /* -- Autoplay -- */
+  var p = vid.play();
+  if (p && p.catch) {
+    p.catch(function () {
+      vid.muted = true;
+      var q2 = vid.play();
+      if (q2 && q2.catch) q2.catch(function () { /* ignore */ });
+    });
+  }
+
+  /* -- Events -- */
+  vid.addEventListener('playing', function () {
+    started = true;
+    onPlayStarted();
+    unmuteHint.classList.toggle('on', vid.muted);
+  });
+  vid.addEventListener('volumechange', function () {
+    if (!vid.muted) unmuteHint.classList.remove('on');
+  });
+  vid.addEventListener('error', function () {
+    if (hlsInst) return;
+    lastFailReason = 'video element error';
+    hlsFailNext();
+  });
+
+  /* -- WATCHDOG -- */
+  clearTimeout(playGuard);
+  playGuard = setTimeout(function () {
+    if (started || stage.dataset.s === 'play') return;
+    if (!lastFailReason) lastFailReason = 'no playback within ' + (PLYR_WATCHDOG_MS / 1000) + 's';
+    console.warn('[HLS] watchdog: candidate timed out —', lastFailReason);
+    hlsFailNext();
+  }, PLYR_WATCHDOG_MS);
+}
+
+function hlsFailNext() {
+  clearTimeout(playGuard);
+  hlsIdx++;
+  if (hlsIdx < hlsCands.length) {
+    attachHLS(hlsCands[hlsIdx]);
+  } else {
+    showError('Stream Unavailable',
+      'All stream mirrors failed. ' + (lastFailReason || '') + ' Retrying automatically…', true);
+  }
+}
+
+/* ────────────────────────────────────────────
+   START STREAMING
+   Order:  JW Player → Plyr (+hls.js) → bare hls.js
+──────────────────────────────────────────── */
 function startStream(raw) {
   streamStarted = true;
   clearInterval(tickTimer);
+  clearTimeout(pollTimer);   // Don't let a pending poll fire mid-startup
   showSpinner();
 
-  var res   = resolveStreams(raw);
+  var res = resolveStreams(raw);
   if (!res) {
     streamStarted = false;
     showWaiting();
@@ -1121,31 +1635,42 @@ function startStream(raw) {
     return;
   }
 
-  
+  curCands = cands;
+
+  // JW already failed twice this session → start with Plyr directly
+  if (preferPlyr) {
+    console.log('[Player] starting with Plyr directly (JW failed ' + jwFailCount + ' times before)');
+    beginPlyr('previous JW failures — skipping JW');
+    return;
+  }
+
+  // Try JW Player first; fall back to Plyr the moment it misbehaves
   loadJWPlayer()
     .then(function () { initJWPlayer(cands, res); })
     .catch(function (err) {
-      console.warn('[JW] load failed:', err, '— switching to HLS.js');
-      fallbackToHLS(cands);
+      console.warn('[JW] load failed:', err, '— switching to Plyr');
+      beginPlyr('JW script could not be loaded');
     });
 }
 
-
+/* ────────────────────────────────────────────
+   PAINT MATCH INFO  (title, crumb, about, rows)
+──────────────────────────────────────────── */
 function paintMatchInfo(m) {
-  
+  /* Title */
   var t1 = m.teams[0], t2 = m.teams[1];
   if (m.teams.length === 2) {
     $('matchTitle').innerHTML =
       esc(t1) + ' <span class="vs">vs</span> ' + esc(t2);
-    document.title = t1 + ' vs ' + t2 + ' — Live Stream | FC Cricket';
+    document.title = t1 + ' vs ' + t2 + ' — Live Stream | FC – Cricket News Point';
   } else {
     $('matchTitle').textContent = m.title;
-    document.title = m.title + ' — Live Stream | FC Cricket';
+    document.title = m.title + ' — Live Stream | FC – Cricket News Point';
   }
 
-  
-  var statusTxt = m.status === 'LIVE'      ? '🔴 Live now'
-                : m.status === 'COMPLETED'  ? '✓ Ended'
+  /* Crumb: tournament · status */
+  var statusTxt = m.status === 'LIVE'     ? '🔴 Live now'
+                : m.status === 'COMPLETED' ? '✓ Ended'
                 : '⏱ Upcoming';
   var crumbHTML = '';
   if (m.tournament) {
@@ -1155,7 +1680,7 @@ function paintMatchInfo(m) {
   crumbHTML += '<span class="crumb-status">' + esc(statusTxt) + '</span>';
   $('crumb').innerHTML = crumbHTML;
 
-  
+  /* About text */
   var about = '';
   if (m.tournament && m.teams.length === 2) {
     about = 'In the ' + m.tournament + ', ' +
@@ -1172,32 +1697,36 @@ function paintMatchInfo(m) {
   }
   $('aboutText').textContent = about;
 
-  
+  /* Info rows */
   var rowsHTML = '';
-  if (m.tournament) rowsHTML += makeRow(ICON_TROPHY, 'Tournament', m.tournament, true);
+  // NOTE: isLink is false — the tournament name is not a clickable link
+  if (m.tournament) rowsHTML += makeRow(ICON_TROPHY, 'Tournament', m.tournament, false);
   rowsHTML += makeRow(ICON_CLOCK, 'Match Time', m.startMs ? fmtDate(m.startMs) : 'TBA', false);
   if (m.langs.length) {
     rowsHTML += makeRow(ICON_GLOBE, 'Language', m.langs.map(cap).join(' / '), false);
   }
   $('infoRows').innerHTML = rowsHTML;
 
-  
+  /* Language chips (shown only if multiple languages are available) */
   if (m.langs.length > 1) {
     $('langRow').innerHTML = m.langs.map(function (lg) {
       var code   = toLangCode(lg);
       var active = code === wantLang;
+      // encodeURIComponent for safe URL building
+      var chipHref = '?id=' + encodeURIComponent(matchId) +
+                     '&lang=' + encodeURIComponent(code);
       return '<a class="chip' + (active ? ' on' : '') + '" ' +
-             'href="?id=' + esc(matchId) + '&lang=' + esc(code) + '">' +
+             'href="' + esc(chipHref) + '">' +
              esc(cap(lg)) + '</a>';
     }).join('');
   } else {
     $('langRow').innerHTML = '';
   }
 
-  
+  /* Tab buttons row (Squad / Points Table) — kept empty for now */
   $('tabRow').innerHTML = '';
 
-  
+  /* Poster / thumbnail in cover */
   if (m.image) {
     poster.onload  = function () { poster.classList.add('vis'); };
     poster.onerror = function () { poster.classList.remove('vis'); };
@@ -1210,7 +1739,7 @@ function paintMatchInfo(m) {
   }
 }
 
-
+/* ── Abbreviation helper: "Mumbai Indians" → "MI" ── */
 function makeAbbr(name) {
   return name.trim().split(/\s+/)
     .filter(function (w) { return w.length > 1; })
@@ -1218,7 +1747,9 @@ function makeAbbr(name) {
     .join('').toUpperCase().slice(0, 4);
 }
 
-
+/* ────────────────────────────────────────────
+   SVG ICON STRINGS
+──────────────────────────────────────────── */
 var SVG = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" ' +
           'stroke="currentColor" stroke-width="2" stroke-linecap="round" ' +
           'stroke-linejoin="round">';
@@ -1236,10 +1767,6 @@ var ICON_GLOBE =
         '<path d="M2 12h20"/>' +
         '<path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10A15.3 15.3 0 0 1 12 2z"/></svg>';
 
-var ICON_MAP =
-  SVG + '<path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/>' +
-        '<circle cx="12" cy="10" r="3"/></svg>';
-
 function makeRow(icon, label, value, isLink) {
   return '<div class="info-row">' +
     '<div class="row-icon">' + icon + '</div>' +
@@ -1252,7 +1779,9 @@ function makeRow(icon, label, value, isLink) {
   '</div>';
 }
 
-
+/* ────────────────────────────────────────────
+   POLL  &  FETCH
+──────────────────────────────────────────── */
 function schedulePoll(ms) {
   clearTimeout(pollTimer);
   pollTimer = setTimeout(fetchAndLoad, Math.max(ms, 5000));
@@ -1265,15 +1794,15 @@ function fetchAndLoad() {
       return r.json();
     })
     .then(function (data) {
-      
+      // Supports both: array response and {matches:[...]} response
       var list = Array.isArray(data)
                    ? data
                    : (Array.isArray(data.matches) ? data.matches : []);
 
-      
+      // Find our match by match_id (accept "id" as an alternate field)
       var raw = null;
       for (var i = 0; i < list.length; i++) {
-        if (String(list[i].match_id) === matchId) { raw = list[i]; break; }
+        if (String(list[i].match_id || list[i].id) === matchId) { raw = list[i]; break; }
       }
 
       if (!raw) {
@@ -1287,7 +1816,7 @@ function fetchAndLoad() {
       ctaBtn.textContent = stage.dataset.s === 'play' ? 'Watch Now' : 'Copy Link';
 
       if (!streamStarted) {
-        
+        // Does this match have live stream URLs?
         var res   = resolveStreams(raw);
         var cands = res ? buildCandidates(res) : [];
         if (cands.length) {
@@ -1296,7 +1825,7 @@ function fetchAndLoad() {
           showWaiting();
         }
       } else {
-        
+        // Stream already running — re-poll in 60s to watch for status changes
         schedulePoll(60000);
       }
     })
@@ -1311,7 +1840,9 @@ function fetchAndLoad() {
     });
 }
 
-
+/* ────────────────────────────────────────────
+   CTA BUTTON  ("Watch Now" / "Copy Link")
+──────────────────────────────────────────── */
 function flashCta(text) {
   ctaBtn.textContent = text;
   clearTimeout(ctaTimer);
@@ -1328,7 +1859,7 @@ function copyURL() {
       .catch(function () { flashCta('Copy failed'); });
     return;
   }
-  
+  // Fallback for older browsers
   var el = document.createElement('textarea');
   el.value = url;
   el.style.cssText = 'position:fixed;opacity:0;top:0;left:0';
@@ -1345,28 +1876,37 @@ function copyURL() {
 
 ctaBtn.addEventListener('click', function () {
   if (stage.dataset.s === 'play') {
-    
+    // Scroll player into view & resume if paused
     stage.scrollIntoView({ behavior: 'smooth', block: 'start' });
     if (jwInst) {
       try {
         if (jwInst.getState() === 'paused') jwInst.play();
-      } catch (e) {}
+      } catch (e) { /* ignore */ }
     }
-    var hv = $('hlsVid');
-    if (hv && hv.paused) hv.play().catch(function () {});
+    // Works for BOTH fallback players (Plyr and bare HLS),
+    // because both mount a plain <video> inside #jwp
+    var hv = document.querySelector('#jwp video');
+    if (hv && hv.paused) {
+      var pr = hv.play();
+      if (pr && pr.catch) pr.catch(function () { /* ignore */ });
+    }
   } else {
     copyURL();
   }
 });
 
-
+/* ────────────────────────────────────────────
+   SHARE BUTTON
+──────────────────────────────────────────── */
 $('btnShare').addEventListener('click', function () {
   var d = { title: document.title, url: location.href };
-  if (navigator.share) { navigator.share(d).catch(function () {}); return; }
+  if (navigator.share) { navigator.share(d).catch(function () { /* ignore */ }); return; }
   copyURL();
 });
 
-
+/* ────────────────────────────────────────────
+   BACK BUTTON
+──────────────────────────────────────────── */
 $('btnBack').addEventListener('click', function (e) {
   try {
     if (document.referrer &&
@@ -1375,39 +1915,69 @@ $('btnBack').addEventListener('click', function (e) {
       e.preventDefault();
       history.back();
     }
-    
-  } catch (err) {}
+    // else: navigate to href="/" naturally
+  } catch (err) { /* ignore */ }
 });
 
-
+/* ────────────────────────────────────────────
+   NOTIFICATION BUTTON
+──────────────────────────────────────────── */
 $('btnNotify').addEventListener('click', function () {
-  if (window.Notification && Notification.permission !== 'granted') {
-    Notification.requestPermission();
+  if (!('Notification' in window)) return;
+
+  var handled = false;
+  function onPerm(perm) {
+    if (handled) return;
+    handled = true;
+    if (perm === 'granted') {
+      try {
+        new Notification('FC – Cricket News Point', {
+          body: 'You will be notified when the match goes live.',
+          icon: '/gop-gop-moww.png'
+        });
+      } catch (e) { /* ignore */ }
+    }
+  }
+
+  if (Notification.permission === 'granted') {
+    onPerm('granted');
+  } else if (Notification.permission !== 'denied') {
+    try {
+      var p = Notification.requestPermission(onPerm); // Legacy callback form
+      if (p && p.then) p.then(onPerm);                // Promise form (modern browsers)
+    } catch (e) { /* ignore */ }
   }
 });
 
-
+/* ────────────────────────────────────────────
+   UNMUTE BUTTON
+──────────────────────────────────────────── */
 unmuteHint.addEventListener('click', function () {
   unmuteHint.classList.remove('on');
   if (jwInst) {
-    try { jwInst.setMute(false); jwInst.setVolume(85); } catch (e) {}
+    try { jwInst.setMute(false); jwInst.setVolume(85); } catch (e) { /* ignore */ }
   }
-  var hv = $('hlsVid');
+  // Works for both fallback players (Plyr & bare HLS)
+  var hv = document.querySelector('#jwp video');
   if (hv) {
     hv.muted = false;
     if (hv.volume < 0.1) hv.volume = 0.85;
   }
 });
 
-
+/* ────────────────────────────────────────────
+   PAGE VISIBILITY  (re-fetch on return)
+──────────────────────────────────────────── */
 document.addEventListener('visibilitychange', function () {
-  if (document.visibilityState === 'visible' && !streamStarted) {
+  if (document.visibilityState === 'visible' && stage.dataset.s !== 'play') {
     clearTimeout(pollTimer);
     fetchAndLoad();
   }
 });
 
-
+/* ────────────────────────────────────────────
+   BOOT
+──────────────────────────────────────────── */
 if (!matchId) {
   showError('No Match Selected',
     'Please go back to the home page and choose a match to watch.', false);
@@ -1416,7 +1986,7 @@ if (!matchId) {
   fetchAndLoad();
 }
 
-})(); 
+})(); // END IIFE
 </script>
 </body>
 </html>
