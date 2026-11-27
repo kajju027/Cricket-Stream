@@ -10,6 +10,11 @@
 <meta name="color-scheme" content="dark light">
 <meta property="og:type" content="website">
 <meta property="og:title" content="FC - CRICKET NEWS POINT - Live Stream">
+<meta property="og:description" content="Live cricket streams, upcoming matches and instant updates.">
+<meta property="og:url" content="https://india-vs-nz.pages.dev/">
+<link rel="canonical" href="https://india-vs-nz.pages.dev/">
+<link rel="icon" href="/gop-gop-moww.png" type="image/png">
+<link rel="apple-touch-icon" href="/gop-gop-moww.png">
 <link rel="preconnect" href="https://raw.githubusercontent.com">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,7 +26,6 @@ function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-BSW772KQX6');
 </script>
-
 <script>try{document.documentElement.dataset.theme=localStorage.getItem("fc_theme")==="light"?"light":"dark"}catch(e){document.documentElement.dataset.theme="dark"}</script>
 <style>
 :root{--ac:#ff5a00;--live:#ff3b47;--bg:#0e1118;--bar:#141824;--card:#171c28;--line:#262d3c;--tx:#f2f4f8;--mu:#97a1b3;--fh:"Barlow Condensed","Barlow",system-ui,"Noto Sans",sans-serif;color-scheme:dark}
@@ -71,22 +75,24 @@ html[dir=rtl] .slide{direction:rtl}
 .meta:empty{display:none}
 .sec{display:flex;align-items:baseline;gap:6px;font:700 19px/1.2 var(--fh);padding:0 14px;margin:12px 0 8px;letter-spacing:.2px}
 .sec span{color:var(--mu);font-size:15px;font-weight:600}
-.row{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x proximity;padding:0 14px 6px;scrollbar-width:thin;scrollbar-color:var(--line) transparent}
+.row{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x proximity;padding:0 14px 6px;scroll-padding-inline:14px;scrollbar-width:thin;scrollbar-color:var(--line) transparent}
 .msg{text-align:center;color:var(--mu);padding:48px 14px}
 .card{flex:0 0 min(60vw,208px);scroll-snap-align:start;background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column}
 .card[data-up]{cursor:pointer}
-.thumb{position:relative;aspect-ratio:16/9;background:#0d1520}
-.thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.thumb{position:relative;aspect-ratio:3/2;background:#0d1520;overflow:hidden;flex:none}
+.thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 28%;display:block}
 .badge{position:absolute;bottom:6px;inset-inline-start:6px;display:flex;align-items:center;gap:5px;background:#fff;color:#14171f;padding:2px 8px;border-radius:5px;font-size:11px;font-weight:600}
 .badge.lv{font-style:italic;font-weight:600}
 .badge i{width:7px;height:7px;border-radius:50%;background:var(--live);animation:pulse 1.6s ease-in-out infinite}
 @keyframes pulse{50%{opacity:.3}}
 .body{padding:8px 10px 10px;display:flex;flex-direction:column;gap:1px;flex:1}
-.tour{font-size:11px;color:var(--mu);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px}
+.tour{min-height:15px;font-size:11px;color:var(--mu);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px}
 .card .tm{font:700 15px/1.2 var(--fh);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .card .vs{display:none}
 .timer{display:flex;align-items:baseline;justify-content:center;gap:6px;margin-top:5px;font-size:11px;color:var(--mu)}
-.card .timer{justify-content:flex-start}
+.card .timer{justify-content:flex-start;margin-top:0}
+.foot{margin-top:auto;padding-top:8px}
+.card .when{margin:0;height:36px;display:flex;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:6px;font-size:12px;font-weight:600;color:var(--ac)}
 .timer b{font:700 15px var(--fh);color:var(--live);font-variant-numeric:tabular-nums;letter-spacing:.4px}
 .slide .timer{color:rgba(255,255,255,.75);margin-top:6px}
 .slide .timer b{color:#fff;font-size:16px}
@@ -122,7 +128,7 @@ footer b{color:var(--ac)}
 <div id="bgimg"></div>
 <header class="bar">
   <div class="bar-in">
-    <a class="brand" href="/" aria-label="Home"><img class="logo" id="logo" src="https://www.fancode.com/skillup-uploads/fc-web-logo/fc_logo_white_bg.svg" alt="" onerror="this.style.visibility='hidden'"></a>
+    <a class="brand" href="/" aria-label="Home"><img class="logo" id="logo" src="/gop-gop-moww.png" alt="" onerror="this.style.visibility='hidden'"></a>
     <div class="tools">
       <select id="lang" aria-label="Language"></select>
       <button id="theme" type="button" aria-label="Switch theme">
@@ -141,14 +147,14 @@ footer b{color:var(--ac)}
   <main id="rows"><div class="msg" data-i="loading">Loading matches…</div></main>
   <footer>
     <div id="vis" hidden><span data-i="visitors">Live visitors</span> <b id="vc"></b></div>
-    <div>&copy; 2026 CnpTV Inc. All Rights Reserved.</div>
+    <div>&copy; 2026 CnpTV openourccesonu.tv Inc. All rights reserved.</div>
   </footer>
 </div>
 <script>
 const API_URL = 'https://raw.githubusercontent.com/kajju027/Fancode-Events-Json/refs/heads/main/fancode.json';
 const HIT_URL = 'https://sayan-prime.pages.dev/api/hit?key=Fancode_inc';
 const PLAYER_PAGE = 'play.html';
-const FALLBACK_IMG = 'https://www.fancode.com/skillup-uploads/fc-web-logo/fc_logo_white_bg.svg';
+const FALLBACK_IMG = '/gop-gop-moww.png';
 const REFRESH_MS = 60000;
 const IST_OFFSET_MIN = 330;
 const RTL_LANGS = ['ur', 'ks', 'sd'];
@@ -409,8 +415,8 @@ function card(m){
     : '<span class="badge">' + esc(t(m.status === 'COMPLETED' ? UI.ended : UI.upcoming)) + '</span>';
   return '<article class="card"' + (m.status === 'UPCOMING' ? ' data-up="' + esc(m.id) + '"' : '') + '><div class="thumb">' +
     imgTag(m, '', false) + badge + '</div><div class="body">' +
-    (tour ? '<div class="tour" title="' + tour + '">' + tour + '</div>' : '') + teamsHtml(m) +
-    (live ? actions(m) : '<div class="when">' + esc(whenText(m)) + '</div>') + '</div></article>';
+    '<div class="tour"' + (tour ? ' title="' + tour + '"' : '') + '>' + tour + '</div>' + teamsHtml(m) +
+    '<div class="foot">' + (live ? actions(m) : '<div class="when">' + esc(whenText(m)) + '</div>') + '</div></div></article>';
 }
 
 function upItem(m){
