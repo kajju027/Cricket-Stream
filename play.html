@@ -1,582 +1,1417 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Live Stream | FC - CRICKET NEWS POINT</title>
-<meta name="description" content="Watch live cricket free on FC - CRICKET NEWS POINT.">
-<meta name="robots" content="index, follow, max-image-preview:large">
+<title>Live Stream | FC – Cricket News Point</title>
+<meta name="description" content="Watch live cricket free — no sign-in, no subscription required.">
 <meta name="theme-color" content="#0e1118">
-<meta name="color-scheme" content="dark light">
+<meta name="color-scheme" content="dark">
 <meta name="referrer" content="no-referrer-when-downgrade">
 <link rel="icon" href="/gop-gop-moww.png" type="image/png">
 <link rel="apple-touch-icon" href="/gop-gop-moww.png">
-<link rel="preconnect" href="https://raw.githubusercontent.com">
-<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@500;600&amp;family=Barlow+Condensed:wght@600;700&amp;display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/plyr@3.7.8/dist/plyr.css">
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-BSW772KQX6"></script>
-<script>
-window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);}
-gtag('js', new Date());
-gtag('config', 'G-BSW772KQX6');
-try{document.documentElement.dataset.theme=localStorage.getItem('fc_theme')==='light'?'light':'dark'}catch(e){}
-</script>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
+
 <style>
-:root{--ac:#ff5a00;--lk:#3d9bff;--live:#ff3b47;--bg:#0b0d13;--bar:#141824;--card:#171c28;--line:#262d3c;--tx:#f2f4f8;--mu:#97a1b3;--fh:"Barlow Condensed","Barlow",system-ui,"Noto Sans",sans-serif;color-scheme:dark}
-html[data-theme=light]{--bg:#f6f0e4;--bar:#fbf7ee;--card:#fffdf8;--line:#e3dac6;--tx:#241f17;--mu:#7b7363;--lk:#1769d6;color-scheme:light}
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html{background:var(--bg)}
-body{color:var(--tx);font:500 14px/1.5 Barlow,system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans",sans-serif;min-height:100vh;padding-bottom:calc(92px + env(safe-area-inset-bottom))}
-button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
-button:focus-visible,a:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
-.bar{position:sticky;top:0;z-index:30;background:var(--bar);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top)}
-.bar-in{max-width:960px;margin:0 auto;height:52px;padding:0 12px;display:flex;align-items:center;gap:6px}
-.ib{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;color:var(--tx)}
-.ib:hover{background:var(--card)}
-.brand{display:flex;align-items:center;height:32px;min-width:110px;margin-inline-start:4px}
-.logo{height:32px;width:auto;display:block}
-.grow{flex:1}
-html[data-theme=light] .i-moon,html:not([data-theme=light]) .i-sun{display:none}
-.page{max-width:960px;margin:0 auto}
-.stage{position:relative;width:100%;aspect-ratio:16/9;background:#000;overflow:hidden}
-@media (min-width:961px){.stage{border-radius:0 0 14px 14px}}
-.stage .plyr{position:absolute;inset:0;height:100%;--plyr-color-main:#ff5a00;--plyr-video-background:#000;--plyr-font-family:Barlow,system-ui,sans-serif;--plyr-control-radius:8px}
-.stage .plyr__video-wrapper,.stage video{height:100%;width:100%}
-.stage video{object-fit:contain;background:#000}
-.stage:not([data-state=play]) .plyr{visibility:hidden}
-.cover{position:absolute;inset:0;z-index:5;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;text-align:center;color:#fff;background:#0b0e14}
-.stage[data-state=play] .cover{display:none}
-.poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.cshade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,10,16,.1) 35%,rgba(8,10,16,.88) 100%)}
-.cbody{position:relative;padding:0 18px 18px;display:flex;flex-direction:column;align-items:center;gap:6px;width:100%}
-.cl{font:600 13px var(--fh);letter-spacing:1.6px;text-transform:uppercase;color:rgba(255,255,255,.78)}
-.cd{font:700 clamp(26px,7vw,40px)/1.1 var(--fh);letter-spacing:1px;font-variant-numeric:tabular-nums}
-.cm{font-size:13px;color:rgba(255,255,255,.75);max-width:340px}
-.spin{width:34px;height:34px;border-radius:50%;border:3px solid rgba(255,255,255,.18);border-top-color:#fff;animation:rot .7s linear infinite;margin-bottom:26px}
-@keyframes rot{to{transform:rotate(360deg)}}
-.stage[data-state=load] .cover{justify-content:center}
-.stage[data-state=load] .cbody{padding:0;align-items:center}
-.stage[data-state=error] .cover{justify-content:center}
-.ebox{position:relative;display:flex;flex-direction:column;align-items:center;gap:8px;padding:0 20px}
-.et{font:700 22px var(--fh)}
-.rt{margin-top:6px;height:38px;padding:0 22px;border-radius:6px;background:var(--ac);color:#fff;font:700 15px var(--fh);letter-spacing:.5px;text-transform:uppercase}
-.badge{position:absolute;top:10px;inset-inline-start:10px;z-index:6;display:none;align-items:center;gap:6px;background:rgba(0,0,0,.6);color:#fff;padding:3px 10px;border-radius:5px;font:700 12px var(--fh);letter-spacing:.8px;pointer-events:none}
-.stage[data-state=play] .badge.on{display:flex}
-.badge i{width:7px;height:7px;border-radius:50%;background:var(--live);animation:pulse 1.6s ease-in-out infinite}
-@keyframes pulse{50%{opacity:.3}}
-.unmute{position:absolute;top:10px;inset-inline-end:10px;z-index:6;display:none;background:rgba(0,0,0,.65);color:#fff;padding:6px 12px;border-radius:99px;font-size:12px;font-weight:600}
-.unmute.on{display:block}
-.info{padding:14px 14px 0}
-.crumb{font-size:13px;color:var(--mu)}
-.crumb a{color:var(--lk)}
-.title{font:700 26px/1.15 var(--fh);margin-top:2px;letter-spacing:.2px}
-.title .vs{font-weight:600;color:var(--mu);font-size:.8em;margin:0 3px}
-.langs{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
-.langs:empty{display:none}
-.chip{padding:6px 14px;border-radius:99px;background:var(--card);border:1px solid var(--line);font-size:13px;font-weight:600;color:var(--tx);text-decoration:none}
-.chip.on{background:var(--ac);border-color:var(--ac);color:#fff}
-.about{margin-top:16px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
-.about h2{font:700 20px var(--fh);margin-bottom:6px}
-.about p{color:var(--mu)}
-.rows{margin-top:14px;border-top:1px solid var(--line)}
-.row{display:flex;gap:12px;align-items:center;padding:12px 0}
-.row+.row{border-top:1px solid var(--line)}
-.ico{width:38px;height:38px;border-radius:50%;background:var(--bg);border:1px solid var(--line);display:grid;place-items:center;flex:none;color:var(--ac)}
-.rl{font-size:11px;letter-spacing:.8px;text-transform:uppercase;color:var(--mu)}
-.rv{font-weight:600}
-.rv.lk{color:var(--lk)}
-.buy{position:fixed;left:0;right:0;bottom:0;z-index:40;background:var(--bar);border-top:1px solid var(--line);border-radius:18px 18px 0 0;padding:14px 16px calc(14px + env(safe-area-inset-bottom));box-shadow:0 -10px 30px rgba(0,0,0,.25)}
-.buy-in{max-width:960px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:14px}
-.bt{font:700 25px/1.1 var(--fh);color:var(--lk)}
-.bs{font-size:12px;color:var(--mu);margin-top:2px}
-.cta{min-width:140px;height:46px;padding:0 20px;border-radius:6px;background:var(--ac);color:#fff;font:700 17px var(--fh);letter-spacing:.6px;text-transform:uppercase}
-.cta:active{filter:brightness(.92)}
-@media (prefers-reduced-motion:reduce){.spin,.badge i{animation:none}}
+/* ══════════════════════════════════════════
+   DESIGN TOKENS
+══════════════════════════════════════════ */
+:root {
+  --ac:    #ff5a00;        /* orange accent (primary brand) */
+  --lk:    #3ea8ff;        /* link / tournament blue        */
+  --live:  #ff3b47;        /* live dot red                  */
+  --free:  #00c853;        /* FREE badge green              */
+  --bg:    #0b0d13;        /* page background               */
+  --bar:   #131824;        /* navbar / bottom bar           */
+  --card:  #171c28;        /* card background               */
+  --card2: #1d2335;        /* card hover / secondary card   */
+  --line:  #252d3e;        /* divider / border              */
+  --tx:    #f1f3f8;        /* primary text                  */
+  --mu:    #8b96af;        /* muted / secondary text        */
+  --fh:    'Barlow Condensed','Barlow',system-ui,sans-serif;
+  color-scheme: dark;
+}
+
+/* ══════════════════════════════════════════
+   RESET & BASE
+══════════════════════════════════════════ */
+*,*::before,*::after {
+  margin: 0; padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+html { background: var(--bg); }
+
+body {
+  color: var(--tx);
+  font: 500 14px/1.55 Barlow, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  min-height: 100dvh;
+  background: var(--bg);
+  /* reserve space for fixed bottom bar */
+  padding-bottom: calc(90px + env(safe-area-inset-bottom, 0px));
+}
+
+button { font: inherit; color: inherit; cursor: pointer; border: 0; background: none; }
+a      { text-decoration: none; color: inherit; }
+img    { display: block; }
+
+button:focus-visible,
+a:focus-visible { outline: 2px solid var(--ac); outline-offset: 2px; }
+
+/* ══════════════════════════════════════════
+   NAVBAR
+══════════════════════════════════════════ */
+.nav {
+  position: sticky; top: 0; z-index: 60;
+  background: var(--bar);
+  border-bottom: 1px solid var(--line);
+  padding-top: env(safe-area-inset-top, 0px);
+}
+.nav-in {
+  max-width: 960px; margin: 0 auto;
+  height: 52px; padding: 0 10px;
+  display: flex; align-items: center; gap: 2px;
+}
+.icon-btn {
+  width: 40px; height: 40px; border-radius: 50%;
+  display: grid; place-items: center;
+  color: var(--tx); transition: background 0.15s;
+}
+.icon-btn:hover { background: var(--card2); }
+
+.brand {
+  display: flex; align-items: center;
+  height: 28px; margin-left: 4px; flex-shrink: 0;
+}
+.brand img {
+  height: 28px; width: auto;
+}
+.spacer { flex: 1; }
+
+/* ══════════════════════════════════════════
+   PAGE WRAPPER
+══════════════════════════════════════════ */
+.page { max-width: 960px; margin: 0 auto; }
+
+/* ══════════════════════════════════════════
+   STAGE (16:9 video container)
+══════════════════════════════════════════ */
+.stage {
+  position: relative; width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #000; overflow: hidden;
+}
+@media (min-width: 961px) {
+  .stage { border-radius: 0 0 16px 16px; }
+}
+
+/* ── JW Player mount element ── */
+#jwp {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  background: #000;
+}
+/* Force JW Player to fill the container */
+#jwp .jwplayer        { width: 100% !important; height: 100% !important; }
+#jwp .jw-wrapper      { position: absolute !important; inset: 0 !important; }
+#jwp .jw-media video  { width: 100% !important; height: 100% !important; object-fit: contain; }
+/* Hide JW Player UI when cover is showing */
+.stage:not([data-s=play]) #jwp { visibility: hidden; }
+
+/* ── HLS.js fallback video element ── */
+#hlsVid {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: contain; background: #000;
+}
+.stage:not([data-s=play]) #hlsVid { visibility: hidden; }
+
+/* ══════════════════════════════════════════
+   COVER OVERLAY  (shown when NOT playing)
+══════════════════════════════════════════ */
+.cover {
+  position: absolute; inset: 0; z-index: 10;
+  display: flex; flex-direction: column;
+  justify-content: center; align-items: center;
+  text-align: center; color: #fff;
+  background: #090c13;
+}
+.stage[data-s=play] .cover { display: none; }
+
+/* Match thumbnail shown as background in cover */
+.poster {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  opacity: 0; transition: opacity 0.45s ease;
+}
+.poster.vis { opacity: 1; }
+
+/* Gradient shade over poster */
+.shade {
+  position: absolute; inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(8, 10, 16, 0.08) 0%,
+    rgba(8, 10, 16, 0.55) 50%,
+    rgba(8, 10, 16, 0.90) 100%
+  );
+  opacity: 0; transition: opacity 0.45s ease;
+}
+.poster.vis ~ .shade { opacity: 1; }
+
+/* Cover body — sits above poster + shade */
+.cv-body {
+  position: relative; z-index: 2;
+  padding: 20px 24px;
+  display: flex; flex-direction: column;
+  align-items: center; gap: 10px;
+  width: 100%;
+}
+
+/* ── Spinner ── */
+.spin {
+  width: 38px; height: 38px; border-radius: 50%;
+  border: 3px solid rgba(255,255,255,.12);
+  border-top-color: rgba(255,255,255,.85);
+  animation: rotate 0.72s linear infinite;
+  margin-bottom: 4px;
+}
+@keyframes rotate { to { transform: rotate(360deg); } }
+
+/* ── Countdown ── */
+.cv-label {
+  font: 700 11px/1 var(--fh);
+  letter-spacing: 2.6px; text-transform: uppercase;
+  color: rgba(255,255,255,.6);
+  margin-bottom: 2px;
+}
+.cv-clock {
+  font: 800 clamp(26px, 8.5vw, 52px)/1 var(--fh);
+  letter-spacing: 1.5px;
+  font-variant-numeric: tabular-nums;
+  color: #fff;
+}
+.cv-msg {
+  font-size: 12.5px; line-height: 1.55;
+  color: rgba(255,255,255,.58);
+  max-width: 310px;
+  margin-top: 2px;
+}
+
+/* ── Error state ── */
+.error-box {
+  display: flex; flex-direction: column;
+  align-items: center; gap: 12px;
+  padding: 0 24px;
+}
+.error-title  { font: 700 20px var(--fh); color: #fff; }
+.retry-btn {
+  margin-top: 2px;
+  height: 38px; padding: 0 24px;
+  border-radius: 7px;
+  background: var(--ac); color: #fff;
+  font: 700 14px var(--fh); letter-spacing: .4px;
+  text-transform: uppercase;
+}
+
+/* ══════════════════════════════════════════
+   LIVE BADGE  (top-left of stage)
+══════════════════════════════════════════ */
+.live-badge {
+  position: absolute; top: 10px; left: 10px; z-index: 20;
+  display: none; align-items: center; gap: 5px;
+  background: rgba(0,0,0,.72);
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  color: #fff; padding: 4px 10px;
+  border-radius: 5px;
+  font: 700 11px var(--fh); letter-spacing: .9px;
+  pointer-events: none; user-select: none;
+}
+.stage[data-s=play] .live-badge.on { display: flex; }
+.live-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--live);
+  animation: blink 1.6s ease-in-out infinite;
+}
+@keyframes blink { 50% { opacity: .2; } }
+
+/* ══════════════════════════════════════════
+   UNMUTE HINT  (bottom-right of stage)
+══════════════════════════════════════════ */
+.unmute-hint {
+  position: absolute; bottom: 56px; right: 10px; z-index: 20;
+  display: none;
+  background: rgba(0,0,0,.72);
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  color: #fff; padding: 6px 14px;
+  border-radius: 20px;
+  font: 600 12px Barlow, sans-serif;
+  cursor: pointer;
+}
+.unmute-hint.on { display: block; }
+
+/* ══════════════════════════════════════════
+   MATCH INFO SECTION
+══════════════════════════════════════════ */
+.info { padding: 14px 14px 0; }
+
+/* Breadcrumb: "Tournament · Status" */
+.crumb {
+  display: flex; align-items: center;
+  flex-wrap: wrap; gap: 5px;
+  font-size: 13px; color: var(--lk);
+  margin-bottom: 5px;
+}
+.crumb-dot { color: var(--mu); }
+.crumb-status { color: var(--mu); }
+
+/* Match title: "Team A vs Team B" */
+.match-title {
+  font: 700 clamp(21px, 6vw, 32px)/1.15 var(--fh);
+  letter-spacing: .3px;
+}
+.match-title .vs {
+  font-weight: 600; color: var(--mu);
+  font-size: .78em; margin: 0 5px;
+}
+
+/* Language chips */
+.lang-row {
+  display: flex; flex-wrap: wrap; gap: 7px;
+  margin-top: 12px;
+}
+.lang-row:empty { display: none; }
+.chip {
+  padding: 5px 16px; border-radius: 20px;
+  background: var(--card); border: 1px solid var(--line);
+  font: 600 13px Barlow, sans-serif; color: var(--tx);
+  transition: background 0.15s;
+}
+.chip:hover:not(.on) { background: var(--card2); }
+.chip.on { background: var(--ac); border-color: var(--ac); color: #fff; }
+
+/* Quick-action tab buttons (Squad / Points Table) */
+.tab-row {
+  display: flex; flex-wrap: wrap; gap: 7px;
+  margin-top: 10px;
+}
+.tab-row:empty { display: none; }
+.tab-btn {
+  padding: 6px 15px; border-radius: 20px;
+  background: var(--card); border: 1px solid var(--line);
+  font: 600 13px Barlow, sans-serif; color: var(--tx);
+  transition: background 0.15s;
+}
+.tab-btn:hover { background: var(--card2); }
+
+/* About card */
+.about-card {
+  margin-top: 14px;
+  background: var(--card); border: 1px solid var(--line);
+  border-radius: 14px; padding: 16px;
+}
+.about-card h2 { font: 700 18px var(--fh); margin-bottom: 7px; }
+.about-card p  { color: var(--mu); font-size: 13px; line-height: 1.65; }
+
+/* Info rows inside about card */
+.info-rows { margin-top: 14px; border-top: 1px solid var(--line); }
+.info-row {
+  display: flex; align-items: center;
+  gap: 12px; padding: 11px 0;
+}
+.info-row + .info-row { border-top: 1px solid var(--line); }
+.row-icon {
+  width: 38px; height: 38px; border-radius: 50%;
+  background: var(--bg); border: 1px solid var(--line);
+  display: grid; place-items: center; flex: none;
+  color: var(--ac);
+}
+.row-label {
+  font-size: 11px; letter-spacing: .7px;
+  text-transform: uppercase; color: var(--mu);
+  margin-bottom: 2px;
+}
+.row-value       { font: 600 14px Barlow, sans-serif; }
+.row-value.link  { color: var(--lk); }
+
+/* ══════════════════════════════════════════
+   FREE BOTTOM BAR  (fixed)
+══════════════════════════════════════════ */
+.free-bar {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 70;
+  background: var(--bar);
+  border-top: 1px solid var(--line);
+  border-radius: 18px 18px 0 0;
+  padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px));
+  box-shadow: 0 -16px 40px rgba(0, 0, 0, .4);
+}
+.free-bar-in {
+  max-width: 960px; margin: 0 auto;
+  display: flex; align-items: center;
+  justify-content: space-between; gap: 12px;
+}
+.free-price {
+  font: 700 24px/1 var(--fh);
+  letter-spacing: .4px;
+}
+.free-badge {
+  display: inline-flex; align-items: center;
+  background: var(--free); color: #fff;
+  font: 800 13px var(--fh); letter-spacing: .7px;
+  padding: 3px 9px; border-radius: 5px;
+  margin-left: 6px; vertical-align: middle;
+}
+.free-sub {
+  font-size: 11px; color: var(--mu); margin-top: 3px;
+}
+.cta-btn {
+  min-width: 128px; height: 46px; padding: 0 18px;
+  border-radius: 7px; flex-shrink: 0;
+  background: var(--ac); color: #fff;
+  font: 700 15px var(--fh); letter-spacing: .5px;
+  text-transform: uppercase;
+  transition: filter 0.15s;
+}
+.cta-btn:active { filter: brightness(.88); }
+
+/* ══════════════════════════════════════════
+   ACCESSIBILITY & MOTION
+══════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  .spin, .live-dot { animation: none; }
+  .poster, .shade  { transition: none; }
+}
 </style>
 </head>
 <body>
-<header class="bar">
-  <div class="bar-in">
-    <a id="back" class="ib" href="/" aria-label="Back"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></a>
-    <a class="brand" href="/" aria-label="Home"><img class="logo" id="logo" src="/gop-gop-moww.png" alt="" onerror="this.style.visibility='hidden'"></a>
-    <span class="grow"></span>
-    <button id="share" class="ib" type="button" aria-label="Share"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg></button>
-    <button id="theme" class="ib" type="button" aria-label="Switch theme">
-      <svg class="i-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
-      <svg class="i-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+
+<!-- ═══════════ NAVBAR ═══════════ -->
+<header class="nav">
+  <div class="nav-in">
+    <a id="btnBack" class="icon-btn" href="/" aria-label="Go back">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M19 12H5M12 19l-7-7 7-7"/>
+      </svg>
+    </a>
+    <a class="brand" href="/" aria-label="Home">
+      <img id="logo" src="/gop-gop-moww.png" alt="FC - Cricket News Point"
+           onerror="this.style.visibility='hidden'">
+    </a>
+    <div class="spacer"></div>
+    <!-- Notification bell -->
+    <button id="btnNotify" class="icon-btn" type="button" aria-label="Notify me">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+      </svg>
+    </button>
+    <!-- Share -->
+    <button id="btnShare" class="icon-btn" type="button" aria-label="Share">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="18" cy="5" r="3"/>
+        <circle cx="6" cy="12" r="3"/>
+        <circle cx="18" cy="19" r="3"/>
+        <path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/>
+      </svg>
     </button>
   </div>
 </header>
+
+<!-- ═══════════ MAIN CONTENT ═══════════ -->
 <main class="page">
-  <div class="stage" id="stage" data-state="load">
-    <video id="vid" playsinline></video>
+
+  <!-- Video Stage -->
+  <div class="stage" id="stage" data-s="load">
+    <!-- JW Player will mount inside this div -->
+    <div id="jwp"></div>
+
+    <!-- Cover overlay: shown when video is NOT playing -->
     <div class="cover" id="cover">
-      <img class="poster" id="poster" alt="" hidden>
-      <div class="cshade"></div>
-      <div class="cbody" id="cbody"><div class="spin"></div></div>
+      <img class="poster" id="poster" alt="" loading="eager">
+      <div class="shade"></div>
+      <div class="cv-body" id="cvBody">
+        <div class="spin"></div>
+      </div>
     </div>
-    <div class="badge" id="badge"><i></i>LIVE</div>
-    <button class="unmute" id="unmute" type="button">Tap to unmute</button>
+
+    <!-- LIVE badge (top-left) -->
+    <div class="live-badge" id="liveBadge">
+      <span class="live-dot"></span>LIVE
+    </div>
+
+    <!-- Unmute hint (bottom-right) -->
+    <button class="unmute-hint" id="unmuteHint" type="button">🔊 Tap to unmute</button>
   </div>
+
+  <!-- Match Info -->
   <section class="info">
     <div class="crumb" id="crumb"></div>
-    <h1 class="title" id="title"></h1>
-    <div class="langs" id="langs"></div>
-    <div class="about">
+    <h1 class="match-title" id="matchTitle">Loading match…</h1>
+    <div class="lang-row" id="langRow"></div>
+    <div class="tab-row" id="tabRow"></div>
+    <div class="about-card">
       <h2>About this match</h2>
-      <p id="about">Loading match details…</p>
-      <div class="rows" id="rows"></div>
+      <p id="aboutText">Loading match details…</p>
+      <div class="info-rows" id="infoRows"></div>
     </div>
   </section>
+
 </main>
-<div class="buy">
-  <div class="buy-in">
-    <div><div class="bt">Watch @ Free</div><div class="bs">No pass. No sign-in. 100% free for everyone.</div></div>
-    <button id="cta" class="cta" type="button">Copy link</button>
+
+<!-- ═══════════ FREE BOTTOM BAR ═══════════ -->
+<div class="free-bar">
+  <div class="free-bar-in">
+    <div>
+      <div class="free-price">
+        Watch @ <span class="free-badge">FREE</span>
+      </div>
+      <div class="free-sub">No subscription · No sign-in · 100% free</div>
+    </div>
+    <button id="ctaBtn" class="cta-btn" type="button">Watch Now</button>
   </div>
 </div>
+
+<!-- ═══════════ SCRIPT ═══════════ -->
 <script>
-(function(){
+(function () {
 'use strict';
 
-var JSON_URL = 'https://raw.githubusercontent.com/kajju027/Fancode-Events-Json/refs/heads/main/fancode.json';
-var PLYR_JS = 'https://cdn.jsdelivr.net/npm/plyr@3.7.8/dist/plyr.min.js';
-var HLS_JS = 'https://cdn.jsdelivr.net/npm/hls.js@1.5.17/dist/hls.min.js';
-var IST_OFFSET_MIN = 330;
-var DEFAULT_Q = 540;
-var LANG_CODES = {ENGLISH:'eng',HINDI:'hin',BANGLA:'ban',BENGALI:'ban',TAMIL:'tam',TELUGU:'tel',KANNADA:'kan',MARATHI:'mar',MALAYALAM:'mal',PUNJABI:'pan',GUJARATI:'guj',URDU:'urd',ODIA:'ori',ASSAMESE:'asm',BHOJPURI:'bho'};
+
+var API_URL  = 'https://raw.githubusercontent.com/kajju027/Fancode-Events-Json/refs/heads/main/fancode.json';
+var JW_PATH  = '/jw.html';        
+var HLS_CDN  = 'https://cdn.jsdelivr.net/npm/hls.js@1.5.17/dist/hls.min.js';
+var DEF_Q    = 720;               
+var IST_OFF  = 330 * 60000;       
+
 
 var sp = new URLSearchParams(location.search);
-var parts = (sp.get('id') || '').split('_').filter(Boolean);
-if (parts.length > 1 && parts[parts.length - 1].toLowerCase() === 'px') parts.pop();
-var matchId = parts[0] || '';
-var wantCode = parts[1] || 'eng';
-var si = parseInt(sp.get('s') || '0', 10) || 0;
 
-var $ = function(id){ return document.getElementById(id); };
-var stage = $('stage'), cbody = $('cbody'), poster = $('poster'), vid = $('vid');
-var badge = $('badge'), unmuteBtn = $('unmute'), cta = $('cta');
+var rawId   = sp.get('id') || '';
+var idParts = rawId.split('_').filter(Boolean);
+var matchId = idParts[0] || '';
+var wantLang = (sp.get('lang') || idParts[1] || 'eng').toLowerCase();
 
-var match = null;
-var started = false;
-var libsPromise = null;
-var player = null;
-var hls = null;
-var sources = {};
-var cands = [];
-var candIdx = 0;
-var netRetry = 0;
-var mediaRetry = 0;
-var watchdog = 0;
-var pollTimer = 0;
-var tickTimer = 0;
-var copiedTimer = 0;
 
-function esc(v){
-  return String(v == null ? '' : v).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; });
+var matchData     = null;   
+var streamStarted = false;  
+var jwInst        = null;   
+var hlsInst       = null;   
+var hlsCands      = [];     
+var hlsIdx        = 0;      
+
+var jwLoadPromise  = null;  
+var hlsLoadPromise = null;  
+
+var pollTimer  = 0;
+var tickTimer  = 0;
+var ctaTimer   = 0;
+
+
+var stage      = $('stage');
+var cover      = $('cover');
+var cvBody     = $('cvBody');
+var poster     = $('poster');
+var liveBadge  = $('liveBadge');
+var unmuteHint = $('unmuteHint');
+var ctaBtn     = $('ctaBtn');
+
+
+function $(id)   { return document.getElementById(id); }
+function pad(n)  { return String(n).padStart(2, '0');  }
+function cap(s)  { return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase(); }
+function setState(s) { stage.dataset.s = s; }
+
+function esc(v) {
+  return String(v == null ? '' : v)
+    .replace(/[&<>"']/g, function (c) {
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
 }
 
-function langCode(raw){
-  var l = String(raw || '').trim().toUpperCase();
-  if (!l || l === 'BLOODY_SWEET') return 'eng';
-  return LANG_CODES[l] || l.slice(0, 3).toLowerCase();
+
+
+var LANG_FWD = {
+  ENGLISH:'eng', HINDI:'hin', BANGLA:'ban', BENGALI:'ban',
+  TAMIL:'tam',   TELUGU:'tel', KANNADA:'kan', MARATHI:'mar',
+  MALAYALAM:'mal', PUNJABI:'pan', GUJARATI:'guj', URDU:'urd',
+  ODIA:'ori', ASSAMESE:'asm', BHOJPURI:'bho'
+};
+
+var LANG_REV = {};
+(function () {
+  Object.keys(LANG_FWD).forEach(function (k) {
+    if (!LANG_REV[LANG_FWD[k]]) LANG_REV[LANG_FWD[k]] = k;
+  });
+})();
+
+function toLangCode(raw) {
+  var k = String(raw || '').trim().toUpperCase();
+  return LANG_FWD[k] || k.slice(0, 3).toLowerCase();
 }
 
-function capital(s){
-  return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
-}
 
-function toIstMs(y, mo, d, h, mi, s, ap){
-  h = +h;
-  if (ap){
-    ap = ap.toUpperCase();
-    if (ap === 'PM' && h < 12) h += 12;
-    if (ap === 'AM' && h === 12) h = 0;
-  }
-  return Date.UTC(+y, +mo - 1, +d, h, +mi, s ? +s : 0) - IST_OFFSET_MIN * 60000;
-}
-
-function parseIST(str){
+function parseIST(str) {
   if (!str) return null;
-  var s = String(str).trim();
-  var m = s.match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?\s*(AM|PM)\s+(\d{1,2})[-/](\d{1,2})[-/](\d{4})$/i);
-  if (m) return toIstMs(m[7], m[6], m[5], m[1], m[2], m[3], m[4]);
-  var t = Date.parse(s);
+  str = String(str).trim();
+
+  
+  var m = str.match(
+    /^(\d{1,2}):(\d{2})(?::(\d{2}))?\s*(AM|PM)\s+(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})$/i
+  );
+  if (m) {
+    var H = +m[1], MI = +m[2], SEC = +(m[3] || 0);
+    var AP = m[4].toUpperCase();
+    var D  = +m[5], MO = +m[6], Y = +m[7];
+    if (AP === 'PM' && H < 12) H += 12;
+    if (AP === 'AM' && H === 12) H = 0;
+    
+    return Date.UTC(Y, MO - 1, D, H, MI, SEC) - IST_OFF;
+  }
+
+  
+  var t = Date.parse(str);
   return isNaN(t) ? null : t;
 }
 
-function pad(n){ return String(n).padStart(2, '0'); }
-
-function fmtCountdown(ms){
-  var s = Math.max(0, Math.floor(ms / 1000));
-  var d = Math.floor(s / 86400);
-  var h = Math.floor(s % 86400 / 3600);
-  var m = Math.floor(s % 3600 / 60);
-  var out = pad(h) + 'h : ' + pad(m) + 'm : ' + pad(s % 60) + 's';
-  return d ? d + 'd : ' + out : out;
+function fmtCountdown(ms) {
+  var s   = Math.max(0, Math.floor(ms / 1000));
+  var d   = Math.floor(s / 86400);
+  var h   = Math.floor((s % 86400) / 3600);
+  var min = Math.floor((s % 3600) / 60);
+  var sec = s % 60;
+  var hms = pad(h) + 'h : ' + pad(min) + 'm : ' + pad(sec) + 's';
+  return d > 0 ? d + 'd : ' + hms : hms;
 }
 
-function setState(state){
-  stage.dataset.state = state;
-}
-
-function showCover(html){
-  cbody.innerHTML = html;
-}
-
-function showLoading(){
-  setState('load');
-  showCover('<div class="spin"></div>');
-}
-
-function showError(title, msg){
-  clearInterval(tickTimer);
-  setState('error');
-  showCover('<div class="ebox"><div class="et">' + esc(title) + '</div><div class="cm">' + esc(msg) +
-    '</div><button class="rt" id="retry" type="button">Try again</button></div>');
-  $('retry').addEventListener('click', function(){ showLoading(); load(); });
-  schedulePoll(10000);
-}
-
-function showWaiting(){
-  setState('wait');
-  clearInterval(tickTimer);
-  var start = match && match.startMs;
-  if (match && match.status !== 'LIVE' && start && start > Date.now()){
-    showCover('<div class="cl">Watch live in</div><div class="cd" id="cd">' + fmtCountdown(start - Date.now()) + '</div>');
-    tickTimer = setInterval(function(){
-      var left = start - Date.now();
-      if (left <= 0){ showWaiting(); return; }
-      var el = $('cd');
-      if (el) el.textContent = fmtCountdown(left);
-    }, 1000);
-    return;
+function fmtDate(ms) {
+  if (!ms) return 'TBA';
+  try {
+    return new Date(ms).toLocaleString('en-IN', {
+      day: 'numeric', month: 'short', year: 'numeric',
+      hour: 'numeric', minute: '2-digit',
+      timeZone: 'Asia/Kolkata'
+    }) + ' IST';
+  } catch (e) {
+    return new Date(ms).toUTCString();
   }
-  var passed = match && match.status !== 'LIVE' && start;
-  showCover('<div class="cl">' + (passed || (match && match.status === 'LIVE') ? 'Broadcasting soon' : 'Starting soon') +
-    '</div><div class="cm">The stream will start automatically. Please keep this page open.</div>');
 }
 
-function resolve(m){
-  var s = m.streams || {};
-  var fb = [s.primary, s.fancode_cdn, s.fancode_lk_cdn, s.fancode_bd_cdn, s.fancode_np_cdn].filter(Boolean);
-  var groups = m.auto_streams && typeof m.auto_streams === 'object' ? m.auto_streams : {};
-  var keys = Object.keys(groups).filter(function(k){ return groups[k] && groups[k].streams && Object.keys(groups[k].streams).length; });
-  if (si !== 0){
-    var u = si === 1 ? s.fancode_lk_cdn : si === 2 ? s.fancode_np_cdn : si === 3 ? s.fancode_bd_cdn : null;
-    return u ? { langs: [], key: null, q: {0: u}, fb: fb } : null;
-  }
-  if (keys.length){
-    var key = keys.filter(function(k){ return langCode(k) === wantCode; })[0] || keys[0];
-    var st = groups[key].streams;
-    var q = {};
-    Object.keys(st).forEach(function(k){
-      var mm = k.match(/^(\d+)p$/i);
-      if (mm && st[k]) q[+mm[1]] = st[k];
-    });
-    if (s.fancode_cdn) q[0] = s.fancode_cdn;
-    if (!Object.keys(q).length) q[0] = st[Object.keys(st)[0]];
-    return { langs: keys, key: key, q: q, fb: fb };
-  }
-  return fb.length ? { langs: [], key: null, q: {0: fb[0]}, fb: fb } : null;
-}
 
-function loadScript(src){
-  return new Promise(function(res, rej){
-    var el = document.createElement('script');
-    el.src = src;
-    el.async = true;
-    el.onload = function(){ res(); };
-    el.onerror = function(){ rej(new Error('Failed to load ' + src)); };
-    document.head.appendChild(el);
+function normalize(raw) {
+  var title  = String(raw.title || 'Match');
+  var parts  = title.split(/\s+vs\.?\s+/i);
+  var groups = (raw.auto_streams && typeof raw.auto_streams === 'object')
+                 ? raw.auto_streams : {};
+
+  
+  var langs = Object.keys(groups).filter(function (k) {
+    var g = groups[k];
+    return g && g.streams && Object.keys(g.streams).length > 0;
   });
-}
 
-function loadLibs(){
-  if (window.Plyr && window.Hls) return Promise.resolve();
-  if (!libsPromise){
-    libsPromise = Promise.all([loadScript(PLYR_JS), loadScript(HLS_JS).catch(function(){ return null; })]);
-  }
-  return libsPromise;
-}
-
-function destroyHls(){
-  if (hls){ try { hls.destroy(); } catch(e){} hls = null; }
-}
-
-function attach(url){
-  clearTimeout(watchdog);
-  destroyHls();
-  netRetry = 0;
-  mediaRetry = 0;
-  if (window.Hls && window.Hls.isSupported()){
-    hls = new window.Hls({ enableWorker: true, maxBufferLength: 30, lowLatencyMode: false });
-    hls.on(window.Hls.Events.ERROR, function(e, d){
-      if (!d || !d.fatal) return;
-      if (d.type === window.Hls.ErrorTypes.NETWORK_ERROR && netRetry++ < 3) hls.startLoad();
-      else if (d.type === window.Hls.ErrorTypes.MEDIA_ERROR && mediaRetry++ < 3) hls.recoverMediaError();
-      else failover();
-    });
-    hls.loadSource(url);
-    hls.attachMedia(vid);
-  } else if (vid.canPlayType('application/vnd.apple.mpegurl')){
-    vid.src = url;
-  } else {
-    showError('Can’t play this stream', 'This browser does not support live streaming. Please try another browser.');
-    return;
-  }
-  watchdog = setTimeout(failover, 20000);
-  var p = vid.play();
-  if (p && p.catch) p.catch(function(){
-    vid.muted = true;
-    var q = vid.play();
-    if (q && q.catch) q.catch(function(){});
-  });
-}
-
-function failover(){
-  clearTimeout(watchdog);
-  candIdx++;
-  if (candIdx < cands.length){ attach(cands[candIdx]); return; }
-  destroyHls();
-  started = false;
-  showError('Stream unavailable', 'We couldn’t load the stream right now. Retrying automatically.');
-}
-
-function buildCands(chosen, res){
-  var order = Object.keys(res.q).map(Number).filter(function(h){ return h > 0; })
-    .sort(function(a, b){ return Math.abs(a - chosen) - Math.abs(b - chosen); });
-  var urls = [];
-  if (res.q[chosen]) urls.push(res.q[chosen]);
-  order.forEach(function(h){ urls.push(res.q[h]); });
-  if (res.q[0]) urls.push(res.q[0]);
-  res.fb.forEach(function(u){ urls.push(u); });
-  return urls.filter(function(u, i){ return u && urls.indexOf(u) === i; });
-}
-
-function startPlayer(res){
-  showLoading();
-  sources = res.q;
-  var heights = Object.keys(res.q).map(Number).filter(function(h){ return h > 0; }).sort(function(a, b){ return b - a; });
-  var options = (res.q[0] ? [0] : []).concat(heights);
-  var def = res.q[DEFAULT_Q] ? DEFAULT_Q : (heights.length ? heights.sort(function(a, b){ return Math.abs(a - DEFAULT_Q) - Math.abs(b - DEFAULT_Q); })[0] : 0);
-  cands = buildCands(def, res);
-  candIdx = 0;
-  loadLibs().then(function(){
-    if (!window.Plyr){ throw new Error('Player library missing'); }
-    if (!player){
-      player = new window.Plyr(vid, {
-        controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'settings', 'pip', 'airplay', 'fullscreen'],
-        settings: options.length > 1 ? ['quality'] : [],
-        quality: { default: def, options: options, forced: true, onChange: function(q){ changeQuality(Number(q), res); } },
-        i18n: { qualityLabel: { 0: 'Auto' } },
-        tooltips: { controls: true, seek: true },
-        keyboard: { focused: true, global: false },
-        fullscreen: { enabled: true, fallback: true, iosNative: true },
-        hideControls: true,
-        clickToPlay: true
-      });
-    }
-    attach(cands[0]);
-  }).catch(function(){
-    started = false;
-    showError('Player failed to load', 'Please check your connection and try again.');
-  });
-}
-
-function changeQuality(q, res){
-  var url = sources[q];
-  if (!url) return;
-  cands = buildCands(q, res);
-  candIdx = Math.max(0, cands.indexOf(url));
-  attach(url);
-}
-
-function paintInfo(){
-  var m = match;
-  var teams = m.teams;
-  document.title = teams.join(' vs ') + ' - Live Stream | FC - CRICKET NEWS POINT';
-  $('title').innerHTML = teams.length === 2
-    ? esc(teams[0]) + ' <span class="vs">vs</span> ' + esc(teams[1])
-    : esc(teams[0]);
-  var status = m.status === 'LIVE' ? 'Live now' : (m.status === 'COMPLETED' ? 'Ended' : 'Upcoming');
-  $('crumb').innerHTML = (m.tournament ? '<a href="/">' + esc(m.tournament) + '</a> &bull; ' : '') + esc(status);
-  var about = m.tournament
-    ? 'In the ' + m.tournament + ', ' + (teams.length === 2 ? teams[0] + ' faces off against ' + teams[1] : teams[0]) + ' in what’s expected to be a thrilling contest.'
-    : (teams.length === 2 ? teams[0] + ' faces off against ' + teams[1] + ' in what’s expected to be a thrilling contest.' : teams[0]);
-  $('about').textContent = about;
-  var when = m.startMs
-    ? new Date(m.startMs).toLocaleString(undefined, { day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit' })
-    : 'To be announced';
-  var icoTrophy = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM7 6H4v1a3 3 0 0 0 3 3M17 6h3v1a3 3 0 0 1-3 3"/></svg>';
-  var icoClock = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
-  var icoMic = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>';
-  var rows = '';
-  if (m.tournament) rows += row(icoTrophy, 'Tournament', m.tournament, true);
-  rows += row(icoClock, 'Match time', when, false);
-  if (m.langs.length) rows += row(icoMic, 'Broadcast', m.langs.map(capital).join(', '), false);
-  $('rows').innerHTML = rows;
-  if (m.image){
-    poster.hidden = false;
-    if (poster.getAttribute('src') !== m.image) poster.src = m.image;
-    poster.onerror = function(){ poster.hidden = true; };
-  }
-  paintLangs();
-}
-
-function row(icon, label, value, link){
-  return '<div class="row"><div class="ico">' + icon + '</div><div><div class="rl">' + esc(label) +
-    '</div><div class="rv' + (link ? ' lk' : '') + '">' + esc(value) + '</div></div></div>';
-}
-
-function paintLangs(){
-  var m = match;
-  if (m.langs.length < 2 || si !== 0){ $('langs').innerHTML = ''; return; }
-  var current = m.langs.filter(function(k){ return langCode(k) === wantCode; })[0] || m.langs[0];
-  $('langs').innerHTML = m.langs.map(function(k){
-    return '<a class="chip' + (k === current ? ' on' : '') + '" href="?id=' + encodeURIComponent(m.id + '_' + langCode(k)) + '&s=0" replace>' + esc(capital(k)) + '</a>';
-  }).join('');
-}
-
-function normalize(m){
-  var title = String(m.title || 'Match');
-  var p = title.split(/\s+vs\.?\s+/i);
-  var groups = m.auto_streams && typeof m.auto_streams === 'object' ? m.auto_streams : {};
   return {
-    id: String(m.match_id || ''),
-    title: title,
-    teams: p.length === 2 ? p.map(function(x){ return x.trim(); }) : [title],
-    tournament: m.tournament || '',
-    image: m.image || '',
-    status: String(m.status || '').toUpperCase(),
-    startMs: parseIST(m.startTime),
-    langs: Object.keys(groups).filter(function(k){ return groups[k] && groups[k].streams && Object.keys(groups[k].streams).length; })
+    id:         String(raw.match_id || ''),
+    title:      title,
+    teams:      parts.length === 2 ? [parts[0].trim(), parts[1].trim()] : [title],
+    tournament: raw.tournament || '',
+    image:      raw.image      || '',
+    status:     String(raw.status || '').toUpperCase(),
+    startMs:    parseIST(raw.startTime),
+    langs:      langs,
+    groups:     groups,
+    rawStreams:  raw.streams || {}
   };
 }
 
-function schedulePoll(ms){
-  clearTimeout(pollTimer);
-  pollTimer = setTimeout(load, ms);
+
+function resolveStreams(raw) {
+  var groups = (raw.auto_streams && typeof raw.auto_streams === 'object')
+                 ? raw.auto_streams : {};
+  var s      = raw.streams || {};
+
+  
+  var langKeys = Object.keys(groups).filter(function (k) {
+    var g = groups[k];
+    return g && g.streams && Object.keys(g.streams).length > 0;
+  });
+
+  var wantKey = (LANG_REV[wantLang] || wantLang).toUpperCase();
+  var targetKey = null;
+
+  langKeys.forEach(function (k) {
+    if (k.toUpperCase() === wantKey) targetKey = k;
+  });
+  if (!targetKey && langKeys.length) targetKey = langKeys[0]; 
+
+  
+  var qualities = {}; 
+  if (targetKey) {
+    var stMap = groups[targetKey].streams || {};
+    Object.keys(stMap).forEach(function (k) {
+      var mm = k.match(/^(\d+)p$/i);
+      if (mm && stMap[k]) qualities[+mm[1]] = stMap[k];
+    });
+  }
+
+  
+  var adaptiveUrl = s.fancode_cdn || null;
+  if (adaptiveUrl) qualities[0] = adaptiveUrl;
+
+  
+  var fallbacks = [];
+  if (s.primary)         fallbacks.push(s.primary);
+  if (s.fancode_cdn)     fallbacks.push(s.fancode_cdn);
+  if (s.fancode_lk_cdn)  fallbacks.push(s.fancode_lk_cdn);
+  if (s.fancode_bd_cdn)  fallbacks.push(s.fancode_bd_cdn);
+  if (s.fancode_np_cdn)  fallbacks.push(s.fancode_np_cdn);
+
+  
+  var hasQualities = Object.keys(qualities).some(function (k) { return !!qualities[k]; });
+  var hasFallbacks = fallbacks.some(Boolean);
+  if (!hasQualities && !hasFallbacks) return null;
+
+  return { qualities: qualities, langKeys: langKeys, fallbacks: fallbacks };
 }
 
-function load(){
-  fetch(JSON_URL + '?_=' + Date.now(), { cache: 'no-store' })
-    .then(function(r){ if (!r.ok) throw new Error('bad response'); return r.json(); })
-    .then(function(data){
-      var list = Array.isArray(data) ? data : (Array.isArray(data.matches) ? data.matches : []);
-      var raw = list.filter(function(x){ return String(x.match_id) === matchId; })[0];
-      if (!raw){
-        showError('Match not found', 'This match is no longer available. Go back and pick another one.');
+
+function buildCandidates(res) {
+  var q  = res.qualities;
+  var fb = res.fallbacks;
+
+  var cands = [];
+  function push(u) { if (u && cands.indexOf(u) === -1) cands.push(u); }
+
+  
+  push(q[DEF_Q]);
+
+  
+  var heights = Object.keys(q).map(Number)
+    .filter(function (h) { return h > 0 && h !== DEF_Q; })
+    .sort(function (a, b) { return Math.abs(a - DEF_Q) - Math.abs(b - DEF_Q); });
+  heights.forEach(function (h) { push(q[h]); });
+
+  
+  push(q[0]);
+
+  
+  fb.forEach(push);
+
+  return cands;
+}
+
+
+function loadJWPlayer() {
+  if (jwLoadPromise) return jwLoadPromise;
+
+  
+  if (typeof jwplayer !== 'undefined') {
+    jwLoadPromise = Promise.resolve();
+    return jwLoadPromise;
+  }
+
+  jwLoadPromise = new Promise(function (resolve, reject) {
+    fetch(JW_PATH + '?_=' + Date.now(), { cache: 'no-store' })
+      .then(function (r) {
+        if (!r.ok) throw new Error('jw.html HTTP ' + r.status);
+        return r.text();
+      })
+      .then(function (html) {
+        
+        
+        var tmp = document.createElement('div');
+        tmp.innerHTML = html;
+        var sc = tmp.querySelector('script');
+        var content = sc ? sc.textContent : null;
+
+        if (!content || !content.trim()) {
+          
+          var mm = html.match(/<script[^>]*>([\s\S]*?)<\/script>/i);
+          content = mm ? mm[1] : null;
+        }
+
+        if (!content || !content.trim()) {
+          throw new Error('No script content found in jw.html');
+        }
+
+        
+        var el = document.createElement('script');
+        el.textContent = content;
+        document.head.appendChild(el);
+
+        
+        var elapsed = 0;
+        var interval = setInterval(function () {
+          if (typeof jwplayer !== 'undefined') {
+            clearInterval(interval);
+            resolve();
+          } else if ((elapsed += 60) >= 7000) {
+            clearInterval(interval);
+            reject(new Error('jwplayer did not initialize within 7s'));
+          }
+        }, 60);
+      })
+      .catch(function (err) {
+        jwLoadPromise = null; 
+        reject(err);
+      });
+  });
+
+  return jwLoadPromise;
+}
+
+
+function loadHLSJS() {
+  if (hlsLoadPromise) return hlsLoadPromise;
+  if (window.Hls) {
+    hlsLoadPromise = Promise.resolve();
+    return hlsLoadPromise;
+  }
+
+  hlsLoadPromise = new Promise(function (resolve, reject) {
+    var el = document.createElement('script');
+    el.src = HLS_CDN;
+    el.async = true;
+    el.onload  = resolve;
+    el.onerror = function () { hlsLoadPromise = null; reject(new Error('HLS.js load failed')); };
+    document.head.appendChild(el);
+  });
+
+  return hlsLoadPromise;
+}
+
+
+function showSpinner() {
+  setState('load');
+  cvBody.innerHTML = '<div class="spin"></div>';
+}
+
+
+function showError(title, msg, canRetry) {
+  clearInterval(tickTimer);
+  setState('error');
+  cvBody.innerHTML =
+    '<div class="error-box">' +
+      '<div class="error-title">' + esc(title) + '</div>' +
+      '<div class="cv-msg">'  + esc(msg)   + '</div>' +
+      (canRetry !== false
+        ? '<button class="retry-btn" id="retryBtn" type="button">Try Again</button>'
+        : '') +
+    '</div>';
+
+  var rb = $('retryBtn');
+  if (rb) rb.addEventListener('click', function () {
+    showSpinner();
+    fetchAndLoad();
+  });
+
+  if (canRetry !== false) schedulePoll(12000);
+}
+
+
+function showWaiting() {
+  clearInterval(tickTimer);
+  setState('wait');
+  ctaBtn.textContent = 'Copy Link';
+
+  var m       = matchData;
+  var now     = Date.now();
+  var startMs = m && m.startMs;
+
+  
+  if (m && m.status !== 'LIVE' && startMs && startMs > now) {
+    cvBody.innerHTML =
+      '<div class="cv-label">Watch Live in</div>' +
+      '<div class="cv-clock" id="cdTimer">' + fmtCountdown(startMs - now) + '</div>' +
+      '<div class="cv-msg">Keep this page open — the stream starts automatically.</div>';
+
+    tickTimer = setInterval(function () {
+      var left  = startMs - Date.now();
+      var timer = $('cdTimer');
+      if (left <= 0) {
+        clearInterval(tickTimer);
+        showWaiting();         
+        schedulePoll(5000);
         return;
       }
-      match = normalize(raw);
-      paintInfo();
-      cta.textContent = 'Copy link';
-      if (!started){
-        var res = resolve(raw);
-        if (res){
-          started = true;
-          clearInterval(tickTimer);
-          startPlayer(res);
-        } else {
-          showWaiting();
-          var left = match.startMs ? match.startMs - Date.now() : Infinity;
-          schedulePoll(left < 180000 ? 8000 : 30000);
-        }
-      } else {
-        schedulePoll(60000);
-      }
-    })
-    .catch(function(){
-      if (!started) showError('Couldn’t load match', 'Please check your internet connection.');
-      else schedulePoll(60000);
-    });
+      if (timer) timer.textContent = fmtCountdown(left);
+    }, 1000);
+
+    
+    var timeLeft = startMs - now;
+    schedulePoll(timeLeft < 180000 ? 10000 : 30000);
+    return;
+  }
+
+  
+  var msg;
+  if (m && m.status === 'LIVE') {
+    msg = 'Broadcasting soon… Stay on this page, the stream will begin automatically.';
+  } else if (m && m.status === 'COMPLETED') {
+    msg = 'This match has already ended.';
+  } else {
+    msg = 'Starting soon… Stay on this page, the stream will begin automatically.';
+  }
+
+  cvBody.innerHTML =
+    '<div class="cv-label">Coming Up</div>' +
+    '<div class="cv-msg" style="font-size:14px;margin-top:8px">' + esc(msg) + '</div>';
+
+  schedulePoll(15000);
 }
 
-function copy(text){
-  if (navigator.clipboard && navigator.clipboard.writeText) return navigator.clipboard.writeText(text);
-  return new Promise(function(res, rej){
+
+function onPlayStarted() {
+  setState('play');
+  if (matchData) {
+    liveBadge.classList.toggle('on', matchData.status === 'LIVE');
+  }
+  ctaBtn.textContent = 'Watch Now';
+}
+
+
+function initJWPlayer(cands, res) {
+  if (!cands.length) { showWaiting(); return; }
+
+  var q = res.qualities;
+
+  
+  
+  var useAdaptive = !!q[0];
+  var mainUrl     = useAdaptive ? q[0] : (q[DEF_Q] || cands[0]);
+
+  
+  
+  
+  var sources = [];
+  var pushed  = {};
+  function pushSrc(url, label) {
+    if (!url || pushed[url]) return;
+    pushed[url] = true;
+    sources.push({ file: url, type: 'hls', label: label || '' });
+  }
+
+  pushSrc(mainUrl, useAdaptive ? 'Auto' : DEF_Q + 'p');
+  cands.forEach(function (u) { pushSrc(u); });
+
+  if (!sources.length) { showError('No Stream', 'No playable URL was found.', true); return; }
+
+  
+  var sw = stage.offsetWidth  || 640;
+  var sh = stage.offsetHeight || Math.round(sw * 9 / 16);
+
+  setState('load');
+  cvBody.innerHTML = '<div class="spin"></div>';
+
+  
+  try {
+    jwInst = jwplayer('jwp').setup({
+      playlist: [{ sources: sources }],
+      width:    sw,
+      height:   sh,
+      stretching:  'uniform',
+      primary:     'html5',
+      autostart:   true,
+      mute:        false,
+      volume:      85,
+      hlshtml:     true,
+      displaytitle: false,
+      displaydescription: false,
+      controls:    true,
+      
+      defaultBandwidthEstimate: 2000000
+    });
+  } catch (err) {
+    console.warn('[JW] setup() threw:', err);
+    fallbackToHLS(cands);
+    return;
+  }
+
+  
+
+  
+  jwInst.on('levels', function (e) {
+    if (!e || !e.levels || !e.levels.length) return;
+    var lv = e.levels;
+    var targetIdx = -1;
+    for (var i = 0; i < lv.length; i++) {
+      if (lv[i].height === DEF_Q) { targetIdx = i; break; }
+    }
+    
+    if (targetIdx === -1) {
+      var best = Infinity, bestI = 0;
+      lv.forEach(function (l, idx) {
+        var diff = Math.abs((l.height || 0) - DEF_Q);
+        if (diff < best) { best = diff; bestI = idx; }
+      });
+      targetIdx = bestI;
+    }
+    try { jwInst.setCurrentQuality(targetIdx); } catch (e2) {  }
+  });
+
+  
+  jwInst.on('firstFrame', function () { onPlayStarted(); });
+
+  
+  jwInst.on('play', function () {
+    onPlayStarted();
     try {
-      var a = document.createElement('textarea');
-      a.value = text;
-      a.style.cssText = 'position:fixed;opacity:0';
-      document.body.appendChild(a);
-      a.select();
-      var ok = document.execCommand('copy');
-      a.remove();
-      ok ? res() : rej();
-    } catch(e){ rej(e); }
+      unmuteHint.classList.toggle('on', jwInst.getMute());
+    } catch (e2) {  }
+  });
+
+  
+  jwInst.on('mute', function (ev) {
+    if (ev && ev.mute) unmuteHint.classList.add('on');
+    else unmuteHint.classList.remove('on');
+  });
+
+  
+  jwInst.on('error', function (ev) {
+    console.warn('[JW] error event:', ev && (ev.message || ev.code || ev));
+    fallbackToHLS(cands);
+  });
+
+  jwInst.on('setupError', function (ev) {
+    console.warn('[JW] setupError:', ev && (ev.message || ev.code || ev));
+    fallbackToHLS(cands);
+  });
+
+  
+  window.addEventListener('resize', function () {
+    if (!jwInst || stage.dataset.s !== 'play') return;
+    var w2 = stage.offsetWidth;
+    var h2 = stage.offsetHeight;
+    try { jwInst.resize(w2, h2); } catch (e3) {  }
   });
 }
 
-function flashCta(text){
-  cta.textContent = text;
-  clearTimeout(copiedTimer);
-  copiedTimer = setTimeout(function(){ cta.textContent = stage.dataset.state === 'play' ? 'Watch now' : 'Copy link'; }, 2000);
+
+function fallbackToHLS(cands) {
+  
+  if (jwInst) {
+    try { jwInst.remove(); } catch (e) {}
+    jwInst = null;
+  }
+
+  hlsCands = cands;
+  hlsIdx   = 0;
+
+  loadHLSJS()
+    .then(function () { attachHLS(hlsCands[0]); })
+    .catch(function (err) {
+      console.error('[HLS.js] load failed:', err);
+      showError('Player Error', 'Video player could not be loaded. Try refreshing the page.', true);
+    });
 }
 
-cta.addEventListener('click', function(){
-  if (stage.dataset.state === 'play'){
-    stage.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    var p = vid.play();
-    if (p && p.catch) p.catch(function(){});
+function attachHLS(url) {
+  if (!url) {
+    showError('Stream Unavailable',
+      'The stream could not be loaded right now. We will keep retrying.', true);
+    schedulePoll(20000);
     return;
   }
-  copy(location.href).then(function(){ flashCta('Link copied'); }).catch(function(){ flashCta('Copy failed'); });
-});
 
-$('share').addEventListener('click', function(){
-  var data = { title: document.title, url: location.href };
-  if (navigator.share){ navigator.share(data).catch(function(){}); return; }
-  copy(location.href).then(function(){ flashCta('Link copied'); }).catch(function(){});
-});
+  
+  var jwpEl = $('jwp');
+  if (!jwpEl) return;
 
-$('back').addEventListener('click', function(e){
+  if (hlsInst) { try { hlsInst.destroy(); } catch (e) {} hlsInst = null; }
+
+  jwpEl.innerHTML =
+    '<video id="hlsVid" playsinline ' +
+    'style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000">' +
+    '</video>';
+
+  var vid = $('hlsVid');
+  if (!vid) return;
+
+  
+  if (window.Hls && window.Hls.isSupported()) {
+    hlsInst = new window.Hls({
+      maxBufferLength: 30,
+      enableWorker:    true,
+      lowLatencyMode:  false
+    });
+
+    hlsInst.on(window.Hls.Events.ERROR, function (evt, d) {
+      if (!d || !d.fatal) return;
+      console.warn('[HLS.js] fatal error type:', d.type);
+      hlsIdx++;
+      if (hlsIdx < hlsCands.length) {
+        hlsInst.destroy(); hlsInst = null;
+        attachHLS(hlsCands[hlsIdx]);
+      } else {
+        showError('Stream Unavailable',
+          'All streams failed. We are retrying automatically.', true);
+        schedulePoll(15000);
+      }
+    });
+
+    hlsInst.loadSource(url);
+    hlsInst.attachMedia(vid);
+
+  } else if (vid.canPlayType('application/vnd.apple.mpegurl')) {
+    
+    vid.src = url;
+  } else {
+    showError('Browser Not Supported',
+      'Your browser cannot play this stream. Please try Chrome or Firefox.', false);
+    return;
+  }
+
+  
+  var p = vid.play();
+  if (p && p.catch) {
+    p.catch(function () {
+      vid.muted = true;
+      var q2 = vid.play();
+      if (q2 && q2.catch) q2.catch(function () {});
+    });
+  }
+
+  
+  vid.addEventListener('playing', function () {
+    onPlayStarted();
+    unmuteHint.classList.toggle('on', vid.muted);
+  });
+  vid.addEventListener('volumechange', function () {
+    if (!vid.muted) unmuteHint.classList.remove('on');
+  });
+  vid.addEventListener('error', function () {
+    
+    if (hlsInst) return;
+    hlsIdx++;
+    if (hlsIdx < hlsCands.length) attachHLS(hlsCands[hlsIdx]);
+    else {
+      showError('Stream Error', 'All streams failed. Retrying shortly.', true);
+      schedulePoll(15000);
+    }
+  });
+}
+
+
+function startStream(raw) {
+  streamStarted = true;
+  clearInterval(tickTimer);
+  showSpinner();
+
+  var res   = resolveStreams(raw);
+  if (!res) {
+    streamStarted = false;
+    showWaiting();
+    return;
+  }
+
+  var cands = buildCandidates(res);
+  if (!cands.length) {
+    streamStarted = false;
+    showWaiting();
+    return;
+  }
+
+  
+  loadJWPlayer()
+    .then(function () { initJWPlayer(cands, res); })
+    .catch(function (err) {
+      console.warn('[JW] load failed:', err, '— switching to HLS.js');
+      fallbackToHLS(cands);
+    });
+}
+
+
+function paintMatchInfo(m) {
+  
+  var t1 = m.teams[0], t2 = m.teams[1];
+  if (m.teams.length === 2) {
+    $('matchTitle').innerHTML =
+      esc(t1) + ' <span class="vs">vs</span> ' + esc(t2);
+    document.title = t1 + ' vs ' + t2 + ' — Live Stream | FC Cricket';
+  } else {
+    $('matchTitle').textContent = m.title;
+    document.title = m.title + ' — Live Stream | FC Cricket';
+  }
+
+  
+  var statusTxt = m.status === 'LIVE'      ? '🔴 Live now'
+                : m.status === 'COMPLETED'  ? '✓ Ended'
+                : '⏱ Upcoming';
+  var crumbHTML = '';
+  if (m.tournament) {
+    crumbHTML += '<span>' + esc(m.tournament) + '</span>' +
+                 '<span class="crumb-dot">·</span>';
+  }
+  crumbHTML += '<span class="crumb-status">' + esc(statusTxt) + '</span>';
+  $('crumb').innerHTML = crumbHTML;
+
+  
+  var about = '';
+  if (m.tournament && m.teams.length === 2) {
+    about = 'In the ' + m.tournament + ', ' +
+            m.teams[0] + ' (' + makeAbbr(m.teams[0]) + ') ' +
+            'faces off against ' +
+            m.teams[1] + ' (' + makeAbbr(m.teams[1]) + ') ' +
+            "in what's expected to be a thrilling contest. " +
+            'Watch 100% free — no sign-in needed.';
+  } else if (m.teams.length === 2) {
+    about = m.teams[0] + ' takes on ' + m.teams[1] +
+            ' in an exciting encounter. Watch live and completely free, no account required.';
+  } else {
+    about = m.title;
+  }
+  $('aboutText').textContent = about;
+
+  
+  var rowsHTML = '';
+  if (m.tournament) rowsHTML += makeRow(ICON_TROPHY, 'Tournament', m.tournament, true);
+  rowsHTML += makeRow(ICON_CLOCK, 'Match Time', m.startMs ? fmtDate(m.startMs) : 'TBA', false);
+  if (m.langs.length) {
+    rowsHTML += makeRow(ICON_GLOBE, 'Language', m.langs.map(cap).join(' / '), false);
+  }
+  $('infoRows').innerHTML = rowsHTML;
+
+  
+  if (m.langs.length > 1) {
+    $('langRow').innerHTML = m.langs.map(function (lg) {
+      var code   = toLangCode(lg);
+      var active = code === wantLang;
+      return '<a class="chip' + (active ? ' on' : '') + '" ' +
+             'href="?id=' + esc(matchId) + '&lang=' + esc(code) + '">' +
+             esc(cap(lg)) + '</a>';
+    }).join('');
+  } else {
+    $('langRow').innerHTML = '';
+  }
+
+  
+  $('tabRow').innerHTML = '';
+
+  
+  if (m.image) {
+    poster.onload  = function () { poster.classList.add('vis'); };
+    poster.onerror = function () { poster.classList.remove('vis'); };
+    if (poster.src !== m.image) {
+      poster.classList.remove('vis');
+      poster.src = m.image;
+    } else if (poster.complete) {
+      poster.classList.add('vis');
+    }
+  }
+}
+
+
+function makeAbbr(name) {
+  return name.trim().split(/\s+/)
+    .filter(function (w) { return w.length > 1; })
+    .map(function (w) { return w[0]; })
+    .join('').toUpperCase().slice(0, 4);
+}
+
+
+var SVG = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" ' +
+          'stroke="currentColor" stroke-width="2" stroke-linecap="round" ' +
+          'stroke-linejoin="round">';
+
+var ICON_TROPHY =
+  SVG + '<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/>' +
+        '<path d="M7 6H4v1a3 3 0 0 0 3 3M17 6h3v1a3 3 0 0 1-3 3"/></svg>';
+
+var ICON_CLOCK =
+  SVG + '<circle cx="12" cy="12" r="10"/>' +
+        '<path d="M12 7v5l3 2"/></svg>';
+
+var ICON_GLOBE =
+  SVG + '<circle cx="12" cy="12" r="10"/>' +
+        '<path d="M2 12h20"/>' +
+        '<path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10A15.3 15.3 0 0 1 12 2z"/></svg>';
+
+var ICON_MAP =
+  SVG + '<path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/>' +
+        '<circle cx="12" cy="10" r="3"/></svg>';
+
+function makeRow(icon, label, value, isLink) {
+  return '<div class="info-row">' +
+    '<div class="row-icon">' + icon + '</div>' +
+    '<div>' +
+      '<div class="row-label">' + esc(label) + '</div>' +
+      '<div class="row-value' + (isLink ? ' link' : '') + '" title="' + esc(value) + '">' +
+        esc(value) +
+      '</div>' +
+    '</div>' +
+  '</div>';
+}
+
+
+function schedulePoll(ms) {
+  clearTimeout(pollTimer);
+  pollTimer = setTimeout(fetchAndLoad, Math.max(ms, 5000));
+}
+
+function fetchAndLoad() {
+  fetch(API_URL + '?_=' + Date.now(), { cache: 'no-store' })
+    .then(function (r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    })
+    .then(function (data) {
+      
+      var list = Array.isArray(data)
+                   ? data
+                   : (Array.isArray(data.matches) ? data.matches : []);
+
+      
+      var raw = null;
+      for (var i = 0; i < list.length; i++) {
+        if (String(list[i].match_id) === matchId) { raw = list[i]; break; }
+      }
+
+      if (!raw) {
+        showError('Match Not Found',
+          'This match is no longer in the schedule. Please go back and choose another.', false);
+        return;
+      }
+
+      matchData = normalize(raw);
+      paintMatchInfo(matchData);
+      ctaBtn.textContent = stage.dataset.s === 'play' ? 'Watch Now' : 'Copy Link';
+
+      if (!streamStarted) {
+        
+        var res   = resolveStreams(raw);
+        var cands = res ? buildCandidates(res) : [];
+        if (cands.length) {
+          startStream(raw);
+        } else {
+          showWaiting();
+        }
+      } else {
+        
+        schedulePoll(60000);
+      }
+    })
+    .catch(function (err) {
+      console.error('[API] fetch error:', err);
+      if (!streamStarted) {
+        showError('Connection Error',
+          'Could not load match data. Please check your internet connection.', true);
+      } else {
+        schedulePoll(60000);
+      }
+    });
+}
+
+
+function flashCta(text) {
+  ctaBtn.textContent = text;
+  clearTimeout(ctaTimer);
+  ctaTimer = setTimeout(function () {
+    ctaBtn.textContent = stage.dataset.s === 'play' ? 'Watch Now' : 'Copy Link';
+  }, 2300);
+}
+
+function copyURL() {
+  var url = location.href;
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(url)
+      .then(function () { flashCta('✓ Link Copied!'); })
+      .catch(function () { flashCta('Copy failed'); });
+    return;
+  }
+  
+  var el = document.createElement('textarea');
+  el.value = url;
+  el.style.cssText = 'position:fixed;opacity:0;top:0;left:0';
+  document.body.appendChild(el);
+  el.select();
   try {
-    if (document.referrer && new URL(document.referrer).origin === location.origin && history.length > 1){
+    document.execCommand('copy');
+    flashCta('✓ Link Copied!');
+  } catch (e) {
+    flashCta('Copy failed');
+  }
+  el.remove();
+}
+
+ctaBtn.addEventListener('click', function () {
+  if (stage.dataset.s === 'play') {
+    
+    stage.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (jwInst) {
+      try {
+        if (jwInst.getState() === 'paused') jwInst.play();
+      } catch (e) {}
+    }
+    var hv = $('hlsVid');
+    if (hv && hv.paused) hv.play().catch(function () {});
+  } else {
+    copyURL();
+  }
+});
+
+
+$('btnShare').addEventListener('click', function () {
+  var d = { title: document.title, url: location.href };
+  if (navigator.share) { navigator.share(d).catch(function () {}); return; }
+  copyURL();
+});
+
+
+$('btnBack').addEventListener('click', function (e) {
+  try {
+    if (document.referrer &&
+        new URL(document.referrer).origin === location.origin &&
+        history.length > 1) {
       e.preventDefault();
       history.back();
     }
-  } catch(err){}
+    
+  } catch (err) {}
 });
 
-$('theme').addEventListener('click', function(){
-  var next = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light';
-  document.documentElement.dataset.theme = next;
-  try { localStorage.setItem('fc_theme', next); } catch(e){}
-  document.querySelector('meta[name="theme-color"]').content = next === 'light' ? '#f6f0e4' : '#0e1118';
+
+$('btnNotify').addEventListener('click', function () {
+  if (window.Notification && Notification.permission !== 'granted') {
+    Notification.requestPermission();
+  }
 });
 
-unmuteBtn.addEventListener('click', function(){
-  vid.muted = false;
-  if (vid.volume === 0) vid.volume = 1;
-  unmuteBtn.classList.remove('on');
+
+unmuteHint.addEventListener('click', function () {
+  unmuteHint.classList.remove('on');
+  if (jwInst) {
+    try { jwInst.setMute(false); jwInst.setVolume(85); } catch (e) {}
+  }
+  var hv = $('hlsVid');
+  if (hv) {
+    hv.muted = false;
+    if (hv.volume < 0.1) hv.volume = 0.85;
+  }
 });
 
-vid.addEventListener('playing', function(){
-  clearTimeout(watchdog);
-  setState('play');
-  badge.classList.toggle('on', Boolean(match && match.status === 'LIVE') || started);
-  unmuteBtn.classList.toggle('on', vid.muted);
-  cta.textContent = 'Watch now';
-});
-vid.addEventListener('volumechange', function(){
-  if (!vid.muted) unmuteBtn.classList.remove('on');
-});
-vid.addEventListener('error', function(){
-  if (started && !hls) failover();
+
+document.addEventListener('visibilitychange', function () {
+  if (document.visibilityState === 'visible' && !streamStarted) {
+    clearTimeout(pollTimer);
+    fetchAndLoad();
+  }
 });
 
-if (!matchId){
-  showError('No match selected', 'Go back and choose a match to watch.');
+
+if (!matchId) {
+  showError('No Match Selected',
+    'Please go back to the home page and choose a match to watch.', false);
 } else {
-  load();
+  showSpinner();
+  fetchAndLoad();
 }
-})();
+
+})(); 
 </script>
 </body>
 </html>
