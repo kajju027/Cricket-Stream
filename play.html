@@ -52,6 +52,9 @@ html[data-theme=light] .i-moon,html:not([data-theme=light]) .i-sun{display:none}
 .poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .cshade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,10,16,.1) 35%,rgba(8,10,16,.88) 100%)}
 .cbody{position:relative;padding:0 18px 18px;display:flex;flex-direction:column;align-items:center;gap:6px;width:100%}
+.ct{font:700 clamp(22px,6vw,30px)/1.1 var(--fh);letter-spacing:.2px}
+.ct span{font-weight:600;font-size:.7em;opacity:.7;margin:0 2px}
+.cs{font-size:12px;color:rgba(255,255,255,.78);margin-bottom:8px}
 .cl{font:600 13px var(--fh);letter-spacing:1.6px;text-transform:uppercase;color:rgba(255,255,255,.78)}
 .cd{font:700 clamp(26px,7vw,40px)/1.1 var(--fh);letter-spacing:1px;font-variant-numeric:tabular-nums}
 .cm{font-size:13px;color:rgba(255,255,255,.75);max-width:340px}
@@ -73,7 +76,7 @@ html[data-theme=light] .i-moon,html:not([data-theme=light]) .i-sun{display:none}
 .unmute.on{display:block}
 .info{padding:14px 14px 0}
 .crumb{font-size:13px;color:var(--mu)}
-.crumb a{color:var(--lk)}
+.crumb .tr{color:var(--lk);font-weight:600}
 .title{font:700 26px/1.15 var(--fh);margin-top:2px;letter-spacing:.2px}
 .title .vs{font-weight:600;color:var(--mu);font-size:.8em;margin:0 3px}
 .langs{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
@@ -269,12 +272,18 @@ function showError(title, msg, opts){
   schedulePoll(10000);
 }
 
+function coverTitle(){
+  if (!match) return '';
+  var tm = match.teams.length === 2 ? esc(match.teams[0]) + ' <span>vs</span> ' + esc(match.teams[1]) : esc(match.teams[0]);
+  return '<div class="ct">' + tm + '</div>' + (match.tournament ? '<div class="cs">' + esc(match.tournament) + '</div>' : '');
+}
+
 function showWaiting(){
   setState('wait');
   clearInterval(tickTimer);
   var start = match && match.startMs;
   if (match && match.status !== 'LIVE' && start && start > Date.now()){
-    showCover('<div class="cl">Watch live in</div><div class="cd" id="cd">' + fmtCountdown(start - Date.now()) + '</div>');
+    showCover(coverTitle() + '<div class="cl">Watch live in</div><div class="cd" id="cd">' + fmtCountdown(start - Date.now()) + '</div>');
     tickTimer = setInterval(function(){
       var left = start - Date.now();
       if (left <= 0){ clearInterval(tickTimer); load(); return; }
@@ -284,7 +293,7 @@ function showWaiting(){
     return;
   }
   var passed = match && match.status !== 'LIVE' && start;
-  showCover('<div class="cl">' + (passed || (match && match.status === 'LIVE') ? 'Broadcasting soon' : 'Starting soon') +
+  showCover(coverTitle() + '<div class="cl">' + (passed || (match && match.status === 'LIVE') ? 'Broadcasting soon' : 'Starting soon') +
     '</div><div class="cm">The stream will start automatically. Please keep this page open.</div>');
 }
 
@@ -471,13 +480,13 @@ function availableModes(){
 
 function setLevel(q){
   if (!hls) return;
-  if (!q){ hls.currentLevel = -1; return; }
+  if (!q){ hls.nextLevel = -1; return; }
   var best = -1, diff = Infinity;
   hls.levels.forEach(function(l, i){
     var d = Math.abs((l.height || 0) - q);
     if (d < diff){ diff = d; best = i; }
   });
-  hls.currentLevel = best;
+  if (best >= 0) hls.nextLevel = best;
 }
 
 function ensurePlayer(){
@@ -647,7 +656,7 @@ function paintInfo(){
     ? esc(teams[0]) + ' <span class="vs">vs</span> ' + esc(teams[1])
     : esc(teams[0]);
   var status = m.status === 'LIVE' ? 'Live now' : (m.status === 'COMPLETED' ? 'Ended' : 'Upcoming');
-  $('crumb').innerHTML = (m.tournament ? '<a href="/">' + esc(m.tournament) + '</a> &bull; ' : '') + esc(status);
+  $('crumb').innerHTML = (m.tournament ? '<span class="tr">' + esc(m.tournament) + '</span> &bull; ' : '') + esc(status);
   var about = m.tournament
     ? 'In the ' + m.tournament + ', ' + (teams.length === 2 ? teams[0] + ' faces off against ' + teams[1] : teams[0]) + ' in what’s expected to be a thrilling contest.'
     : (teams.length === 2 ? teams[0] + ' faces off against ' + teams[1] + ' in what’s expected to be a thrilling contest.' : teams[0]);
