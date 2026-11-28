@@ -178,8 +178,7 @@ const UI = {
   liveFor:'Live for', liveNow:'Live now', live:'Live', upcoming:'Upcoming', ended:'Ended', today:'Today',
   tba:'Time to be announced', empty:'No matches found.', failed:'Couldn’t load matches. Please try again.',
   updated:'Updated', visitors:'Live visitors', loading:'Loading matches…', audio:'Broadcast language',
-  notLive:'This match is not live yet.', startsAt:'Starts', copied:'The stream link has been copied to your clipboard.',
-  openAnyway:'Open the stream page anyway?'
+  startsAt:'Starts'
 };
 const BG_MOBILE = 'https://wallpapercat.com/w/full/8/c/c/57325-2160x3840-mobile-4k-milky-way-background.jpg';
 const BG_DESKTOP = 'https://wallpapercat.com/w/full/4/e/9/185978-3840x2160-desktop-4k-moon-background-photo.jpg';
@@ -551,9 +550,8 @@ async function copyText(text){
 
 async function onUpcoming(m){
   const url = new URL(playerUrl(m.id, m.code), location.href).href;
-  const copied = await copyText(url);
-  const msg = t(UI.notLive) + '\n\n' + m.teams.map(x => t(x)).join(' v ') + '\n' +
-    t(UI.startsAt) + ': ' + whenText(m) + (copied ? '\n\n' + t(UI.copied) : '') + '\n\n' + t(UI.openAnyway);
+  await copyText(url);
+  const msg = m.teams.map(x => t(x)).join(' v ') + '\n' + t(UI.startsAt) + ': ' + whenText(m);
   if (window.confirm(msg)) window.location.href = url;
 }
 
