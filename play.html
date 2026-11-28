@@ -65,7 +65,7 @@ html[data-theme=light] .i-moon,html:not([data-theme=light]) .i-sun{display:none}
 .dt{font-size:11px;color:rgba(255,255,255,.55);word-break:break-word;max-width:340px}
 .sec-btn{height:34px;padding:0 16px;border-radius:6px;border:1px solid rgba(255,255,255,.35);color:#fff;font:600 14px/32px var(--fh);letter-spacing:.3px;text-decoration:none}
 .rt{margin-top:6px;height:38px;padding:0 22px;border-radius:6px;background:var(--ac);color:#fff;font:700 15px var(--fh);letter-spacing:.5px;text-transform:uppercase}
-.badge{position:absolute;top:10px;inset-inline-start:10px;z-index:6;display:none;align-items:center;gap:6px;background:rgba(0,0,0,.6);color:#fff;padding:3px 10px;border-radius:5px;font:700 12px var(--fh);letter-spacing:.8px;pointer-events:none}
+.badge{position:absolute;top:10px;inset-inline-start:10px;z-index:6;display:none;align-items:center;gap:6px;background:rgba(0,0,0,.62);color:#fff;padding:4px 11px;border-radius:5px;font:700 12px var(--fh);letter-spacing:.8px;pointer-events:none}
 .stage[data-state=play] .badge.on{display:flex}
 .badge i{width:7px;height:7px;border-radius:50%;background:var(--live);animation:pulse 1.6s ease-in-out infinite}
 @keyframes pulse{50%{opacity:.3}}
@@ -96,6 +96,7 @@ html[data-theme=light] .i-moon,html:not([data-theme=light]) .i-sun{display:none}
 .bs{font-size:12px;color:var(--mu);margin-top:2px}
 .cta{min-width:140px;height:46px;padding:0 20px;border-radius:6px;background:var(--ac);color:#fff;font:700 17px var(--fh);letter-spacing:.6px;text-transform:uppercase}
 .cta:active{filter:brightness(.92)}
+@media (orientation:landscape) and (max-height:520px){.stage{aspect-ratio:auto;height:calc(100vh - 52px - env(safe-area-inset-top));height:calc(100dvh - 52px - env(safe-area-inset-top))}.page{max-width:none}}
 @media (prefers-reduced-motion:reduce){.spin,.badge i{animation:none}}
 </style>
 </head>
@@ -103,7 +104,7 @@ html[data-theme=light] .i-moon,html:not([data-theme=light]) .i-sun{display:none}
 <header class="bar">
   <div class="bar-in">
     <a id="back" class="ib" href="/" aria-label="Back"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></a>
-    <a class="brand" href="/" aria-label="Home"><img class="logo" id="logo" src="https://imgh.in/host/amldwu" alt="" onerror="this.style.visibility='hidden'"></a>
+    <a class="brand" href="/" aria-label="Home"><img class="logo" id="logo" src="/gop-gop-moww.png" alt="" onerror="this.style.visibility='hidden'"></a>
     <span class="grow"></span>
     <button id="share" class="ib" type="button" aria-label="Share"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg></button>
     <button id="theme" class="ib" type="button" aria-label="Switch theme">
@@ -120,7 +121,7 @@ html[data-theme=light] .i-moon,html:not([data-theme=light]) .i-sun{display:none}
       <div class="cshade"></div>
       <div class="cbody" id="cbody"><div class="spin"></div></div>
     </div>
-    <div class="badge" id="badge"><i></i>LIVE</div>
+    <div class="badge" id="badge"><i></i><span id="btxt">LIVE</span></div>
     <button class="unmute" id="unmute" type="button">Tap to unmute</button>
   </div>
   <section class="info">
@@ -173,6 +174,11 @@ var levels = [];
 var lastErr = '';
 var DEBUG = sp.get('debug') === '1';
 var endedReloads = 0;
+var extendOff = false;
+var safetyMs = 8000;
+var miss404 = 0;
+var badgeState = 'live';
+var qLabel = '';
 var netRetry = 0;
 var mediaRetry = 0;
 var watchdog = 0;
@@ -310,6 +316,121 @@ function resolve(m){
   return urls.length ? { urls: urls } : null;
 }
 
+function extendStalePlaylist(text){
+  if (extendOff || !text) return text;
+  if (text.indexOf('#EXTINF:') === -1) return text;
+  if (text.indexOf('#EXT-X-STREAM-INF') !== -1) return text;
+  if (text.indexOf('#EXT-X-ENDLIST') !== -1) return text;
+  if (text.indexOf('#EXT-X-KEY') !== -1 || text.indexOf('#EXT-X-MAP') !== -1) return text;
+  var lines = text.split('\n');
+  var entries = [], header = [];
+  var inHeader = true, dur = '4.000', pdt = '';
+  for (var i = 0; i < lines.length; i++){
+    var l = lines[i].trim();
+    if (!l) continue;
+    if (l.indexOf('#EXTINF:') === 0){
+      inHeader = false;
+      var dm = l.match(/#EXTINF:([0-9.]+)/);
+      if (dm) dur = dm[1];
+    } else if (l.indexOf('#EXT-X-PROGRAM-DATE-TIME:') === 0){
+      inHeader = false;
+      pdt = l.substring(25).trim();
+    } else if (l.charAt(0) === '#'){
+      if (inHeader && l.indexOf('#EXT-X-MEDIA-SEQUENCE:') !== 0) header.push(l);
+    } else {
+      inHeader = false;
+      entries.push({ dur: dur, pdt: pdt, uri: l });
+      pdt = '';
+    }
+  }
+  if (!entries.length) return text;
+  var last = entries[entries.length - 1];
+  if (!last.pdt) return text;
+  var lastMs = Date.parse(last.pdt);
+  if (!lastMs || isNaN(lastMs)) return text;
+  var seg = last.uri.match(/^(.*-)(\d+)(\.ts.*)$/i);
+  if (!seg) return text;
+  var lastSeq = parseInt(seg[2], 10);
+  var segMs = Math.max(1000, Math.round((parseFloat(last.dur) || 4) * 1000));
+  var elapsed = Math.floor((Date.now() - lastMs - safetyMs) / segMs);
+  if (elapsed <= 0 || elapsed > 10800) return text;
+  var windowSize = 75;
+  var sm = text.match(/#EXT-X-MEDIA-SEQUENCE:(\d+)/);
+  var baseSeq = sm ? parseInt(sm[1], 10) : 0;
+  var startOff = Math.max(1, elapsed - (windowSize - 1));
+  var newBase = baseSeq + Math.max(0, entries.length + elapsed - windowSize);
+  var finals = [];
+  if (startOff === 1){
+    var keep = Math.max(0, entries.length - (windowSize - elapsed));
+    for (var k = keep; k < entries.length; k++) finals.push(entries[k]);
+  }
+  for (var n = startOff; n <= elapsed; n++){
+    finals.push({ dur: last.dur, pdt: new Date(lastMs + n * segMs).toISOString(), uri: seg[1] + (lastSeq + n) + seg[3] });
+  }
+  var out = header.slice();
+  out.push('#EXT-X-MEDIA-SEQUENCE:' + newBase);
+  finals.forEach(function(f){
+    out.push('#EXTINF:' + f.dur + ',');
+    if (f.pdt) out.push('#EXT-X-PROGRAM-DATE-TIME:' + f.pdt);
+    out.push(f.uri);
+  });
+  dbg('frozen playlist extended by ' + elapsed + ' segments');
+  return out.join('\n') + '\n';
+}
+
+function makeLoader(mode){
+  function Loader(){ this.aborted = false; this.ctrl = null; }
+  Loader.prototype.destroy = Loader.prototype.abort = function(){
+    this.aborted = true;
+    if (this.ctrl){ try { this.ctrl.abort(); } catch(e){} }
+  };
+  Loader.prototype.load = function(ctx, cfg, cb){
+    var self = this;
+    var t0 = performance.now();
+    self.context = ctx;
+    self.ctrl = typeof AbortController === 'function' ? new AbortController() : null;
+    var timer = setTimeout(function(){ if (self.ctrl) self.ctrl.abort(); }, 12000);
+    var target = mode === 'proxy' && PROXY_URL ? PROXY_URL + encodeURIComponent(ctx.url) : ctx.url;
+    fetch(target, { cache: 'no-store', signal: self.ctrl ? self.ctrl.signal : undefined })
+      .then(function(res){
+        if (self.aborted) return;
+        if (!res.ok){ cb.onError({ code: res.status, text: 'HTTP ' + res.status }, ctx, res, {}); return; }
+        return res.text().then(function(data){
+          if (self.aborted) return;
+          var out = extendStalePlaylist(data);
+          var now = performance.now();
+          var stats = {
+            aborted: false, loaded: out.length, total: out.length, retry: 0, chunkCount: 0, bwEstimate: 0,
+            trequest: t0, tfirst: now, tload: now,
+            loading: { start: t0, first: now, end: now },
+            parsing: { start: 0, end: 0 },
+            buffering: { start: 0, end: 0 }
+          };
+          self.stats = stats;
+          cb.onSuccess({ url: ctx.url, data: out }, stats, ctx, res);
+        });
+      })
+      .catch(function(e){
+        if (!self.aborted) cb.onError({ code: 0, text: (e && e.message) || 'Network error' }, ctx, null, {});
+      })
+      .then(function(){ clearTimeout(timer); });
+  };
+  return Loader;
+}
+
+function refreshBadge(){
+  var txt = badgeState === 'buffering' ? 'Buffering' : badgeState === 'reconnecting' ? 'Reconnecting' : 'LIVE' + (qLabel ? ' · ' + qLabel : '');
+  $('btxt').textContent = txt;
+}
+
+function lockLandscape(){
+  try { if (screen.orientation && screen.orientation.lock) screen.orientation.lock('landscape').catch(function(){}); } catch(e){}
+}
+
+function unlockOrientation(){
+  try { if (screen.orientation && screen.orientation.unlock) screen.orientation.unlock(); } catch(e){}
+}
+
 function loadScript(src){
   return new Promise(function(res, rej){
     var el = document.createElement('script');
@@ -382,6 +503,8 @@ function ensurePlayer(){
     cfg.quality = { default: 0, options: [0].concat(hs), forced: true, onChange: function(q){ setLevel(Number(q)); } };
   }
   player = new window.Plyr(vid, cfg);
+  player.on('enterfullscreen', lockLandscape);
+  player.on('exitfullscreen', unlockOrientation);
 }
 
 function tryPlay(){
@@ -423,12 +546,10 @@ function attach(){
     levelLoadingRetryDelay: 1000,
     fragLoadingMaxRetry: 6,
     xhrSetup: function(xhr, url){
-      var u = url;
-      if (a.mode !== 'hlsraw' && /\.m3u8(\?|$)/i.test(u) && u.indexOf('?') === -1) u += '?_t=' + Date.now();
-      if (a.mode === 'proxy') u = PROXY_URL + encodeURIComponent(u);
-      if (u !== url) xhr.open('GET', u, true);
+      if (a.mode === 'proxy') xhr.open('GET', PROXY_URL + encodeURIComponent(url), true);
     }
   };
+  if (a.mode !== 'hlsraw') cfg.pLoader = makeLoader(a.mode);
   dbg('attempt ' + (aIdx + 1) + '/' + attempts.length + ' ' + a.mode + ' ' + a.url);
   hls = new window.Hls(cfg);
   hls.on(window.Hls.Events.MANIFEST_PARSED, function(e, d){
@@ -438,10 +559,19 @@ function attach(){
     tryPlay();
   });
   hls.on(window.Hls.Events.FRAG_LOADED, function(){ netRetry = 0; mediaRetry = 0; });
+  hls.on(window.Hls.Events.LEVEL_SWITCHED, function(e, d){
+    var l = hls && hls.levels[d.level];
+    if (l && l.height){ qLabel = (hls.autoLevelEnabled ? 'Auto · ' : '') + l.height + 'p'; refreshBadge(); }
+  });
   hls.on(window.Hls.Events.ERROR, function(e, d){
     if (!d) return;
     var code = d.response ? d.response.code : '';
     dbg((d.fatal ? 'FATAL ' : '') + d.type + '/' + d.details + (code !== '' ? ' HTTP ' + code : ''));
+    if (d.details === 'fragLoadError' && code === 404){
+      miss404++;
+      safetyMs = Math.min(60000, safetyMs + 8000);
+      if (miss404 >= 5) extendOff = true;
+    }
     if (!d.fatal) return;
     lastErr = d.details + (code !== '' ? ' · HTTP ' + code : '') + ' · ' + a.mode;
     var blocked = d.type === window.Hls.ErrorTypes.NETWORK_ERROR && /manifest/i.test(d.details) && !code;
@@ -470,7 +600,7 @@ setInterval(function(){
   var t = vid.currentTime;
   if (Math.abs(t - lastT) > 0.1){ lastT = t; stuck = 0; return; }
   stuck++;
-  if (stuck === 5){ dbg('stalled 5s: nudge'); nudge(); }
+  if (stuck === 5){ dbg('stalled 5s: nudge'); badgeState = 'reconnecting'; refreshBadge(); nudge(); }
   else if (stuck === 11){ dbg('stalled 11s: reload source'); attach(); }
   else if (stuck >= 20){ dbg('stalled 20s: next source'); stuck = 0; failover(); }
 }, 1000);
@@ -489,6 +619,9 @@ function failover(){
 
 function startPlayer(res){
   showLoading();
+  extendOff = false;
+  safetyMs = 8000;
+  miss404 = 0;
   loadLibs().then(function(){
     var modes = availableModes();
     if (!modes.length){
@@ -521,7 +654,7 @@ function paintInfo(){
   $('about').textContent = about;
   var when = m.startMs
     ? new Date(m.startMs).toLocaleString(undefined, { day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit' })
-    : 'To be announced';
+    : (m.status === 'LIVE' ? 'Live now' : 'To be announced');
   var icoTrophy = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM7 6H4v1a3 3 0 0 0 3 3M17 6h3v1a3 3 0 0 1-3 3"/></svg>';
   var icoClock = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
   var icoMic = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>';
@@ -668,8 +801,13 @@ unmuteBtn.addEventListener('click', function(){
   unmuteBtn.classList.remove('on');
 });
 
+vid.addEventListener('waiting', function(){
+  if (stage.dataset.state === 'play'){ badgeState = 'buffering'; refreshBadge(); }
+});
 vid.addEventListener('playing', function(){
   clearTimeout(watchdog);
+  badgeState = 'live';
+  refreshBadge();
   setState('play');
   badge.classList.toggle('on', Boolean(match && match.status === 'LIVE') || started);
   unmuteBtn.classList.toggle('on', vid.muted);
