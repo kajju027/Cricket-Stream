@@ -31,6 +31,7 @@ function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-BSW772KQX6');
 </script>
+<script>window.__bip=null;window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();window.__bip=e;window.dispatchEvent(new Event('fc-bip'))});</script>
 <script>try{document.documentElement.dataset.theme=localStorage.getItem("fc_theme")==="light"?"light":"dark"}catch(e){document.documentElement.dataset.theme="dark"}</script>
 <style>
 :root{--ac:#ff5a00;--live:#ff3b47;--bg:#0e1118;--bar:#141824;--card:#171c28;--line:#262d3c;--tx:#f2f4f8;--mu:#97a1b3;--fh:"Barlow Condensed","Barlow",system-ui,"Noto Sans",sans-serif;color-scheme:dark}
@@ -133,8 +134,6 @@ footer b{color:var(--ac)}
 .fab:active{transform:scale(.94)}
 @keyframes bob{50%{transform:translateY(-4px)}}
 @keyframes ring{0%{transform:scale(1);opacity:.75}100%{transform:scale(1.75);opacity:0}}
-.hint{position:fixed;inset-inline-end:14px;bottom:calc(74px + env(safe-area-inset-bottom));z-index:50;max-width:min(260px,calc(100vw - 28px));background:var(--card);color:var(--tx);border:1px solid var(--line);border-radius:12px;padding:10px 13px;font-size:12px;line-height:1.4;box-shadow:0 10px 28px rgba(0,0,0,.35)}
-.hint[hidden]{display:none}
 @media (min-width:700px){.slide{aspect-ratio:1/1}.card{flex-basis:220px}}
 @media (prefers-reduced-motion:reduce){.fab,.fab::before{animation:none}.badge i{animation:none}#bgimg,.slide,.dot,.more-btn svg{transition:none}}
 </style>
@@ -144,7 +143,7 @@ footer b{color:var(--ac)}
 <div id="bgimg"></div>
 <header class="bar">
   <div class="bar-in">
-    <a class="brand" href="/" aria-label="Home"><img class="logo" id="logo" src="https://imgh.in/host/nwkvg5" alt="" onerror="this.style.visibility='hidden'"></a>
+    <a class="brand" href="/" aria-label="Home"><img class="logo" id="logo" src="/gop-gop-moww.png" alt="" onerror="this.style.visibility='hidden'"></a>
     <div class="tools">
       <select id="lang" aria-label="Language"></select>
       <button id="theme" type="button" aria-label="Switch theme">
@@ -169,7 +168,6 @@ footer b{color:var(--ac)}
 <button id="install" class="fab" type="button" aria-label="Install app" hidden>
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2.5" width="10" height="19" rx="2.4"/><path d="M12 7.5v6.5M9.2 11.6L12 14.4l2.8-2.8"/><path d="M10.5 18.5h3"/></svg>
 </button>
-<div id="ihint" class="hint" role="status" hidden></div>
 <script>
 const API_URL = 'https://raw.githubusercontent.com/kajju027/Fancode-Events-Json/refs/heads/main/fancode.json';
 const HIT_URL = 'https://sayan-prime.pages.dev/api/hit?key=Fancode_inc';
@@ -195,9 +193,7 @@ const UI = {
   liveFor:'Live for', liveNow:'Live now', live:'Live', upcoming:'Upcoming', ended:'Ended', today:'Today',
   tba:'Time to be announced', empty:'No matches found.', failed:'Couldn’t load matches. Please try again.',
   updated:'Updated', visitors:'Live visitors', loading:'Loading matches…', audio:'Broadcast language',
-  startsAt:'Starts', installApp:'Install app',
-  iosHint:'Tap Share, then “Add to Home Screen”.',
-  manualHint:'Open your browser menu and choose “Install app” or “Add to Home screen”.'
+  startsAt:'Starts', installApp:'Install app'
 };
 const BG_MOBILE = 'https://wallpapercat.com/w/full/8/c/c/57325-2160x3840-mobile-4k-milky-way-background.jpg';
 const BG_DESKTOP = 'https://wallpapercat.com/w/full/4/e/9/185978-3840x2160-desktop-4k-moon-background-photo.jpg';
@@ -209,7 +205,6 @@ const track = document.getElementById('track');
 const dots = document.getElementById('dots');
 const themeBtn = document.getElementById('theme');
 const installBtn = document.getElementById('install');
-const hintEl = document.getElementById('ihint');
 const langSel = document.getElementById('lang');
 const updEl = document.getElementById('upd');
 const noteEl = document.getElementById('note');
@@ -731,46 +726,37 @@ themeBtn.addEventListener('click', () => {
 startAuto();
 
 let deferredInstall = null;
-let hintTimer = 0;
 const isStandalone = () => (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true;
-const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
-function showHint(text){
-  hintEl.textContent = text;
-  hintEl.hidden = false;
-  clearTimeout(hintTimer);
-  hintTimer = setTimeout(() => { hintEl.hidden = true; }, 7000);
+function syncInstall(){
+  installBtn.hidden = isStandalone() || !deferredInstall;
 }
 
-if (!isStandalone()) installBtn.hidden = false;
-
-window.addEventListener('beforeinstallprompt', e => {
-  e.preventDefault();
+function takeInstall(e){
+  if (!e) return;
   deferredInstall = e;
-});
+  syncInstall();
+}
+
+takeInstall(window.__bip);
+window.addEventListener('fc-bip', () => takeInstall(window.__bip));
 
 window.addEventListener('appinstalled', () => {
   deferredInstall = null;
+  window.__bip = null;
   installBtn.hidden = true;
-  hintEl.hidden = true;
 });
 
 installBtn.addEventListener('click', async () => {
-  if (deferredInstall){
-    const promptEvent = deferredInstall;
-    deferredInstall = null;
-    promptEvent.prompt();
-    try {
-      const choice = await promptEvent.userChoice;
-      if (choice && choice.outcome === 'accepted') installBtn.hidden = true;
-    } catch(e){}
-    return;
-  }
-  showHint(t(isIOS ? UI.iosHint : UI.manualHint));
-});
-
-document.addEventListener('click', e => {
-  if (!hintEl.hidden && !e.target.closest('#install') && !e.target.closest('#ihint')) hintEl.hidden = true;
+  const ev = deferredInstall;
+  if (!ev) return;
+  deferredInstall = null;
+  window.__bip = null;
+  installBtn.hidden = true;
+  try {
+    await ev.prompt();
+    await ev.userChoice;
+  } catch(e){}
 });
 
 if ('serviceWorker' in navigator){
