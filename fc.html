@@ -94,6 +94,9 @@ html[dir=rtl] .slide{direction:rtl}
 .foot{margin-top:auto;padding-top:8px}
 .card .when{margin:0;height:36px;display:flex;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:6px;font-size:12px;font-weight:600;color:var(--ac)}
 .timer b{font:700 15px var(--fh);color:var(--live);font-variant-numeric:tabular-nums;letter-spacing:.4px}
+.live-now{align-items:center;gap:7px;font:700 14px var(--fh);color:var(--live);letter-spacing:.4px}
+.live-now i{width:7px;height:7px;border-radius:50%;background:var(--live);animation:pulse 1.6s ease-in-out infinite}
+.slide .live-now{color:#fff}
 .slide .timer{color:rgba(255,255,255,.75);margin-top:6px}
 .slide .timer b{color:#fff;font-size:16px}
 .when{margin-top:4px;font-size:12px;font-weight:600;color:var(--ac)}
@@ -128,7 +131,7 @@ footer b{color:var(--ac)}
 <div id="bgimg"></div>
 <header class="bar">
   <div class="bar-in">
-    <a class="brand" href="/" aria-label="Home"><img class="logo" id="logo" src="https://imgh.in/host/amldwu" alt="" onerror="this.style.visibility='hidden'"></a>
+    <a class="brand" href="/" aria-label="Home"><img class="logo" id="logo" src="/gop-gop-moww.png" alt="" onerror="this.style.visibility='hidden'"></a>
     <div class="tools">
       <select id="lang" aria-label="Language"></select>
       <button id="theme" type="button" aria-label="Switch theme">
@@ -147,7 +150,7 @@ footer b{color:var(--ac)}
   <main id="rows"><div class="msg" data-i="loading">Loading matches…</div></main>
   <footer>
     <div id="vis" hidden><span data-i="visitors">Live visitors</span> <b id="vc"></b></div>
-    <div>&copy; 2026 CnpTV Inc. All rights reserved.</div>
+    <div>&copy; 2026 CnpTV openourccesonu.tv Inc. All rights reserved.</div>
   </footer>
 </div>
 <script>
@@ -172,7 +175,7 @@ const LANG_CODES = {
 };
 const UI = {
   watch:'Watch Now', allLive:'All Live Now', liveUpcoming:'Live & Upcoming', allUpcoming:'All Upcoming Matches',
-  liveFor:'Live for', live:'Live', upcoming:'Upcoming', ended:'Ended', today:'Today',
+  liveFor:'Live for', liveNow:'Live now', live:'Live', upcoming:'Upcoming', ended:'Ended', today:'Today',
   tba:'Time to be announced', empty:'No matches found.', failed:'Couldn’t load matches. Please try again.',
   updated:'Updated', visitors:'Live visitors', loading:'Loading matches…', audio:'Broadcast language',
   notLive:'This match is not live yet.', startsAt:'Starts', copied:'The stream link has been copied to your clipboard.',
@@ -198,7 +201,6 @@ let updatedMs = null;
 let token = 0;
 let pick = {};
 let trCache = {};
-let seen = readJSON('fc_seen');
 let lang = localStorage.getItem('fc_lang');
 if (!LANGS.some(l => l[0] === lang)) lang = 'en';
 
@@ -381,15 +383,17 @@ function teamsHtml(m){
 }
 
 function actions(m){
-  const since = m.startMs || seen[m.id] || Date.now();
   const chosen = pick[m.id] || (m.bc[0] && m.bc[0].code);
   const select = m.bc.length > 1
     ? '<select class="bc" data-id="' + esc(m.id) + '" aria-label="' + esc(t(UI.audio)) + '">' +
       m.bc.map(b => '<option value="' + esc(b.code) + '"' + (b.code === chosen ? ' selected' : '') + '>' +
         esc(t(capital(b.name))) + '</option>').join('') + '</select>'
     : '';
-  return '<div class="timer"><span>' + esc(t(UI.liveFor)) + '</span><b data-since="' + since + '">' +
-    fmtElapsed(Date.now() - since) + '</b></div>' + select +
+  const timer = m.startMs
+    ? '<div class="timer"><span>' + esc(t(UI.liveFor)) + '</span><b data-since="' + m.startMs + '">' +
+      fmtElapsed(Date.now() - m.startMs) + '</b></div>'
+    : '<div class="timer live-now"><i></i><span>' + esc(t(UI.liveNow)) + '</span></div>';
+  return timer + select +
     '<button type="button" class="watch" data-id="' + esc(m.id) + '"' + (m.canWatch ? '' : ' disabled') + '>' +
     PLAY_ICON + '<span>' + esc(t(UI.watch)) + '</span></button>';
 }
@@ -610,16 +614,6 @@ function build(data){
   });
 }
 
-function syncSeen(list){
-  const now = Date.now();
-  const next = {};
-  list.forEach(m => {
-    if (m.status === 'LIVE' && !m.startMs) next[m.id] = seen[m.id] || now;
-  });
-  seen = next;
-  try { localStorage.setItem('fc_seen', JSON.stringify(seen)); } catch(e){}
-}
-
 async function refresh(first){
   if (!first && document.hidden) return;
   try {
@@ -632,7 +626,6 @@ async function refresh(first){
     if (snap === lastSnap) return;
     lastSnap = snap;
     matches = build(data);
-    syncSeen(matches);
     loaded = true;
     render();
     translate();
