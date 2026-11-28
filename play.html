@@ -11,6 +11,11 @@
 <meta name="referrer" content="no-referrer">
 <link rel="icon" href="/gop-gop-moww.png" type="image/png">
 <link rel="apple-touch-icon" href="/gop-gop-moww.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="CNP TV">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="preconnect" href="https://raw.githubusercontent.com">
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -58,8 +63,13 @@ html[data-theme=light] .i-moon,html:not([data-theme=light]) .i-sun{display:none}
 .cl{font:600 13px var(--fh);letter-spacing:1.6px;text-transform:uppercase;color:rgba(255,255,255,.78)}
 .cd{font:700 clamp(26px,7vw,40px)/1.1 var(--fh);letter-spacing:1px;font-variant-numeric:tabular-nums}
 .cm{font-size:13px;color:rgba(255,255,255,.75);max-width:340px}
-.spin{width:34px;height:34px;border-radius:50%;border:3px solid rgba(255,255,255,.18);border-top-color:#fff;animation:rot .7s linear infinite;margin-bottom:26px}
+.ring{display:block;width:56px;height:56px;border-radius:50%;border:4px solid rgba(255,255,255,.14);border-top-color:var(--ac);animation:rot 1s linear infinite;filter:drop-shadow(0 0 10px rgba(255,90,0,.45))}
+@supports ((mask:radial-gradient(#000,#000)) or (-webkit-mask:radial-gradient(#000,#000))) and (background:conic-gradient(#000,#fff)){
+.ring{border:0;background:conic-gradient(from 0deg,rgba(255,90,0,0) 0%,rgba(255,90,0,.18) 45%,#ff5a00 100%);-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 5px),#000 calc(100% - 4px));mask:radial-gradient(farthest-side,transparent calc(100% - 5px),#000 calc(100% - 4px))}
+}
 @keyframes rot{to{transform:rotate(360deg)}}
+.nf{position:absolute;left:50%;top:50%;margin:-28px 0 0 -28px;z-index:6;pointer-events:none;display:none}
+.nf.on{display:block}
 .stage[data-state=load] .cover{justify-content:center}
 .stage[data-state=load] .cbody{padding:0;align-items:center}
 .stage[data-state=error] .cover{justify-content:center}
@@ -100,7 +110,7 @@ html[data-theme=light] .i-moon,html:not([data-theme=light]) .i-sun{display:none}
 .cta{min-width:140px;height:46px;padding:0 20px;border-radius:6px;background:var(--ac);color:#fff;font:700 17px var(--fh);letter-spacing:.6px;text-transform:uppercase}
 .cta:active{filter:brightness(.92)}
 @media (orientation:landscape) and (max-height:520px){.stage{aspect-ratio:auto;height:calc(100vh - 52px - env(safe-area-inset-top));height:calc(100dvh - 52px - env(safe-area-inset-top))}.page{max-width:none}}
-@media (prefers-reduced-motion:reduce){.spin,.badge i{animation:none}}
+@media (prefers-reduced-motion:reduce){.ring,.badge i{animation:none}}
 </style>
 </head>
 <body>
@@ -122,8 +132,9 @@ html[data-theme=light] .i-moon,html:not([data-theme=light]) .i-sun{display:none}
     <div class="cover" id="cover">
       <img class="poster" id="poster" alt="" hidden>
       <div class="cshade"></div>
-      <div class="cbody" id="cbody"><div class="spin"></div></div>
+      <div class="cbody" id="cbody"><div class="ring"></div></div>
     </div>
+    <div class="nf" id="buffer"><i class="ring"></i></div>
     <div class="badge" id="badge"><i></i><span id="btxt">LIVE</span></div>
     <button class="unmute" id="unmute" type="button">Tap to unmute</button>
   </div>
@@ -248,6 +259,7 @@ function fmtCountdown(ms){
 
 function setState(state){
   stage.dataset.state = state;
+  if (state !== 'play') $('buffer').classList.remove('on');
 }
 
 function showCover(html){
@@ -256,7 +268,7 @@ function showCover(html){
 
 function showLoading(){
   setState('load');
-  showCover('<div class="spin"></div>');
+  showCover('<div class="ring"></div>');
 }
 
 function showError(title, msg, opts){
@@ -811,12 +823,13 @@ unmuteBtn.addEventListener('click', function(){
 });
 
 vid.addEventListener('waiting', function(){
-  if (stage.dataset.state === 'play'){ badgeState = 'buffering'; refreshBadge(); }
+  if (stage.dataset.state === 'play'){ badgeState = 'buffering'; refreshBadge(); $('buffer').classList.add('on'); }
 });
 vid.addEventListener('playing', function(){
   clearTimeout(watchdog);
   badgeState = 'live';
   refreshBadge();
+  $('buffer').classList.remove('on');
   setState('play');
   badge.classList.toggle('on', Boolean(match && match.status === 'LIVE') || started);
   unmuteBtn.classList.toggle('on', vid.muted);
@@ -831,6 +844,8 @@ if (DEBUG){
     vid.addEventListener(ev, function(){ dbg('video ' + ev + ' t=' + vid.currentTime.toFixed(1)); });
   });
 }
+vid.addEventListener('canplay', function(){ $('buffer').classList.remove('on'); });
+vid.addEventListener('pause', function(){ $('buffer').classList.remove('on'); });
 vid.addEventListener('volumechange', function(){
   if (!vid.muted) unmuteBtn.classList.remove('on');
 });
@@ -839,6 +854,10 @@ vid.addEventListener('error', function(){
   lastErr = 'native · media error ' + (vid.error ? vid.error.code : '');
   failover();
 });
+
+if ('serviceWorker' in navigator){
+  window.addEventListener('load', function(){ navigator.serviceWorker.register('/sw.js').catch(function(){}); });
+}
 
 if (!matchId){
   showError('No match selected', 'Go back and choose a match to watch.');
