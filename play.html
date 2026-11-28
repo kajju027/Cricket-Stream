@@ -21,6 +21,200 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@500;600&amp;family=Barlow+Condensed:wght@600;700&amp;display=swap" rel="stylesheet">
+<script>
+/* Playlist shaping that works for EVERY engine (JW Player, hls.js):
+   1) keeps ONE quality only: 720p, else 1080p, else the closest one
+   2) revives frozen live playlists by generating the next .ts segments
+   It hooks fetch + XMLHttpRequest, so JW Player's own loader gets the fixed playlist too. */
+(function(){
+'use strict';
+var st = { on: false, safetyMs: 8000, extendOff: false, miss404: 0 };
+var isSeg = /\.ts(\?|#|$)/i;
+
+function log(m){ try { if (window.__dbg) window.__dbg(m); } catch(e){} }
+
+function onlyOneQuality(text){
+  var lines = text.split(/\r?\n/), head = [], vars = [];
+  for (var i = 0; i < lines.length; i++){
+    var l = lines[i].trim();
+    if (!l) continue;
+    if (l.indexOf('#EXT-X-I-FRAME-STREAM-INF') === 0) continue;
+    if (l.indexOf('#EXT-X-STREAM-INF') === 0){
+      var j = i + 1;
+      while (j < lines.length && !lines[j].trim()) j++;
+      var uri = j < lines.length ? lines[j].trim() : '';
+      if (!uri || uri.charAt(0) === '#') continue;
+      var rm = l.match(/RESOLUTION=(\d+)x(\d+)/i);
+      var bm = l.match(/(?:^|[:,])BANDWIDTH=(\d+)/i);
+      vars.push({ inf: l, uri: uri, h: rm ? +rm[2] : 0, bw: bm ? +bm[1] : 0 });
+      i = j;
+    } else {
+      head.push(l);
+    }
+  }
+  if (vars.length < 2) return text;
+  var withH = vars.filter(function(v){ return v.h > 0; });
+  if (!withH.length) return text;
+  function within(a, b){
+    return withH.filter(function(v){ return v.h >= a && v.h <= b; })
+      .sort(function(x, y){ return y.bw - x.bw; })[0];
+  }
+  var pick = within(700, 740) || within(1040, 1100) ||
+    withH.slice().sort(function(a, b){ return Math.abs(a.h - 720) - Math.abs(b.h - 720); })[0];
+  log('single quality: ' + pick.h + 'p (of ' + vars.length + ')');
+  return head.join('\n') + '\n' + pick.inf + '\n' + pick.uri + '\n';
+}
+
+function extendStalePlaylist(text){
+  if (st.extendOff || !text) return text;
+  if (text.indexOf('#EXTINF:') === -1) return text;
+  if (text.indexOf('#EXT-X-STREAM-INF') !== -1) return text;
+  if (text.indexOf('#EXT-X-ENDLIST') !== -1) return text;
+  if (text.indexOf('#EXT-X-KEY') !== -1 || text.indexOf('#EXT-X-MAP') !== -1) return text;
+  var lines = text.split('\n');
+  var entries = [], header = [];
+  var inHeader = true, dur = '4.000', pdt = '';
+  for (var i = 0; i < lines.length; i++){
+    var l = lines[i].trim();
+    if (!l) continue;
+    if (l.indexOf('#EXTINF:') === 0){
+      inHeader = false;
+      var dm = l.match(/#EXTINF:([0-9.]+)/);
+      if (dm) dur = dm[1];
+    } else if (l.indexOf('#EXT-X-PROGRAM-DATE-TIME:') === 0){
+      inHeader = false;
+      pdt = l.substring(25).trim();
+    } else if (l.charAt(0) === '#'){
+      if (inHeader && l.indexOf('#EXT-X-MEDIA-SEQUENCE:') !== 0) header.push(l);
+    } else {
+      inHeader = false;
+      entries.push({ dur: dur, pdt: pdt, uri: l });
+      pdt = '';
+    }
+  }
+  if (!entries.length) return text;
+  var last = entries[entries.length - 1];
+  if (!last.pdt) return text;
+  var lastMs = Date.parse(last.pdt);
+  if (!lastMs || isNaN(lastMs)) return text;
+  var seg = last.uri.match(/^(.*-)(\d+)(\.ts.*)$/i);
+  if (!seg) return text;
+  var lastSeq = parseInt(seg[2], 10);
+  var segMs = Math.max(1000, Math.round((parseFloat(last.dur) || 4) * 1000));
+  var elapsed = Math.floor((Date.now() - lastMs - st.safetyMs) / segMs);
+  if (elapsed <= 0 || elapsed > 10800) return text;
+  var windowSize = 75;
+  var sm = text.match(/#EXT-X-MEDIA-SEQUENCE:(\d+)/);
+  var baseSeq = sm ? parseInt(sm[1], 10) : 0;
+  var startOff = Math.max(1, elapsed - (windowSize - 1));
+  var newBase = baseSeq + Math.max(0, entries.length + elapsed - windowSize);
+  var finals = [];
+  if (startOff === 1){
+    var keep = Math.max(0, entries.length - (windowSize - elapsed));
+    for (var k = keep; k < entries.length; k++) finals.push(entries[k]);
+  }
+  for (var n = startOff; n <= elapsed; n++){
+    finals.push({ dur: last.dur, pdt: new Date(lastMs + n * segMs).toISOString(), uri: seg[1] + (lastSeq + n) + seg[3] });
+  }
+  var out = header.slice();
+  out.push('#EXT-X-MEDIA-SEQUENCE:' + newBase);
+  finals.forEach(function(f){
+    out.push('#EXTINF:' + f.dur + ',');
+    if (f.pdt) out.push('#EXT-X-PROGRAM-DATE-TIME:' + f.pdt);
+    out.push(f.uri);
+  });
+  log('frozen playlist extended by ' + elapsed + ' segments');
+  return out.join('\n') + '\n';
+}
+
+function shape(text){
+  if (typeof text !== 'string' || text.slice(0, 16).indexOf('#EXTM3U') === -1) return text;
+  if (text.indexOf('#EXT-X-STREAM-INF') !== -1) return onlyOneQuality(text);
+  return extendStalePlaylist(text);
+}
+
+function note404(){
+  st.miss404++;
+  st.safetyMs = Math.min(60000, st.safetyMs + 8000);
+  if (st.miss404 >= 5) st.extendOff = true;
+}
+
+function reset(){
+  st.safetyMs = 8000;
+  st.extendOff = false;
+  st.miss404 = 0;
+}
+
+/* ---- fetch hook ---- */
+try {
+  var nFetch = window.fetch;
+  if (typeof nFetch === 'function'){
+    window.fetch = function(input, init){
+      var url = typeof input === 'string' ? input : ((input && input.url) || '');
+      var byUrl = /\.m3u8(\?|#|$)/i.test(url);
+      if (st.on && byUrl && typeof input === 'string'){
+        init = Object.assign({}, init || {});
+        if (!init.cache) init.cache = 'no-store';
+      }
+      var p = nFetch.call(window, input, init);
+      if (!st.on) return p;
+      return p.then(function(res){
+        if (!res) return res;
+        if (res.status === 404 && isSeg.test(url)) note404();
+        if (!res.ok) return res;
+        var ct = (res.headers && res.headers.get && res.headers.get('content-type')) || '';
+        if (!byUrl && !/mpegurl/i.test(ct)) return res;
+        return res.clone().text().then(function(t){
+          var out = shape(t);
+          if (out === t) return res;
+          var r = new Response(out, { status: res.status, statusText: res.statusText, headers: res.headers });
+          try { Object.defineProperty(r, 'url', { value: res.url }); } catch(e){}
+          return r;
+        });
+      });
+    };
+  }
+} catch(e){}
+
+/* ---- XMLHttpRequest hook (prototype level, so it also catches references the player saved early) ---- */
+try {
+  var XP = XMLHttpRequest.prototype;
+  var dText = Object.getOwnPropertyDescriptor(XP, 'responseText');
+  var dResp = Object.getOwnPropertyDescriptor(XP, 'response');
+  var nOpen = XP.open;
+  if (dText && dText.get && dResp && dResp.get){
+    XP.open = function(method, url){
+      this.__u = String(url);
+      if (!this.__ls){
+        this.__ls = true;
+        this.addEventListener('loadend', function(){
+          if (st.on && this.status === 404 && isSeg.test(this.__u || '')) note404();
+        });
+      }
+      return nOpen.apply(this, arguments);
+    };
+    var textOf = function(x, raw){
+      if (!st.on || x.readyState !== 4 || typeof raw !== 'string') return raw;
+      if (x.__raw !== raw){ x.__raw = raw; x.__out = shape(raw); }
+      return x.__out;
+    };
+    Object.defineProperty(XP, 'responseText', {
+      configurable: true, enumerable: true,
+      get: function(){ return textOf(this, dText.get.call(this)); }
+    });
+    Object.defineProperty(XP, 'response', {
+      configurable: true, enumerable: true,
+      get: function(){
+        var raw = dResp.get.call(this), rt = this.responseType;
+        return (rt === '' || rt === 'text') ? textOf(this, raw) : raw;
+      }
+    });
+  }
+} catch(e){}
+
+window.PL = { st: st, shape: shape, note404: note404, reset: reset };
+})();
+</script>
 <link rel="preconnect" href="https://content.jwplatform.com" crossorigin>
 <script async src="https://content.jwplatform.com/libraries/SAHhwvZq.js"></script>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-BSW772KQX6"></script>
@@ -40,16 +234,16 @@ body{color:var(--tx);font:500 14px/1.5 Barlow,system-ui,-apple-system,"Segoe UI"
 button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
 button:focus-visible,a:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
 .bar{position:sticky;top:0;z-index:30;background:var(--bar);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top)}
-.bar-in{max-width:960px;margin:0 auto;height:52px;padding:0 12px;display:flex;align-items:center;gap:6px}
+.bar-in{max-width:1160px;margin:0 auto;height:52px;padding:0 12px;display:flex;align-items:center;gap:6px}
 .ib{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;color:var(--tx)}
 .ib:hover{background:var(--card)}
 .brand{display:flex;align-items:center;height:32px;min-width:110px;margin-inline-start:4px}
 .logo{height:32px;width:auto;display:block}
 .grow{flex:1}
 html[data-theme=light] .i-moon,html:not([data-theme=light]) .i-sun{display:none}
-.page{max-width:960px;margin:0 auto}
+.page{max-width:1160px;margin:0 auto}
 .stage{position:relative;width:100%;aspect-ratio:16/9;background:#000;overflow:hidden}
-@media (min-width:961px){.stage{border-radius:0 0 14px 14px}}
+@media (min-width:1161px){.stage{border-radius:0 0 14px 14px}}
 #jwbox{position:absolute;inset:0;background:#000}
 #jwbox>div,#jwbox .jwplayer{position:absolute!important;inset:0;width:100%!important;height:100%!important}
 .stage video{height:100%;width:100%;object-fit:contain;background:#000}
@@ -108,7 +302,7 @@ html[data-theme=light] .i-moon,html:not([data-theme=light]) .i-sun{display:none}
 .rv{font-weight:600}
 .rv.lk{color:var(--lk)}
 .buy{position:fixed;left:0;right:0;bottom:0;z-index:40;background:var(--bar);border-top:1px solid var(--line);border-radius:18px 18px 0 0;padding:14px 16px calc(14px + env(safe-area-inset-bottom));box-shadow:0 -10px 30px rgba(0,0,0,.25)}
-.buy-in{max-width:960px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:14px}
+.buy-in{max-width:1160px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:14px}
 .bt{font:700 25px/1.1 var(--fh);color:var(--lk)}
 .bs{font-size:12px;color:var(--mu);margin-top:2px}
 .cta{min-width:140px;height:46px;padding:0 20px;border-radius:6px;background:var(--ac);color:#fff;font:700 17px var(--fh);letter-spacing:.6px;text-transform:uppercase}
@@ -358,9 +552,6 @@ var levels = [];
 var lastErr = '';
 var DEBUG = sp.get('debug') === '1';
 var endedReloads = 0;
-var extendOff = false;
-var safetyMs = 8000;
-var miss404 = 0;
 var badgeState = 'live';
 var qLabel = '';
 var netRetry = 0;
@@ -382,6 +573,8 @@ function dbg(msg){
   el.textContent += new Date().toLocaleTimeString() + ' ' + msg + '\n';
   el.scrollTop = el.scrollHeight;
 }
+
+window.__dbg = dbg;
 
 function esc(v){
   return String(v == null ? '' : v).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; });
@@ -491,82 +684,23 @@ function resolve(m){
     var qualityUrls = [];
     if (key){
       var st = groups[key].streams;
-      qualityUrls = Object.keys(st).map(function(k){
+      var cand = Object.keys(st).map(function(k){
         var mm = k.match(/^(\d+)p$/i);
         return { h: mm ? +mm[1] : 0, u: st[k] };
-      }).filter(function(x){ return x.h && x.u; })
-        .sort(function(a, b){ return Math.abs(a.h - 540) - Math.abs(b.h - 540); })
-        .map(function(x){ return x.u; });
+      }).filter(function(x){ return x.h && x.u; });
+      // only 720p, then 1080p. If neither exists keep the single closest one.
+      var pref = cand.filter(function(x){ return x.h === 720; }).concat(cand.filter(function(x){ return x.h === 1080; }));
+      if (!pref.length && cand.length){
+        cand.sort(function(a, b){ return Math.abs(a.h - 720) - Math.abs(b.h - 720); });
+        pref = [cand[0]];
+      }
+      qualityUrls = pref.map(function(x){ return x.u; });
     }
-    var defaultKey = m.language ? keys.filter(function(k){ return langCode(k) === langCode(m.language); })[0] : keys[0];
-    var isDefault = !key || keys.length < 2 || key === defaultKey;
-    urls = isDefault ? [s.fancode_cdn, s.primary].concat(qualityUrls) : qualityUrls.concat([s.fancode_cdn, s.primary]);
+    urls = qualityUrls.concat([s.fancode_cdn, s.primary]);
   }
   urls = urls.concat([s.fancode_lk_cdn, s.fancode_bd_cdn, s.fancode_np_cdn]);
   urls = urls.filter(function(u, i){ return u && urls.indexOf(u) === i; });
   return urls.length ? { urls: urls } : null;
-}
-
-function extendStalePlaylist(text){
-  if (extendOff || !text) return text;
-  if (text.indexOf('#EXTINF:') === -1) return text;
-  if (text.indexOf('#EXT-X-STREAM-INF') !== -1) return text;
-  if (text.indexOf('#EXT-X-ENDLIST') !== -1) return text;
-  if (text.indexOf('#EXT-X-KEY') !== -1 || text.indexOf('#EXT-X-MAP') !== -1) return text;
-  var lines = text.split('\n');
-  var entries = [], header = [];
-  var inHeader = true, dur = '4.000', pdt = '';
-  for (var i = 0; i < lines.length; i++){
-    var l = lines[i].trim();
-    if (!l) continue;
-    if (l.indexOf('#EXTINF:') === 0){
-      inHeader = false;
-      var dm = l.match(/#EXTINF:([0-9.]+)/);
-      if (dm) dur = dm[1];
-    } else if (l.indexOf('#EXT-X-PROGRAM-DATE-TIME:') === 0){
-      inHeader = false;
-      pdt = l.substring(25).trim();
-    } else if (l.charAt(0) === '#'){
-      if (inHeader && l.indexOf('#EXT-X-MEDIA-SEQUENCE:') !== 0) header.push(l);
-    } else {
-      inHeader = false;
-      entries.push({ dur: dur, pdt: pdt, uri: l });
-      pdt = '';
-    }
-  }
-  if (!entries.length) return text;
-  var last = entries[entries.length - 1];
-  if (!last.pdt) return text;
-  var lastMs = Date.parse(last.pdt);
-  if (!lastMs || isNaN(lastMs)) return text;
-  var seg = last.uri.match(/^(.*-)(\d+)(\.ts.*)$/i);
-  if (!seg) return text;
-  var lastSeq = parseInt(seg[2], 10);
-  var segMs = Math.max(1000, Math.round((parseFloat(last.dur) || 4) * 1000));
-  var elapsed = Math.floor((Date.now() - lastMs - safetyMs) / segMs);
-  if (elapsed <= 0 || elapsed > 10800) return text;
-  var windowSize = 75;
-  var sm = text.match(/#EXT-X-MEDIA-SEQUENCE:(\d+)/);
-  var baseSeq = sm ? parseInt(sm[1], 10) : 0;
-  var startOff = Math.max(1, elapsed - (windowSize - 1));
-  var newBase = baseSeq + Math.max(0, entries.length + elapsed - windowSize);
-  var finals = [];
-  if (startOff === 1){
-    var keep = Math.max(0, entries.length - (windowSize - elapsed));
-    for (var k = keep; k < entries.length; k++) finals.push(entries[k]);
-  }
-  for (var n = startOff; n <= elapsed; n++){
-    finals.push({ dur: last.dur, pdt: new Date(lastMs + n * segMs).toISOString(), uri: seg[1] + (lastSeq + n) + seg[3] });
-  }
-  var out = header.slice();
-  out.push('#EXT-X-MEDIA-SEQUENCE:' + newBase);
-  finals.forEach(function(f){
-    out.push('#EXTINF:' + f.dur + ',');
-    if (f.pdt) out.push('#EXT-X-PROGRAM-DATE-TIME:' + f.pdt);
-    out.push(f.uri);
-  });
-  dbg('frozen playlist extended by ' + elapsed + ' segments');
-  return out.join('\n') + '\n';
 }
 
 function makeLoader(mode){
@@ -588,7 +722,7 @@ function makeLoader(mode){
         if (!res.ok){ cb.onError({ code: res.status, text: 'HTTP ' + res.status }, ctx, res, {}); return; }
         return res.text().then(function(data){
           if (self.aborted) return;
-          var out = extendStalePlaylist(data);
+          var out = PL.shape(data);
           var now = performance.now();
           var stats = {
             aborted: false, loaded: out.length, total: out.length, retry: 0, chunkCount: 0, bwEstimate: 0,
@@ -614,13 +748,34 @@ function refreshBadge(){
   $('btxt').textContent = txt;
 }
 
+function inFs(){
+  return document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
+}
+
 function lockLandscape(){
-  try { if (screen.orientation && screen.orientation.lock) screen.orientation.lock('landscape').catch(function(){}); } catch(e){}
+  if (!screen.orientation || typeof screen.orientation.lock !== 'function') return;
+  var attempt = function(){ screen.orientation.lock('landscape').catch(function(){}); };
+  if (inFs()) attempt(); else setTimeout(attempt, 120);
 }
 
 function unlockOrientation(){
-  try { if (screen.orientation && screen.orientation.unlock) screen.orientation.unlock(); } catch(e){}
+  try { if (screen.orientation && typeof screen.orientation.unlock === 'function') screen.orientation.unlock(); } catch(e){}
 }
+
+['fullscreenchange', 'webkitfullscreenchange', 'mozfullscreenchange', 'MSFullscreenChange'].forEach(function(ev){
+  document.addEventListener(ev, function(){ if (inFs()) lockLandscape(); else unlockOrientation(); });
+});
+
+if (screen.orientation && screen.orientation.addEventListener){
+  screen.orientation.addEventListener('change', function(){
+    if (inFs() && screen.orientation.type && screen.orientation.type.indexOf('portrait') === 0) lockLandscape();
+  });
+}
+
+window.addEventListener('pagehide', function(){
+  try { destroyJw(); } catch(e){}
+  destroyHls();
+});
 
 function loadScript(src){
   return new Promise(function(res, rej){
@@ -643,13 +798,18 @@ function destroyHls(){
   if (hls){ try { hls.destroy(); } catch(e){} hls = null; }
 }
 
-function availableModes(){
+/* iPhone / iPad / Safari play HLS natively, where no script can fix the playlist.
+   There we use the hls.js engine (it can), everywhere else JW Player. */
+function isApple(){
   var ua = navigator.userAgent || '';
-  var apple = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1) ||
+  return /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1) ||
     (/Safari/.test(ua) && !/Chrome|Chromium|Android|CriOS|FxiOS|Edg/.test(ua));
+}
+
+function availableModes(){
   var hlsOk = Boolean(window.Hls && window.Hls.isSupported());
   var nativeOk = Boolean(vid.canPlayType('application/vnd.apple.mpegurl'));
-  var order = apple ? ['native', 'hls', 'hlsraw'] : ['hls', 'hlsraw', 'native'];
+  var order = ['hls', 'hlsraw', 'native'];
   var out = order.filter(function(m){ return m === 'native' ? nativeOk : hlsOk; });
   if (PROXY_URL && hlsOk) out.push('proxy');
   return out;
@@ -731,9 +891,7 @@ function attach(){
     var code = d.response ? d.response.code : '';
     dbg((d.fatal ? 'FATAL ' : '') + d.type + '/' + d.details + (code !== '' ? ' HTTP ' + code : ''));
     if (d.details === 'fragLoadError' && code === 404){
-      miss404++;
-      safetyMs = Math.min(60000, safetyMs + 8000);
-      if (miss404 >= 5) extendOff = true;
+      PL.note404();
     }
     if (!d.fatal) return;
     lastErr = d.details + (code !== '' ? ' · HTTP ' + code : '') + ' · ' + a.mode;
@@ -933,9 +1091,10 @@ function jwAttach(){
 }
 
 function startJw(){
+  PL.st.on = true;
   engine = 'jw';
   stage.classList.remove('fb');
-  jwUrls = fbRes.urls.slice(0, 3);
+  jwUrls = fbRes.urls.slice(0, 4);
   jIdx = 0;
   jwRetry = 0;
   lastErr = '';
@@ -944,6 +1103,7 @@ function startJw(){
 
 function startFallback(){
   destroyJw();
+  PL.st.on = false;
   engine = 'fb';
   stage.classList.add('fb');
   loadLibs().then(function(){
@@ -954,7 +1114,7 @@ function startFallback(){
       return;
     }
     attempts = [];
-    fbRes.urls.slice(0, 3).forEach(function(u){
+    fbRes.urls.slice(0, 4).forEach(function(u){
       modes.forEach(function(m){ attempts.push({ url: u, mode: m }); });
     });
     aIdx = 0;
@@ -964,13 +1124,12 @@ function startFallback(){
 
 function startPlayer(res){
   showLoading();
-  extendOff = false;
-  safetyMs = 8000;
-  miss404 = 0;
+  PL.reset();
   fbRes = res;
   destroyHls();
   vid.removeAttribute('src');
   try { vid.load(); } catch(e){}
+  if (isApple()){ startFallback(); return; }
   waitForJw().then(function(ok){
     if (ok) startJw(); else startFallback();
   });
